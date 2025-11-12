@@ -17,6 +17,7 @@ const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
+const GitOperations = lazy(() => import('./GitOperations'));
 
 // حارس متقدم للمسارات الخاصة
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -180,6 +181,13 @@ export default function App() {
                       <Layout>
                         <Settings />
                       </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Git Operations Dashboard */}
+                  <Route path="/git-ops" element={
+                    <RequireAuth>
+                      <GitOperations />
                     </RequireAuth>
                   } />
 

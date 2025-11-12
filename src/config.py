@@ -113,13 +113,21 @@ class Config:
         Returns:
             Config instance
         """
+        # Define valid fields for BranchConfig to filter out unknown fields
+        valid_branch_fields = {'name', 'remote', 'auto_fetch', 'merge_strategy', 'is_default'}
+
         # Parse repositories
         repos = []
         for repo_data in data.get('repositories', []):
-            branches = [
-                BranchConfig(**branch_data)
-                for branch_data in repo_data.get('branches', [])
-            ]
+            branches = []
+            for branch_data in repo_data.get('branches', []):
+                # Filter out unknown fields from branch config
+                filtered_branch_data = {
+                    k: v for k, v in branch_data.items()
+                    if k in valid_branch_fields
+                }
+                branches.append(BranchConfig(**filtered_branch_data))
+
             repos.append(RepositoryConfig(
                 path=repo_data['path'],
                 name=repo_data['name'],
@@ -128,8 +136,17 @@ class Config:
             ))
 
         # Parse reporting config
+        valid_reporting_fields = {'output_format', 'output_dir', 'include_commits', 'include_diff_stats', 'max_commits'}
         reporting_data = data.get('reporting', {})
-        reporting = ReportingConfig(**reporting_data) if reporting_data else ReportingConfig()
+        if reporting_data:
+            # Filter out unknown fields from reporting config
+            filtered_reporting_data = {
+                k: v for k, v in reporting_data.items()
+                if k in valid_reporting_fields
+            }
+            reporting = ReportingConfig(**filtered_reporting_data)
+        else:
+            reporting = ReportingConfig()
 
         return cls(
             repositories=repos,

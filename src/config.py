@@ -23,6 +23,7 @@ class BranchConfig:
     remote: str = "origin"
     auto_fetch: bool = True
     merge_strategy: str = "merge"  # merge, rebase, or squash
+    is_default: bool = False  # whether this is the default branch
 
 
 @dataclass

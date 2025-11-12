@@ -11,10 +11,28 @@ Provides next-generation analytics capabilities including:
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime, timedelta
 import json
 import math
+
+
+def safe_get(obj: Any, key: str, default: Any = None) -> Any:
+    """
+    Safely get value from either a dictionary or object attribute
+
+    Args:
+        obj: Dictionary or object to get value from
+        key: Key or attribute name
+        default: Default value if key/attribute not found
+
+    Returns:
+        Value or default
+    """
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    else:
+        return getattr(obj, key, default)
 
 
 @dataclass
@@ -187,7 +205,7 @@ class AdvancedAnalyticsEngine:
         activity_level = "low"
 
         if recent_operations:
-            successful_ops = sum(1 for op in recent_operations if op.get('success', False))
+            successful_ops = sum(1 for op in recent_operations if safe_get(op, 'success', False))
             total_ops = len(recent_operations)
 
             if total_ops >= 10:
@@ -278,8 +296,8 @@ class AdvancedAnalyticsEngine:
             # - File overlap
             # - Historical conflict rate
 
-            divergent_commits = comparison.get('unique_commits_count', 0)
-            file_changes = comparison.get('file_changes', 0)
+            divergent_commits = safe_get(comparison, 'unique_commits_count', 0)
+            file_changes = safe_get(comparison, 'file_changes', 0)
 
             # Simple probability model
             if divergent_commits == 0:
@@ -332,22 +350,22 @@ class AdvancedAnalyticsEngine:
         """
         merge_operations = [
             op for op in operation_history
-            if op.get('operation') == 'merge'
+            if safe_get(op, 'operation') == 'merge'
         ]
 
         total_merges = len(merge_operations)
-        successful_merges = sum(1 for op in merge_operations if op.get('success', False))
+        successful_merges = sum(1 for op in merge_operations if safe_get(op, 'success', False))
         failed_merges = total_merges - successful_merges
 
         success_rate = (successful_merges / total_merges * 100) if total_merges > 0 else 0.0
 
         # Analyze by strategy
         strategy_performance = {}
-        strategies = set(op.get('strategy', 'merge') for op in merge_operations)
+        strategies = set(safe_get(op, 'strategy', 'merge') for op in merge_operations)
 
         for strategy in strategies:
-            strategy_ops = [op for op in merge_operations if op.get('strategy') == strategy]
-            strategy_success = sum(1 for op in strategy_ops if op.get('success', False))
+            strategy_ops = [op for op in merge_operations if safe_get(op, 'strategy') == strategy]
+            strategy_success = sum(1 for op in strategy_ops if safe_get(op, 'success', False))
             strategy_total = len(strategy_ops)
             strategy_performance[strategy] = (
                 (strategy_success / strategy_total * 100) if strategy_total > 0 else 0.0
@@ -355,15 +373,15 @@ class AdvancedAnalyticsEngine:
 
         # Common failure patterns
         failure_patterns = []
-        failed_ops = [op for op in merge_operations if not op.get('success', False)]
+        failed_ops = [op for op in merge_operations if not safe_get(op, 'success', False)]
 
-        conflict_failures = sum(1 for op in failed_ops if 'conflict' in op.get('error', '').lower())
+        conflict_failures = sum(1 for op in failed_ops if 'conflict' in safe_get(op, 'error', '').lower())
         if conflict_failures > 0:
             failure_patterns.append(f"Merge conflicts ({conflict_failures} occurrences)")
 
         permission_failures = sum(
             1 for op in failed_ops
-            if 'permission' in op.get('error', '').lower() or 'denied' in op.get('error', '').lower()
+            if 'permission' in safe_get(op, 'error', '').lower() or 'denied' in safe_get(op, 'error', '').lower()
         )
         if permission_failures > 0:
             failure_patterns.append(f"Permission issues ({permission_failures} occurrences)")
@@ -531,17 +549,31 @@ class AdvancedAnalyticsEngine:
         # Calculate branch health for all branches
         branch_health_metrics = []
         for branch_report in branch_reports:
-            branch_name = branch_report.get('branch_name', 'unknown')
-            repository = branch_report.get('repository', 'unknown')
-            status = branch_report.get('status', {})
+            branch_name = safe_get(branch_report, 'branch_name', 'unknown')
+            repository = safe_get(branch_report, 'repository', 'unknown')
+            status = safe_get(branch_report, 'status', {})
+
+            # Handle status as dict or object
+            if isinstance(status, dict):
+                commits_ahead = status.get('ahead', 0)
+                commits_behind = status.get('behind', 0)
+                last_commit = status.get('last_commit', {})
+                last_commit_date = last_commit.get('date') if isinstance(last_commit, dict) else None
+            else:
+                commits_ahead = getattr(status, 'ahead', 0)
+                commits_behind = getattr(status, 'behind', 0)
+                last_commit = getattr(status, 'last_commit', None)
+                last_commit_date = getattr(last_commit, 'date', None) if last_commit else None
+
+            operations = safe_get(branch_report, 'operations', [])
 
             health = self.calculate_branch_health(
                 branch_name=branch_name,
                 repository=repository,
-                commits_ahead=status.get('ahead', 0),
-                commits_behind=status.get('behind', 0),
-                last_commit_date=status.get('last_commit', {}).get('date'),
-                recent_operations=branch_report.get('operations', [])
+                commits_ahead=commits_ahead,
+                commits_behind=commits_behind,
+                last_commit_date=last_commit_date,
+                recent_operations=operations
             )
             branch_health_metrics.append(health)
 
@@ -569,7 +601,8 @@ class AdvancedAnalyticsEngine:
         # Analyze merge success rates
         all_operations = []
         for branch_report in branch_reports:
-            all_operations.extend(branch_report.get('operations', []))
+            operations = safe_get(branch_report, 'operations', [])
+            all_operations.extend(operations)
 
         merge_metrics = self.analyze_merge_success_rates(all_operations)
 

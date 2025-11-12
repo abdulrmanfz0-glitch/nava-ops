@@ -15,6 +15,15 @@ from collections import defaultdict
 import json
 
 
+
+
+def safe_get(obj, key, default=None):
+    """Safely get value from either a dictionary or object attribute"""
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    else:
+        return getattr(obj, key, default)
+
 class InteractiveHTMLGenerator:
     """
     Generates interactive HTML reports with Chart.js visualizations
@@ -35,8 +44,8 @@ class InteractiveHTMLGenerator:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"nava_ops_interactive_{timestamp}.html"
 
-        summary = report.get('summary', {})
-        branch_reports = report.get('branch_reports', [])
+        summary = safe_get(report, 'summary', {})
+        branch_reports = safe_get(report, 'branch_reports', [])
 
         # Prepare data for charts
         chart_data = InteractiveHTMLGenerator._prepare_chart_data(report, analytics)
@@ -310,22 +319,22 @@ class InteractiveHTMLGenerator:
         <div class="dashboard">
             <div class="metric-card">
                 <h3>Total Operations</h3>
-                <div class="value">{summary.get('total_operations', 0)}</div>
+                <div class="value">{safe_get(summary, 'total_operations', 0)}</div>
                 <div class="label">Executed successfully</div>
             </div>
             <div class="metric-card">
                 <h3>Success Rate</h3>
-                <div class="value">{summary.get('success_rate', 0):.1f}%</div>
-                <div class="label">{summary.get('successful_operations', 0)}/{summary.get('total_operations', 0)} operations</div>
+                <div class="value">{safe_get(summary, 'success_rate', 0):.1f}%</div>
+                <div class="label">{safe_get(summary, 'successful_operations', 0)}/{safe_get(summary, 'total_operations', 0)} operations</div>
             </div>
             <div class="metric-card">
                 <h3>Branches</h3>
-                <div class="value">{summary.get('total_branches', 0)}</div>
-                <div class="label">Across {summary.get('total_repositories', 0)} repositories</div>
+                <div class="value">{safe_get(summary, 'total_branches', 0)}</div>
+                <div class="label">Across {safe_get(summary, 'total_repositories', 0)} repositories</div>
             </div>
             <div class="metric-card">
                 <h3>Duration</h3>
-                <div class="value">{summary.get('duration_seconds', 0):.1f}s</div>
+                <div class="value">{safe_get(summary, 'duration_seconds', 0):.1f}s</div>
                 <div class="label">Total execution time</div>
             </div>
         </div>
@@ -396,7 +405,7 @@ class InteractiveHTMLGenerator:
         const successData = {{
             labels: ['Successful', 'Failed'],
             datasets: [{{
-                data: [{summary.get('successful_operations', 0)}, {summary.get('failed_operations', 0)}],
+                data: [{safe_get(summary, 'successful_operations', 0)}, {safe_get(summary, 'failed_operations', 0)}],
                 backgroundColor: [
                     'rgba(46, 204, 113, 0.8)',
                     'rgba(231, 76, 60, 0.8)'
@@ -427,7 +436,7 @@ class InteractiveHTMLGenerator:
         }});
 
         // Operations by Type Chart
-        const operationsData = {json.dumps(chart_data.get('operations_by_type', {}))};
+        const operationsData = {json.dumps(safe_get(chart_data, 'operations_by_type', {}))};
         new Chart(document.getElementById('operationsChart'), {{
             type: 'bar',
             data: {{
@@ -460,7 +469,7 @@ class InteractiveHTMLGenerator:
         }});
 
         // Repository Comparison Chart
-        const repositoryData = {json.dumps(chart_data.get('repository_stats', {}))};
+        const repositoryData = {json.dumps(safe_get(chart_data, 'repository_stats', {}))};
         new Chart(document.getElementById('repositoryChart'), {{
             type: 'bar',
             data: {{
@@ -507,7 +516,7 @@ class InteractiveHTMLGenerator:
 
         # Add branch health chart if analytics available
         if analytics and 'branch_health' in analytics:
-            health_data = chart_data.get('branch_health', {})
+            health_data = safe_get(chart_data, 'branch_health', {})
             html += f"""
         // Branch Health Chart
         const healthData = {json.dumps(health_data)};
@@ -565,23 +574,23 @@ class InteractiveHTMLGenerator:
     @staticmethod
     def _prepare_chart_data(report: Dict, analytics: Dict = None) -> Dict:
         """Prepare data for charts"""
-        branch_reports = report.get('branch_reports', [])
+        branch_reports = safe_get(report, 'branch_reports', [])
 
         # Operations by type
         operations_by_type = {}
         for branch_report in branch_reports:
-            for operation in branch_report.get('operations', []):
-                op_type = operation.get('operation', 'unknown')
+            for operation in safe_get(branch_report, 'operations', []):
+                op_type = safe_get(operation, 'operation', 'unknown')
                 operations_by_type[op_type] = operations_by_type.get(op_type, 0) + 1
 
         # Repository stats
         repository_stats = {}
         for branch_report in branch_reports:
-            repo = branch_report.get('repository', 'unknown')
+            repo = safe_get(branch_report, 'repository', 'unknown')
             if repo not in repository_stats:
                 repository_stats[repo] = {'success': 0, 'failed': 0}
 
-            if branch_report.get('success', False):
+            if safe_get(branch_report, 'success', False):
                 repository_stats[repo]['success'] += 1
             else:
                 repository_stats[repo]['failed'] += 1
@@ -590,8 +599,8 @@ class InteractiveHTMLGenerator:
         branch_health = {}
         if analytics and 'branch_health' in analytics:
             for health in analytics['branch_health'][:10]:  # Top 10
-                branch_name = health.get('branch_name', 'unknown')
-                health_score = health.get('health_score', 0)
+                branch_name = safe_get(health, 'branch_name', 'unknown')
+                health_score = safe_get(health, 'health_score', 0)
                 branch_health[branch_name] = health_score
 
         return {
@@ -665,14 +674,14 @@ class InteractiveHTMLGenerator:
         health_lookup = {}
         if analytics and 'branch_health' in analytics:
             for health in analytics['branch_health']:
-                key = f"{health.get('repository', '')}:{health.get('branch_name', '')}"
-                health_lookup[key] = health.get('health_score', 0)
+                key = f"{safe_get(health, 'repository', '')}:{safe_get(health, 'branch_name', '')}"
+                health_lookup[key] = safe_get(health, 'health_score', 0)
 
         for branch_report in branch_reports:
-            repo = branch_report.get('repository', 'unknown')
-            branch = branch_report.get('branch_name', 'unknown')
-            success = branch_report.get('success', False)
-            op_count = len(branch_report.get('operations', []))
+            repo = safe_get(branch_report, 'repository', 'unknown')
+            branch = safe_get(branch_report, 'branch_name', 'unknown')
+            success = safe_get(branch_report, 'success', False)
+            op_count = len(safe_get(branch_report, 'operations', []))
 
             status_badge = '<span class="badge badge-success">✓ Success</span>' if success else '<span class="badge badge-danger">✗ Failed</span>'
 

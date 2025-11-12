@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
@@ -7,8 +7,15 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
+import ErrorBoundary from './components/ErrorBoundary';
+import { logger, PerformanceLogger } from './lib/logger';
 
 console.log('🚀 App.jsx loaded - Vite + React running');
+logger.info('Application started', {
+  version: import.meta.env.VITE_APP_VERSION,
+  environment: import.meta.env.VITE_ENVIRONMENT,
+  devMode: import.meta.env.DEV
+});
 
 // Lazy loading للمكونات لتحسين الأداء
 const Login = lazy(() => import('./pages/Login'));
@@ -117,14 +124,28 @@ function GlobalLoading() {
 }
 
 export default function App() {
+  // Performance tracking for app initialization
+  useEffect(() => {
+    PerformanceLogger.start('app-init')
+    return () => {
+      PerformanceLogger.end('app-init', 3000)
+    }
+  }, [])
+
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <NotificationProvider>
-          <BrowserRouter>
-            <div className="App">
-              <OfflineIndicator />
-              <Suspense fallback={<GlobalLoading />}>
+    <ErrorBoundary
+      errorMessage="A critical error occurred in the application. Please refresh the page."
+      onError={(error, errorInfo) => {
+        logger.fatal('Critical Application Error', { errorInfo }, error)
+      }}
+    >
+      <ThemeProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <BrowserRouter>
+              <div className="App">
+                <OfflineIndicator />
+                <Suspense fallback={<GlobalLoading />}>
                 <Routes>
                   {/* صفحة تسجيل الدخول */}
                   <Route path="/login" element={<Login />} />
@@ -221,5 +242,6 @@ export default function App() {
         </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
+    </ErrorBoundary>
   );
 }

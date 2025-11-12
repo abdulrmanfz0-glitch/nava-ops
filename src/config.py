@@ -73,8 +73,32 @@ class Config:
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"Configuration file not found: {config_path}")
 
-        with open(config_path, 'r') as f:
-            data = json.load(f)
+        # Check if file is empty
+        if os.path.getsize(config_path) == 0:
+            raise ValueError(
+                f"Configuration file is empty: {config_path}\n"
+                f"The file exists but contains no data. This may happen if:\n"
+                f"  1. The file wasn't properly pulled from git\n"
+                f"  2. The file got corrupted\n"
+                f"To fix this:\n"
+                f"  - Try: git checkout HEAD -- {config_path}\n"
+                f"  - Or pull the latest changes: git pull\n"
+                f"  - Or create a sample config with Config.create_sample_config('{config_path}')"
+            )
+
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+                if not content:
+                    raise ValueError(f"Configuration file is empty: {config_path}")
+                data = json.loads(content)
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                f"Invalid JSON in configuration file: {config_path}\n"
+                f"Error: {str(e)}\n"
+                f"Please ensure the file contains valid JSON or restore it from git:\n"
+                f"  git checkout HEAD -- {config_path}"
+            ) from e
 
         return cls.from_dict(data)
 
@@ -153,6 +177,54 @@ class Config:
             errors.append("retry_attempts cannot be negative")
 
         return errors
+
+    @classmethod
+    def create_sample_config(cls, output_path: str) -> 'Config':
+        """
+        Create a sample configuration file
+
+        Args:
+            output_path: Path where to save the sample configuration
+
+        Returns:
+            The created Config instance
+        """
+        sample_config = cls(
+            repositories=[
+                RepositoryConfig(
+                    path="/path/to/your/repository",
+                    name="my-project",
+                    default_remote="origin",
+                    branches=[
+                        BranchConfig(name="main", remote="origin", auto_fetch=True, merge_strategy="merge"),
+                        BranchConfig(name="develop", remote="origin", auto_fetch=True, merge_strategy="merge"),
+                        BranchConfig(name="staging", remote="origin", auto_fetch=True, merge_strategy="rebase"),
+                    ]
+                ),
+                RepositoryConfig(
+                    path="/path/to/another/repository",
+                    name="another-project",
+                    default_remote="origin",
+                    branches=[
+                        BranchConfig(name="main", remote="origin", auto_fetch=True, merge_strategy="merge"),
+                    ]
+                )
+            ],
+            reporting=ReportingConfig(
+                output_format="html",
+                output_dir="./reports",
+                include_commits=True,
+                include_diff_stats=True,
+                max_commits=50
+            ),
+            parallel_operations=True,
+            max_workers=4,
+            retry_attempts=3,
+            retry_delay=2.0
+        )
+
+        sample_config.to_file(output_path)
+        return sample_config
 
 
 def create_default_config(repo_path: str = ".") -> Config:

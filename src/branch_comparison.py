@@ -162,23 +162,23 @@ class BranchAnalyzer:
         """
         # Find merge base
         merge_base_result = execute_git_command(
-            self.repo_config.path,
-            ["merge-base", branch_a, branch_b]
+            ["merge-base", branch_a, branch_b],
+            self.repo_config.path
         )
 
         merge_base = merge_base_result.stdout.strip() if merge_base_result.success else ""
 
         # Get commits ahead (in branch_a but not in branch_b)
         ahead_result = execute_git_command(
-            self.repo_config.path,
-            ["rev-list", "--count", f"{branch_b}..{branch_a}"]
+            ["rev-list", "--count", f"{branch_b}..{branch_a}"],
+            self.repo_config.path
         )
         ahead = int(ahead_result.stdout.strip()) if ahead_result.success else 0
 
         # Get commits behind (in branch_b but not in branch_a)
         behind_result = execute_git_command(
-            self.repo_config.path,
-            ["rev-list", "--count", f"{branch_a}..{branch_b}"]
+            ["rev-list", "--count", f"{branch_a}..{branch_b}"],
+            self.repo_config.path
         )
         behind = int(behind_result.stdout.strip()) if behind_result.success else 0
 
@@ -193,8 +193,8 @@ class BranchAnalyzer:
 
         # Count diverged files
         diff_stat_result = execute_git_command(
-            self.repo_config.path,
-            ["diff", "--stat", f"{branch_a}...{branch_b}"]
+            ["diff", "--stat", f"{branch_a}...{branch_b}"],
+            self.repo_config.path
         )
         files_diverged = diff_stat_result.stdout.count('|') if diff_stat_result.success else 0
 
@@ -241,8 +241,8 @@ class BranchAnalyzer:
         """
         # Get diff with numstat
         result = execute_git_command(
-            self.repo_config.path,
-            ["diff", "--numstat", f"{branch_a}...{branch_b}"]
+            ["diff", "--numstat", f"{branch_a}...{branch_b}"],
+            self.repo_config.path
         )
 
         if not result.success:
@@ -281,8 +281,8 @@ class BranchAnalyzer:
 
         # Get file status (added, deleted, renamed)
         status_result = execute_git_command(
-            self.repo_config.path,
-            ["diff", "--name-status", f"{branch_a}...{branch_b}"]
+            ["diff", "--name-status", f"{branch_a}...{branch_b}"],
+            self.repo_config.path
         )
 
         if status_result.success:
@@ -327,8 +327,8 @@ class BranchAnalyzer:
             Commit hash of common ancestor or None
         """
         result = execute_git_command(
-            self.repo_config.path,
-            ["merge-base", branch_a, branch_b]
+            ["merge-base", branch_a, branch_b],
+            self.repo_config.path
         )
 
         if result.success:
@@ -352,8 +352,8 @@ class BranchAnalyzer:
         if not branches:
             # Get all branches
             result = execute_git_command(
-                self.repo_config.path,
-                ["branch", "--format=%(refname:short)"]
+                ["branch", "--format=%(refname:short)"],
+                self.repo_config.path
             )
             if result.success:
                 branches = [b.strip() for b in result.stdout.split('\n') if b.strip()]
@@ -371,8 +371,8 @@ class BranchAnalyzer:
 
                 # Check if branch_a is ancestor of branch_b
                 result = execute_git_command(
-                    self.repo_config.path,
-                    ["merge-base", "--is-ancestor", branch_a, branch_b]
+                    ["merge-base", "--is-ancestor", branch_a, branch_b],
+                    self.repo_config.path
                 )
 
                 if result.returncode == 0:
@@ -380,8 +380,8 @@ class BranchAnalyzer:
 
                 # Check if branch_b is ancestor of branch_a
                 result = execute_git_command(
-                    self.repo_config.path,
-                    ["merge-base", "--is-ancestor", branch_b, branch_a]
+                    ["merge-base", "--is-ancestor", branch_b, branch_a],
+                    self.repo_config.path
                 )
 
                 if result.returncode == 0:
@@ -399,10 +399,10 @@ class BranchAnalyzer:
     ) -> List[CommitInfo]:
         """Get commits in branch_a that are not in branch_b"""
         result = execute_git_command(
-            self.repo_config.path,
             ["log", f"{branch_b}..{branch_a}",
              "--pretty=format:%H|%h|%an|%ai|%s",
-             f"-n{limit}"]
+             f"-n{limit}"],
+            self.repo_config.path
         )
 
         if not result.success:
@@ -445,10 +445,10 @@ class BranchAnalyzer:
             return []
 
         result = execute_git_command(
-            self.repo_config.path,
             ["log", merge_base,
              "--pretty=format:%H|%h|%an|%ai|%s",
-             f"-n{limit}"]
+             f"-n{limit}"],
+            self.repo_config.path
         )
 
         if not result.success:

@@ -8,6 +8,8 @@ import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
 
+console.log('🚀 App.jsx loaded - Vite + React running');
+
 // Lazy loading للمكونات لتحسين الأداء
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -21,17 +23,20 @@ const GitOperations = lazy(() => import('./GitOperations'));
 
 // حارس متقدم للمسارات الخاصة
 function RequireAuth({ children, requiredPermissions = [] }) {
-  const { connectionStatus, user, hasPermission } = useAuth();
+  const { connectionStatus, user, hasPermission, isAuthenticated } = useAuth();
   const location = useLocation();
+
+  console.log('🔐 RequireAuth check:', { connectionStatus, isAuthenticated, user: !!user });
 
   // أثناء التحقق من الجلسة
   if (connectionStatus === 'checking') {
+    console.log('⏳ Connection status is checking...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
-          <div className="animate-spin-slow rounded-full h-16 w-16 border-4 border-primary-200 border-t-primary-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">جاري التحقق من الجلسة...</p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">يتم تحميل بياناتك بأمان</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">Checking session...</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">Loading your data securely</p>
         </div>
       </div>
     );
@@ -61,9 +66,12 @@ function RequireAuth({ children, requiredPermissions = [] }) {
   }
 
   // لو غير مسجل دخول -> رجّعه للّوجن
-  if (connectionStatus !== 'authenticated' || !user) {
+  if (!isAuthenticated) {
+    console.log('❌ Not authenticated, redirecting to login');
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
+
+  console.log('✅ Authenticated, rendering protected content');
 
   // التحقق من الصلاحيات إذا كانت مطلوبة
   if (requiredPermissions.length > 0 && !hasPermission(requiredPermissions)) {

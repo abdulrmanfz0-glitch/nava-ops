@@ -10,9 +10,27 @@ Provides AI-powered recommendations and insights for Git operations:
 - Best practices analysis
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+
+
+def safe_get(obj: Any, key: str, default: Any = None) -> Any:
+    """
+    Safely get value from either a dictionary or object attribute
+
+    Args:
+        obj: Dictionary or object to get value from
+        key: Key or attribute name
+        default: Default value if key/attribute not found
+
+    Returns:
+        Value or default
+    """
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    else:
+        return getattr(obj, key, default)
 
 
 @dataclass
@@ -99,8 +117,8 @@ class SmartInsightsEngine:
     def _analyze_success_rate(self, report: Dict, history: Optional[List[Dict]]) -> List[Insight]:
         """Analyze success rate and trends"""
         insights = []
-        summary = report.get('summary', {})
-        success_rate = summary.get('success_rate', 0)
+        summary = safe_get(report, 'summary', {})
+        success_rate = safe_get(summary, 'success_rate', 0)
 
         # Low success rate
         if success_rate < 70:
@@ -117,7 +135,7 @@ class SmartInsightsEngine:
 
         # Declining trend
         if history and len(history) >= 2:
-            recent_rates = [h.get('summary', {}).get('success_rate', 0) for h in history[-5:]]
+            recent_rates = [safe_get(safe_get(h, 'summary', {}), 'success_rate', 0) for h in history[-5:]]
             if len(recent_rates) >= 3:
                 first_half_avg = sum(recent_rates[:len(recent_rates)//2]) / (len(recent_rates)//2)
                 second_half_avg = sum(recent_rates[len(recent_rates)//2:]) / (len(recent_rates) - len(recent_rates)//2)
@@ -210,13 +228,13 @@ class SmartInsightsEngine:
 
         # Count merge operations
         merge_ops = []
-        for branch_report in report.get('branch_reports', []):
-            for op in branch_report.get('operations', []):
-                if op.get('operation') == 'merge':
+        for branch_report in safe_get(report, 'branch_reports', []):
+            for op in safe_get(branch_report, 'operations', []):
+                if safe_get(op, 'operation') == 'merge':
                     merge_ops.append(op)
 
         if merge_ops:
-            failed_merges = [op for op in merge_ops if not op.get('success', False)]
+            failed_merges = [op for op in merge_ops if not safe_get(op, 'success', False)]
             success_rate = ((len(merge_ops) - len(failed_merges)) / len(merge_ops)) * 100
 
             if success_rate < 80:
@@ -236,9 +254,9 @@ class SmartInsightsEngine:
     def _analyze_performance(self, report: Dict, history: Optional[List[Dict]]) -> List[Insight]:
         """Analyze performance metrics"""
         insights = []
-        summary = report.get('summary', {})
-        duration = summary.get('duration_seconds', 0)
-        operations = summary.get('total_operations', 0)
+        summary = safe_get(report, 'summary', {})
+        duration = safe_get(summary, 'duration_seconds', 0)
+        operations = safe_get(summary, 'total_operations', 0)
 
         # Slow execution
         if operations > 0:
@@ -259,7 +277,7 @@ class SmartInsightsEngine:
         # Performance regression
         if history and len(history) >= 2:
             prev_summary = history[-2].get('summary', {})
-            prev_duration = prev_summary.get('duration_seconds', 0)
+            prev_duration = prev_safe_get(summary, 'duration_seconds', 0)
 
             if prev_duration > 0 and duration > prev_duration * 1.5:  # 50% slower
                 insights.append(Insight(
@@ -278,7 +296,7 @@ class SmartInsightsEngine:
     def _analyze_branch_structure(self, report: Dict, analytics: Optional[Dict]) -> List[Insight]:
         """Analyze branch structure and organization"""
         insights = []
-        total_branches = report.get('summary', {}).get('total_branches', 0)
+        total_branches = safe_get(safe_get(report, 'summary', {}), 'total_branches', 0)
 
         # Too many branches
         if total_branches > 50:
@@ -294,7 +312,7 @@ class SmartInsightsEngine:
             ))
 
         # Repository count
-        total_repos = report.get('summary', {}).get('total_repositories', 0)
+        total_repos = safe_get(safe_get(report, 'summary', {}), 'total_repositories', 0)
         if total_branches > 0 and total_repos > 0:
             avg_branches_per_repo = total_branches / total_repos
 
@@ -317,8 +335,8 @@ class SmartInsightsEngine:
         insights = []
 
         # Check for branches with security-related issues
-        for branch_report in report.get('branch_reports', []):
-            branch_name = branch_report.get('branch_name', '').lower()
+        for branch_report in safe_get(report, 'branch_reports', []):
+            branch_name = safe_get(branch_report, 'branch_name', '').lower()
 
             # Detect security-related branch names
             if any(keyword in branch_name for keyword in ['hotfix', 'security', 'vulnerability', 'cve']):
@@ -326,7 +344,7 @@ class SmartInsightsEngine:
                     category="security",
                     priority="high",
                     title="Security-Related Branch Detected",
-                    description=f"Branch '{branch_report.get('branch_name')}' appears to be security-related",
+                    description=f"Branch '{safe_get(branch_report, 'branch_name')}' appears to be security-related",
                     recommendation="Ensure security branches are reviewed promptly and merged with priority. "
                                  "Follow security disclosure procedures.",
                     impact="Critical - Security issues require immediate attention",
@@ -343,8 +361,8 @@ class SmartInsightsEngine:
         # Check if reports are being generated regularly
         # (This would require history, but we can infer from current report)
 
-        total_operations = report.get('summary', {}).get('total_operations', 0)
-        successful_operations = report.get('summary', {}).get('successful_operations', 0)
+        total_operations = safe_get(safe_get(report, 'summary', {}), 'total_operations', 0)
+        successful_operations = safe_get(safe_get(report, 'summary', {}), 'successful_operations', 0)
 
         if total_operations > 0:
             # Perfect success rate

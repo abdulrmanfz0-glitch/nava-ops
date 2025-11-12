@@ -1,27 +1,10 @@
-<<<<<<< HEAD
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
 # Nava Ops - Multi-Branch Operations & Reporting System
 
 A powerful, modular Python system for managing Git operations across multiple branches and repositories with comprehensive reporting capabilities.
 
 ## 🎯 Features
 
+### Core Features
 - **Multi-Branch Operations**: Perform Git operations (fetch, pull, push, merge) across multiple branches simultaneously
 - **Multi-Repository Support**: Manage operations across multiple repositories from a single configuration
 - **Parallel Execution**: Optimized concurrent operations with configurable thread pooling
@@ -31,22 +14,39 @@ A powerful, modular Python system for managing Git operations across multiple br
 - **Zero External Dependencies**: Uses only Python standard library
 - **Type-Safe**: Full type hints for better IDE support and code quality
 
+### Advanced Features (v2.0+)
+- **Interactive CLI**: Rich, colorized command-line interface with interactive menus
+- **Conflict Detection & Resolution**: Smart conflict detection with multiple resolution strategies
+- **Branch Comparison**: Detailed branch divergence analysis and similarity scoring
+- **Advanced Git Operations**: Cherry-pick, stash management, tag operations, rebase
+- **Hooks System**: Pre/post operation event hooks for custom workflows
+- **Notification System**: Multi-channel notifications (console, file, webhook)
+- **Smart Workflows**: Intelligent merge workflows with conflict prevention
+
 ## 📁 Project Structure
 
 ```
 nava-ops/
 ├── src/
-│   ├── __init__.py           # Package initialization
-│   ├── config.py             # Configuration management
-│   ├── utils.py              # Utility functions and helpers
-│   ├── branch_ops.py         # Branch operations
-│   ├── reporting.py          # Report generation
-│   └── orchestrator.py       # High-level orchestration
+│   ├── __init__.py               # Package initialization & exports
+│   ├── config.py                 # Configuration management
+│   ├── utils.py                  # Utility functions
+│   ├── branch_ops.py             # Core Git branch operations
+│   ├── reporting.py              # Report generation (JSON/MD/HTML)
+│   ├── orchestrator.py           # High-level orchestration
+│   ├── cli.py                    # Interactive CLI interface
+│   ├── conflict_resolution.py    # Conflict detection & resolution
+│   ├── branch_comparison.py      # Branch divergence analysis
+│   ├── advanced_ops.py           # Advanced Git operations
+│   ├── hooks.py                  # Event-driven hooks system
+│   └── notifications.py          # Multi-channel notifications
 ├── examples/
-│   ├── example_usage.py      # Usage examples
-│   └── config.json           # Sample configuration
-├── requirements.txt          # Python dependencies
-└── README.md                 # This file
+│   ├── example_usage.py          # Basic usage examples
+│   ├── advanced_examples.py      # Advanced feature examples
+│   └── config.json               # Sample configuration
+├── nava-ops                      # CLI entry point script
+├── requirements.txt              # Python dependencies (none!)
+└── README.md                     # This file
 ```
 
 ## 🚀 Quick Start
@@ -61,7 +61,22 @@ cd nava-ops
 
 2. No external dependencies needed! The project uses only Python standard library.
 
-### Basic Usage
+### Interactive CLI (Easiest)
+
+```bash
+# Run the interactive CLI
+./nava-ops
+
+# Or with Python
+python3 -m src.cli
+
+# With custom config
+python3 -m src.cli --config my-config.json
+```
+
+The CLI provides an interactive menu for all operations with colorized output and progress tracking.
+
+### Programmatic Usage
 
 ```python
 from src import Config, MultibranchOrchestrator
@@ -90,6 +105,31 @@ report = orchestrator.fetch_all_branches()
 # Export report
 report_path = orchestrator.report_generator.export(report)
 print(f"Report generated: {report_path}")
+```
+
+### Advanced Features
+
+```python
+# Conflict Detection
+from src import ConflictDetector, preview_merge_conflicts
+
+conflict_info = preview_merge_conflicts(repo_config, "feature", "main")
+if conflict_info.has_conflicts:
+    print(f"Found {conflict_info.total_conflicts} conflicts")
+
+# Branch Comparison
+from src import compare_branches
+
+comparison = compare_branches(repo_config, "main", "develop")
+print(f"Similarity: {comparison.similarity_score:.2%}")
+print(f"Recommendation: {comparison.merge_recommendation}")
+
+# Advanced Operations
+from src import AdvancedGitOperations
+
+ops = AdvancedGitOperations(repo_config)
+ops.cherry_pick_commit("abc123", branch_name="hotfix")
+ops.create_tag("v1.0.0", message="Release 1.0.0")
 ```
 
 ## 📚 Module Documentation
@@ -414,4 +454,3 @@ For issues and questions, please open an issue on GitHub.
 ---
 
 **Made with ❤️ for efficient multi-branch Git operations**
->>>>>>> 550c25533c11428a193145e2bac6edd7609c13ba

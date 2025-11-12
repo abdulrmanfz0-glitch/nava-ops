@@ -85,8 +85,8 @@ class AdvancedGitOperations:
         # Switch to branch if specified
         if branch_name:
             switch_result = execute_git_command(
-                self.repo_path,
-                ["checkout", branch_name]
+                ["checkout", branch_name],
+                self.repo_path
             )
             if not switch_result.success:
                 return OperationResult(
@@ -99,8 +99,8 @@ class AdvancedGitOperations:
 
         # Perform cherry-pick
         result = execute_git_command(
-            self.repo_path,
-            ["cherry-pick", commit_hash]
+            ["cherry-pick", commit_hash],
+            self.repo_path
         )
 
         if result.success:
@@ -151,8 +151,8 @@ class AdvancedGitOperations:
         # Switch to branch if specified
         if branch_name:
             switch_result = execute_git_command(
-                self.repo_path,
-                ["checkout", branch_name]
+                ["checkout", branch_name],
+                self.repo_path
             )
             if not switch_result.success:
                 return [OperationResult(
@@ -165,8 +165,8 @@ class AdvancedGitOperations:
 
         # Perform cherry-pick
         result = execute_git_command(
-            self.repo_path,
-            ["cherry-pick", f"{start_commit}..{end_commit}"]
+            ["cherry-pick", f"{start_commit}..{end_commit}"],
+            self.repo_path
         )
 
         if result.success:
@@ -193,8 +193,8 @@ class AdvancedGitOperations:
             OperationResult
         """
         result = execute_git_command(
-            self.repo_path,
-            ["cherry-pick", "--abort"]
+            ["cherry-pick", "--abort"],
+            self.repo_path
         )
 
         return OperationResult(
@@ -232,7 +232,7 @@ class AdvancedGitOperations:
         if message:
             cmd.extend(["-m", message])
 
-        result = execute_git_command(self.repo_path, cmd)
+        result = execute_git_command(cmd, self.repo_path)
 
         return OperationResult(
             success=result.success,
@@ -255,8 +255,8 @@ class AdvancedGitOperations:
         logger.info(f"Popping stash entry: {index}")
 
         result = execute_git_command(
-            self.repo_path,
-            ["stash", "pop", f"stash@{{{index}}}"]
+            ["stash", "pop", f"stash@{{{index}}}"],
+            self.repo_path
         )
 
         return OperationResult(
@@ -280,8 +280,8 @@ class AdvancedGitOperations:
         logger.info(f"Applying stash entry: {index}")
 
         result = execute_git_command(
-            self.repo_path,
-            ["stash", "apply", f"stash@{{{index}}}"]
+            ["stash", "apply", f"stash@{{{index}}}"],
+            self.repo_path
         )
 
         return OperationResult(
@@ -300,8 +300,8 @@ class AdvancedGitOperations:
             List of StashEntry objects
         """
         result = execute_git_command(
-            self.repo_path,
-            ["stash", "list", "--format=%gd|%gs|%cr"]
+            ["stash", "list", "--format=%gd|%gs|%cr"],
+            self.repo_path
         )
 
         if not result.success:
@@ -336,8 +336,8 @@ class AdvancedGitOperations:
             OperationResult
         """
         result = execute_git_command(
-            self.repo_path,
-            ["stash", "drop", f"stash@{{{index}}}"]
+            ["stash", "drop", f"stash@{{{index}}}"],
+            self.repo_path
         )
 
         return OperationResult(
@@ -356,8 +356,8 @@ class AdvancedGitOperations:
             OperationResult
         """
         result = execute_git_command(
-            self.repo_path,
-            ["stash", "clear"]
+            ["stash", "clear"],
+            self.repo_path
         )
 
         return OperationResult(
@@ -399,7 +399,7 @@ class AdvancedGitOperations:
         if commit:
             cmd.append(commit)
 
-        result = execute_git_command(self.repo_path, cmd)
+        result = execute_git_command(cmd, self.repo_path)
 
         return OperationResult(
             success=result.success,
@@ -422,8 +422,8 @@ class AdvancedGitOperations:
         logger.info(f"Deleting tag: {tag_name}")
 
         result = execute_git_command(
-            self.repo_path,
-            ["tag", "-d", tag_name]
+            ["tag", "-d", tag_name],
+            self.repo_path
         )
 
         return OperationResult(
@@ -451,7 +451,7 @@ class AdvancedGitOperations:
 
         cmd.append("--format=%(refname:short)|%(objectname:short)|%(objecttype)")
 
-        result = execute_git_command(self.repo_path, cmd)
+        result = execute_git_command(cmd, self.repo_path)
 
         if not result.success:
             logger.error("Failed to list tags")
@@ -498,8 +498,8 @@ class AdvancedGitOperations:
 
         def push_operation():
             return execute_git_command(
-                self.repo_path,
-                ["push", remote, tag_name]
+                ["push", remote, tag_name],
+                self.repo_path
             )
 
         result = retry_with_backoff(
@@ -529,8 +529,8 @@ class AdvancedGitOperations:
 
         def push_operation():
             return execute_git_command(
-                self.repo_path,
-                ["push", remote, "--tags"]
+                ["push", remote, "--tags"],
+                self.repo_path
             )
 
         result = retry_with_backoff(
@@ -568,8 +568,8 @@ class AdvancedGitOperations:
         # Switch to branch if specified
         if branch_name:
             switch_result = execute_git_command(
-                self.repo_path,
-                ["checkout", branch_name]
+                ["checkout", branch_name],
+                self.repo_path
             )
             if not switch_result.success:
                 return OperationResult(
@@ -582,8 +582,8 @@ class AdvancedGitOperations:
 
         # Perform rebase
         result = execute_git_command(
-            self.repo_path,
-            ["rebase", base_branch]
+            ["rebase", base_branch],
+            self.repo_path
         )
 
         if result.success:
@@ -610,8 +610,8 @@ class AdvancedGitOperations:
             OperationResult
         """
         result = execute_git_command(
-            self.repo_path,
-            ["rebase", "--abort"]
+            ["rebase", "--abort"],
+            self.repo_path
         )
 
         return OperationResult(
@@ -630,8 +630,8 @@ class AdvancedGitOperations:
             OperationResult
         """
         result = execute_git_command(
-            self.repo_path,
-            ["rebase", "--continue"]
+            ["rebase", "--continue"],
+            self.repo_path
         )
 
         return OperationResult(
@@ -669,7 +669,7 @@ class AdvancedGitOperations:
         if include_directories:
             cmd.append("-d")
 
-        result = execute_git_command(self.repo_path, cmd)
+        result = execute_git_command(cmd, self.repo_path)
 
         action = "Would remove" if dry_run else "Removed"
 
@@ -694,8 +694,8 @@ class AdvancedGitOperations:
             OperationResult
         """
         result = execute_git_command(
-            self.repo_path,
-            ["reset", "--soft", commit]
+            ["reset", "--soft", commit],
+            self.repo_path
         )
 
         return OperationResult(
@@ -719,8 +719,8 @@ class AdvancedGitOperations:
         logger.warning(f"Performing hard reset to {commit}")
 
         result = execute_git_command(
-            self.repo_path,
-            ["reset", "--hard", commit]
+            ["reset", "--hard", commit],
+            self.repo_path
         )
 
         return OperationResult(

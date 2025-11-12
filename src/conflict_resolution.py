@@ -102,10 +102,10 @@ class ConflictDetector:
 
         # Use git merge-tree to preview conflicts without actually merging
         result = execute_git_command(
-            self.repo_config.path,
             ["merge-tree",
              f"{target_branch}",
-             f"{source_branch}"]
+             f"{source_branch}"],
+            self.repo_config.path
         )
 
         if not result.success:
@@ -141,8 +141,8 @@ class ConflictDetector:
         """
         # Get list of conflicted files
         result = execute_git_command(
-            self.repo_config.path,
-            ["diff", "--name-only", "--diff-filter=U"]
+            ["diff", "--name-only", "--diff-filter=U"],
+            self.repo_config.path
         )
 
         if not result.success:
@@ -282,8 +282,8 @@ class ConflictDetector:
 
         # Get diff stat
         result = execute_git_command(
-            self.repo_config.path,
-            ["diff", "--stat", f"{target_branch}...{source_branch}"]
+            ["diff", "--stat", f"{target_branch}...{source_branch}"],
+            self.repo_config.path
         )
 
         # Estimate conflict potential based on changes
@@ -431,15 +431,15 @@ class ConflictResolver:
 
         for file_path in files:
             result = execute_git_command(
-                self.repo_config.path,
-                ["checkout", "--ours", file_path]
+                ["checkout", "--ours", file_path],
+                self.repo_config.path
             )
 
             if result.success:
                 # Add file to staging
                 add_result = execute_git_command(
-                    self.repo_config.path,
-                    ["add", file_path]
+                    ["add", file_path],
+                    self.repo_config.path
                 )
 
                 if add_result.success:
@@ -469,15 +469,15 @@ class ConflictResolver:
 
         for file_path in files:
             result = execute_git_command(
-                self.repo_config.path,
-                ["checkout", "--theirs", file_path]
+                ["checkout", "--theirs", file_path],
+                self.repo_config.path
             )
 
             if result.success:
                 # Add file to staging
                 add_result = execute_git_command(
-                    self.repo_config.path,
-                    ["add", file_path]
+                    ["add", file_path],
+                    self.repo_config.path
                 )
 
                 if add_result.success:
@@ -503,8 +503,8 @@ class ConflictResolver:
     def _abort_merge(self) -> ResolutionResult:
         """Abort the current merge operation"""
         result = execute_git_command(
-            self.repo_config.path,
-            ["merge", "--abort"]
+            ["merge", "--abort"],
+            self.repo_config.path
         )
 
         if result.success:

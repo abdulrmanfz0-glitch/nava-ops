@@ -1,0 +1,53 @@
+{
+  "repositories": [
+    {
+      "path": "/path/to/your/repository",
+      "name": "my-project",
+      "default_remote": "origin",
+      "branches": [
+        {
+          "name": "main",
+          "remote": "origin",
+          "auto_fetch": true,
+          "merge_strategy": "merge"
+        },
+        {
+          "name": "develop",
+          "remote": "origin",
+          "auto_fetch": true,
+          "merge_strategy": "merge"
+        },
+        {
+          "name": "staging",
+          "remote": "origin",
+          "auto_fetch": true,
+          "merge_strategy": "rebase"
+        }
+      ]
+    },
+    {
+      "path": "/path/to/another/repository",
+      "name": "another-project",
+      "default_remote": "origin",
+      "branches": [
+        {
+          "name": "main",
+          "remote": "origin",
+          "auto_fetch": true,
+          "merge_strategy": "merge"
+        }
+      ]
+    }
+  ],
+  "reporting": {
+    "output_format": "html",
+    "output_dir": "./reports",
+    "include_commits": true,
+    "include_diff_stats": true,
+    "max_commits": 50
+  },
+  "parallel_operations": true,
+  "max_workers": 4,
+  "retry_attempts": 3,
+  "retry_delay": 2.0
+}

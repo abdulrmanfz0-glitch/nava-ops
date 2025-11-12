@@ -68,6 +68,10 @@ class Report:
     errors: List[str]
     timestamp: datetime
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert report to dictionary, properly handling nested dataclasses"""
+        return asdict(self)
+
 
 class ReportGenerator:
     """

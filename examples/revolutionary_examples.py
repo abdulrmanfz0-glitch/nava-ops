@@ -56,7 +56,7 @@ def example_1_advanced_analytics():
 
     # Generate comprehensive report with analytics
     result = reporting_hub.generate_comprehensive_report(
-        report_data=report.__dict__,
+        report_data=report.to_dict(),
         export_formats=['interactive', 'json'],  # Just interactive HTML for this example
         send_notifications=False
     )
@@ -113,7 +113,7 @@ def example_2_interactive_visualizations():
 
     # Generate ONLY interactive HTML with visualizations
     result = reporting_hub.generate_comprehensive_report(
-        report_data=report.__dict__,
+        report_data=report.to_dict(),
         export_formats=['interactive'],  # Interactive HTML with Chart.js
         send_notifications=False
     )
@@ -158,7 +158,7 @@ def example_3_multi_format_export():
 
     # Export in ALL formats
     result = reporting_hub.generate_comprehensive_report(
-        report_data=report.__dict__,
+        report_data=report.to_dict(),
         export_formats=[
             'json',
             'csv',
@@ -220,7 +220,7 @@ def example_4_slack_notifications():
 
     # Generate report and send Slack notification
     result = reporting_hub.generate_comprehensive_report(
-        report_data=report.__dict__,
+        report_data=report.to_dict(),
         export_formats=['interactive'],
         send_notifications=True,  # Enable notifications
         notification_priority=NotificationPriority.HIGH
@@ -277,7 +277,7 @@ def example_5_email_reports():
 
     # Generate and send email
     result = reporting_hub.generate_comprehensive_report(
-        report_data=report.__dict__,
+        report_data=report.to_dict(),
         export_formats=['interactive'],
         send_notifications=True,
         notification_priority=NotificationPriority.HIGH
@@ -323,7 +323,7 @@ def example_6_report_history_and_trends():
     # First report
     report1 = orchestrator.fetch_all_branches()
     result1 = reporting_hub.generate_comprehensive_report(
-        report_data=report1.__dict__,
+        report_data=report1.to_dict(),
         export_formats=['json'],
         compare_with_previous=False  # First report, nothing to compare
     )
@@ -332,7 +332,7 @@ def example_6_report_history_and_trends():
     # Second report
     report2 = orchestrator.sync_all_branches()
     result2 = reporting_hub.generate_comprehensive_report(
-        report_data=report2.__dict__,
+        report_data=report2.to_dict(),
         export_formats=['json'],
         compare_with_previous=True  # Compare with report 1
     )
@@ -398,7 +398,7 @@ def example_7_smart_insights_and_recommendations():
 
     # Generate comprehensive report
     result = reporting_hub.generate_comprehensive_report(
-        report_data=report.__dict__,
+        report_data=report.to_dict(),
         export_formats=['interactive', 'json']
     )
 
@@ -476,7 +476,7 @@ def example_8_complete_revolution():
 
     print("\n🎨 Generating revolutionary reports...")
     result = reporting_hub.generate_comprehensive_report(
-        report_data=report.__dict__,
+        report_data=report.to_dict(),
         export_formats=[
             'json',
             'csv',

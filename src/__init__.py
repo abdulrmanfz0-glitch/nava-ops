@@ -1,8 +1,11 @@
 """
-Nava Ops - Multi-Branch Operations and Reporting System
+Nava Ops - Next-Generation Git Orchestration & Reporting System
 
-A powerful, modular Python system for managing Git operations across
-multiple branches and repositories with comprehensive reporting capabilities.
+A revolutionary, modular Python system for managing Git operations across
+multiple branches and repositories with advanced analytics, interactive
+visualizations, and intelligent insights.
+
+🚀 Version 2.0 - Reporting Revolution Edition
 """
 
 __version__ = "2.0.0"
@@ -45,6 +48,37 @@ from .notifications import (
     get_notifier
 )
 
+# Revolutionary v2.0 modules - Next-Generation Reporting
+from .analytics import (
+    AdvancedAnalyticsEngine,
+    AnalyticsReport,
+    BranchHealthMetrics,
+    RepositoryHealthDashboard,
+    ConflictHeatmap,
+    MergeSuccessMetrics,
+    DivergenceMetrics
+)
+from .export_formats import EnhancedExportFormats
+from .interactive_html import InteractiveHTMLGenerator
+from .enhanced_notifications import (
+    EnhancedNotificationManager,
+    EnhancedNotificationConfig,
+    EnhancedNotificationChannel,
+    NotificationPriority
+)
+from .report_history import (
+    ReportHistoryManager,
+    HistoricalTrend,
+    Anomaly,
+    ComparisonResult
+)
+from .smart_insights import (
+    SmartInsightsEngine,
+    Insight,
+    SmartRecommendation
+)
+from .advanced_reporting import AdvancedReportingHub
+
 __all__ = [
     # Core
     "Config",
@@ -79,4 +113,31 @@ __all__ = [
     "NotificationChannel",
     "send_notification",
     "get_notifier",
+    # Revolutionary v2.0 - Advanced Analytics
+    "AdvancedAnalyticsEngine",
+    "AnalyticsReport",
+    "BranchHealthMetrics",
+    "RepositoryHealthDashboard",
+    "ConflictHeatmap",
+    "MergeSuccessMetrics",
+    "DivergenceMetrics",
+    # Enhanced Export Formats
+    "EnhancedExportFormats",
+    "InteractiveHTMLGenerator",
+    # Enhanced Notifications
+    "EnhancedNotificationManager",
+    "EnhancedNotificationConfig",
+    "EnhancedNotificationChannel",
+    "NotificationPriority",
+    # Report History & Trends
+    "ReportHistoryManager",
+    "HistoricalTrend",
+    "Anomaly",
+    "ComparisonResult",
+    # Smart Insights
+    "SmartInsightsEngine",
+    "Insight",
+    "SmartRecommendation",
+    # Advanced Reporting Hub (Unified Interface)
+    "AdvancedReportingHub",
 ]

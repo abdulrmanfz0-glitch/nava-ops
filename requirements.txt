@@ -1,8 +1,8 @@
 # Nava Ops Requirements
 # Python 3.8+ required
 
-# No external dependencies required!
-# This project uses only Python standard library modules:
+# Core Git Operations (Standard Library Only)
+# The core Git orchestration functionality uses only Python standard library:
 # - subprocess (for git commands)
 # - json (for configuration)
 # - logging (for logging)
@@ -11,6 +11,13 @@
 # - typing (for type hints)
 # - datetime (for timestamps)
 # - os, time (for utilities)
+# - urllib (for HTTP requests - Slack/webhooks)
+# - smtplib, email (for email notifications)
+
+# REST API Dependencies
+fastapi>=0.104.0          # Modern web framework for building APIs
+uvicorn[standard]>=0.24.0 # ASGI server for running FastAPI
+pydantic>=2.0.0           # Data validation using Python type annotations
 
 # Optional development dependencies:
 # pytest>=7.0.0  # For running tests

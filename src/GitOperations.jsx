@@ -24,6 +24,7 @@ import {
   Download,
   Loader
 } from 'lucide-react';
+import logger from './lib/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -80,7 +81,7 @@ export default function GitOperations() {
         fetchConfig();
       }
     } catch (err) {
-      // API health check failed silently
+      logger.error('API health check failed', { error: err.message });
     }
   };
 
@@ -109,7 +110,11 @@ export default function GitOperations() {
         setConfig(data);
       }
     } catch (err) {
+<<<<<<< HEAD
       // Failed to fetch config silently
+=======
+      logger.error('Failed to fetch config', { error: err.message });
+>>>>>>> origin/claude/codebase-deep-upgrade-011CV5xaRKkDeUJpoqsxBnNF
     }
   };
 

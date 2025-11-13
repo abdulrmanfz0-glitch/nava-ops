@@ -21,7 +21,8 @@ logger.info('Application started', {
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
-const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics'));
+const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew'));
+const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence'));
@@ -182,6 +183,15 @@ export default function App() {
                     <RequireAuth requiredPermissions={['reports:view']}>
                       <Layout>
                         <ReportsAnalytics />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Executive Dashboard */}
+                  <Route path="/executive" element={
+                    <RequireAuth requiredPermissions={['reports:view']}>
+                      <Layout>
+                        <ExecutiveDashboard />
                       </Layout>
                     </RequireAuth>
                   } />

@@ -1,39 +1,10 @@
 // NAVA OPS - Menu Intelligence
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
 // Strategic menu performance analysis & optimization recommendations
-
-// Strategic menu performance analysis with engineering matrix
- main
 
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
 import api from '@/services/api';
 import PageHeader from '@/components/UI/PageHeader';
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
-import { UtensilsCrossed, TrendingUp, TrendingDown, Star, AlertTriangle, CheckCircle } from 'lucide-react';
-
-// Menu Engineering Matrix Component
-function MenuEngineering() {
-  const [selectedBranch, setSelectedBranch] = useState(null);
-  const [branches, setBranches] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchData();
-  }, [selectedBranch]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const branchesData = await api.branches.getAll();
-      setBranches(branchesData);
-
-      // Generate sample menu items with performance metrics
-      const sampleMenuItems = [
-        {
-          id: 1,
-
 import StatCard from '@/components/UI/StatCard';
 import DateRangePicker from '@/components/UI/DateRangePicker';
 import EmptyState from '@/components/UI/EmptyState';
@@ -47,7 +18,8 @@ import {
   Star,
   AlertTriangle,
   Package,
-  BarChart3
+  BarChart3,
+  CheckCircle
 } from 'lucide-react';
 
 export default function MenuIntelligence() {
@@ -80,7 +52,7 @@ export default function MenuIntelligence() {
       // Generate menu items with performance metrics
       const menuItems = [
         {
- main
+          id: 1,
           name: 'Classic Burger',
           category: 'Burgers',
           orders: 1250,
@@ -90,7 +62,6 @@ export default function MenuIntelligence() {
           popularity: 0.28,
           profitability: 0.40,
           trend: '+15%',
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
           classification: 'Star',
           image: '🍔'
         },
@@ -98,195 +69,125 @@ export default function MenuIntelligence() {
           id: 2,
           name: 'Margherita Pizza',
           category: 'Pizza',
-          orders: 980,
-          revenue: 29400,
-          cost: 14700,
-          margin: 0.50,
-          popularity: 0.22,
-          profitability: 0.50,
+          orders: 900,
+          revenue: 22500,
+          cost: 15750,
+          margin: 0.30,
+          popularity: 0.20,
+          profitability: 0.30,
           trend: '+8%',
-          classification: 'Star',
+          classification: 'Plow Horse',
           image: '🍕'
         },
         {
           id: 3,
           name: 'Caesar Salad',
           category: 'Salads',
-          orders: 1120,
-          revenue: 22400,
-          cost: 11200,
+          orders: 450,
+          revenue: 13500,
+          cost: 6750,
           margin: 0.50,
-          popularity: 0.25,
+          popularity: 0.10,
           profitability: 0.50,
-          trend: '+12%',
-          classification: 'Star',
+          trend: '-5%',
+          classification: 'Puzzle',
           image: '🥗'
         },
         {
           id: 4,
-          name: 'Chicken Wings',
-          category: 'Appetizers',
-          orders: 875,
-          revenue: 21875,
-          cost: 15312,
+          name: 'Fettuccine Alfredo',
+          category: 'Pasta',
+          orders: 320,
+          revenue: 9600,
+          cost: 6720,
           margin: 0.30,
-          popularity: 0.20,
+          popularity: 0.07,
           profitability: 0.30,
-          trend: '-3%',
-          classification: 'Plow Horse',
-          image: '🍗'
+          trend: '-12%',
+          classification: 'Dog',
+          image: '🍝'
         },
         {
           id: 5,
-          name: 'Specialty Steak',
-          category: 'Mains',
-          orders: 245,
-          revenue: 18375,
-          cost: 9187,
+          name: 'BBQ Ribs',
+          category: 'Grills',
+          orders: 1100,
+          revenue: 38500,
+          cost: 19250,
           margin: 0.50,
-          popularity: 0.05,
-          profitability: 0.50,
-          trend: '-8%',
-          classification: 'Puzzle',
-          image: '🥩'
-        }
-      ];
-
-      setMenuItems(sampleMenuItems);
-    } catch (error) {
-      console.error('Failed to fetch menu data:', error);
-
-          image: '🍔'
-        },
-        {
-          name: 'Cheese Pizza',
-          category: 'Pizza',
-          orders: 980,
-          revenue: 34300,
-          cost: 17150,
-          margin: 0.50,
-          popularity: 0.22,
+          popularity: 0.25,
           profitability: 0.50,
           trend: '+22%',
-          image: '🍕'
+          classification: 'Star',
+          image: '🍖'
         },
         {
-          name: 'Caesar Salad',
-          category: 'Salads',
-          orders: 450,
-          revenue: 5850,
-          cost: 3510,
-          margin: 0.40,
-          popularity: 0.10,
-          profitability: 0.40,
-          trend: '-8%',
-          image: '🥗'
-        },
-        {
-          name: 'Chicken Wings',
-          category: 'Appetizers',
-          orders: 820,
-          revenue: 16400,
-          cost: 11480,
+          id: 6,
+          name: 'Fish & Chips',
+          category: 'Seafood',
+          orders: 850,
+          revenue: 21250,
+          cost: 14875,
           margin: 0.30,
-          popularity: 0.18,
+          popularity: 0.19,
           profitability: 0.30,
           trend: '+5%',
-          image: '🍗'
+          classification: 'Plow Horse',
+          image: '🐟'
         },
         {
-          name: 'Veggie Burger',
-          category: 'Burgers',
-          orders: 320,
-          revenue: 8320,
-          cost: 3328,
-          margin: 0.60,
-          popularity: 0.07,
-          profitability: 0.60,
-          trend: '+35%',
-          image: '🥙'
-        },
-        {
-          name: 'French Fries',
-          category: 'Sides',
-          orders: 1450,
-          revenue: 7250,
-          cost: 5075,
-          margin: 0.30,
-          popularity: 0.32,
-          profitability: 0.30,
-          trend: '+3%',
-          image: '🍟'
-        },
-        {
-          name: 'Grilled Chicken',
-          category: 'Mains',
-          orders: 680,
-          revenue: 20400,
-          cost: 10200,
+          id: 7,
+          name: 'Lobster Thermidor',
+          category: 'Seafood',
+          orders: 180,
+          revenue: 10800,
+          cost: 5400,
           margin: 0.50,
-          popularity: 0.15,
+          popularity: 0.04,
           profitability: 0.50,
-          trend: '+12%',
-          image: '🍗'
+          trend: '-3%',
+          classification: 'Puzzle',
+          image: '🦞'
         },
         {
-          name: 'Margherita Pizza',
-          category: 'Pizza',
-          orders: 540,
-          revenue: 18900,
-          cost: 9450,
-          margin: 0.50,
-          popularity: 0.12,
-          profitability: 0.50,
-          trend: '+8%',
-          image: '🍕'
+          id: 8,
+          name: 'Chicken Wings',
+          category: 'Appetizers',
+          orders: 1350,
+          revenue: 20250,
+          cost: 12150,
+          margin: 0.40,
+          popularity: 0.30,
+          profitability: 0.40,
+          trend: '+18%',
+          classification: 'Star',
+          image: '🍗'
         }
       ];
 
-      // Calculate averages
-      const avgPopularity = menuItems.reduce((sum, item) => sum + item.popularity, 0) / menuItems.length;
-      const avgProfitability = menuItems.reduce((sum, item) => sum + item.profitability, 0) / menuItems.length;
-
-      // Classify items
-      const itemsWithClass = menuItems.map(item => {
-        const highPopularity = item.popularity >= avgPopularity;
-        const highProfitability = item.profitability >= avgProfitability;
-
-        let classification;
-        if (highPopularity && highProfitability) {
-          classification = { type: 'star', label: 'Star', color: 'green', icon: '⭐', bgClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400', borderClass: 'border-green-200 dark:border-green-800' };
-        } else if (!highPopularity && highProfitability) {
-          classification = { type: 'puzzle', label: 'Puzzle', color: 'blue', icon: '🧩', bgClass: 'bg-blue-100 dark:bg-blue-900/20', textClass: 'text-blue-700 dark:text-blue-400', borderClass: 'border-blue-200 dark:border-blue-800' };
-        } else if (highPopularity && !highProfitability) {
-          classification = { type: 'plow', label: 'Plow Horse', color: 'yellow', icon: '🐴', bgClass: 'bg-yellow-100 dark:bg-yellow-900/20', textClass: 'text-yellow-700 dark:text-yellow-400', borderClass: 'border-yellow-200 dark:border-yellow-800' };
-        } else {
-          classification = { type: 'dog', label: 'Dog', color: 'red', icon: '🐕', bgClass: 'bg-red-100 dark:bg-red-900/20', textClass: 'text-red-700 dark:text-red-400', borderClass: 'border-red-200 dark:border-red-800' };
-        }
-
-        return { ...item, classification };
-      });
-
       setMenuData({
-        items: itemsWithClass,
+        items: menuItems,
         totalRevenue: menuItems.reduce((sum, item) => sum + item.revenue, 0),
         totalOrders: menuItems.reduce((sum, item) => sum + item.orders, 0),
-        avgMargin: avgProfitability
+        avgMargin: menuItems.reduce((sum, item) => sum + item.margin, 0) / menuItems.length
       });
+
     } catch (error) {
-      console.error('Menu data error:', error);
+      console.error('Error fetching menu data:', error);
       addNotification({
         title: 'Error',
         message: 'Failed to load menu intelligence data',
         type: 'error'
       });
- main
     } finally {
       setLoading(false);
     }
   };
 
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
+  useEffect(() => {
+    fetchMenuData();
+  }, [dateRange]);
+
   // Classify items into BCG matrix categories
   const getClassification = (item) => {
     const avgPopularity = 0.20;
@@ -303,59 +204,56 @@ export default function MenuIntelligence() {
     }
   };
 
-  if (!selectedBranch && branches.length > 0) {
-    return (
-      <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-        <div className="text-6xl mb-4">🍽️</div>
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          Select a Branch
-        </h3>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Please select a branch to view menu performance analysis
-        </p>
-        <select
-          onChange={(e) => setSelectedBranch(e.target.value)}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                   focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">Choose a branch...</option>
-          {branches.map((branch) => (
-            <option key={branch.id} value={branch.id}>
-              {branch.name} {branch.code ? `(${branch.code})` : ''}
-            </option>
-          ))}
-        </select>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      {/* Branch Selector */}
-      {branches.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Selected Branch
-          </label>
-          <select
-            value={selectedBranch || ''}
-            onChange={(e) => setSelectedBranch(e.target.value)}
-            className="w-full md:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="">All Branches</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={branch.id}>
-                {branch.name} {branch.code ? `(${branch.code})` : ''}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* Header with gradient background */}
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl shadow-lg p-6">
+        <PageHeader
+          title="Menu Intelligence"
+          subtitle="Strategic menu performance analysis & optimization recommendations"
+          icon={UtensilsCrossed}
+          className="text-white"
+        />
+      </div>
+
+      {/* Date Range Picker */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
+        <DateRangePicker
+          startDate={dateRange.startDate}
+          endDate={dateRange.endDate}
+          onChange={setDateRange}
+        />
+      </div>
 
       {/* Performance Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard
+          title="Total Revenue"
+          value={`SAR ${menuData.totalRevenue.toLocaleString()}`}
+          icon={DollarSign}
+          color="green"
+        />
+        <StatCard
+          title="Total Orders"
+          value={menuData.totalOrders.toLocaleString()}
+          icon={Package}
+          color="blue"
+        />
+        <StatCard
+          title="Avg Profit Margin"
+          value={`${(menuData.avgMargin * 100).toFixed(1)}%`}
+          icon={Target}
+          color="purple"
+        />
+        <StatCard
+          title="Menu Items"
+          value={menuData.items.length}
+          icon={UtensilsCrossed}
+          color="orange"
+        />
+      </div>
+
+      {/* Category Performance Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
           <div className="flex items-center justify-between mb-2">
@@ -363,7 +261,7 @@ export default function MenuIntelligence() {
             <Star className="w-6 h-6" />
           </div>
           <div className="text-3xl font-bold mb-1">
-            {menuItems.filter(item => getClassification(item).type === 'Star').length}
+            {menuData.items.filter(item => getClassification(item).type === 'Star').length}
           </div>
           <div className="text-sm opacity-90">High profit & popularity</div>
         </div>
@@ -374,7 +272,7 @@ export default function MenuIntelligence() {
             <TrendingUp className="w-6 h-6" />
           </div>
           <div className="text-3xl font-bold mb-1">
-            {menuItems.filter(item => getClassification(item).type === 'Plow Horse').length}
+            {menuData.items.filter(item => getClassification(item).type === 'Plow Horse').length}
           </div>
           <div className="text-sm opacity-90">Popular but low margin</div>
         </div>
@@ -385,7 +283,7 @@ export default function MenuIntelligence() {
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div className="text-3xl font-bold mb-1">
-            {menuItems.filter(item => getClassification(item).type === 'Puzzle').length}
+            {menuData.items.filter(item => getClassification(item).type === 'Puzzle').length}
           </div>
           <div className="text-sm opacity-90">High profit, low popularity</div>
         </div>
@@ -396,138 +294,22 @@ export default function MenuIntelligence() {
             <TrendingDown className="w-6 h-6" />
           </div>
           <div className="text-3xl font-bold mb-1">
-            {menuItems.filter(item => getClassification(item).type === 'Dog').length}
+            {menuData.items.filter(item => getClassification(item).type === 'Dog').length}
           </div>
-          <div className="text-sm opacity-90">Consider removing</div>
+          <div className="text-sm opacity-90">Low profit & popularity</div>
         </div>
       </div>
 
-      {/* Menu Items Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Menu Performance Analysis
-
-  useEffect(() => {
-    fetchMenuData();
-  }, [dateRange]);
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-SA', {
-      style: 'currency',
-      currency: 'SAR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-
-  // Count items by classification
-  const classificationCounts = menuData.items.reduce((acc, item) => {
-    acc[item.classification.type] = (acc[item.classification.type] || 0) + 1;
-    return acc;
-  }, {});
-
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Menu Intelligence"
-        subtitle="Strategic menu performance analysis with engineering matrix"
-        icon={UtensilsCrossed}
-        actions={
-          <DateRangePicker
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-            onDateChange={({ startDate, endDate }) => setDateRange({ startDate, endDate })}
-          />
-        }
-      />
-
-      {/* Menu Performance Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Menu Items"
-          value={menuData.items.length}
-          subtitle="Active items"
-          icon={Package}
-          color="blue"
-          loading={loading}
-        />
-        <StatCard
-          title="Total Revenue"
-          value={formatCurrency(menuData.totalRevenue)}
-          subtitle="From menu sales"
-          icon={DollarSign}
-          color="green"
-          loading={loading}
-        />
-        <StatCard
-          title="Avg Profit Margin"
-          value={`${(menuData.avgMargin * 100).toFixed(1)}%`}
-          subtitle="Average across menu"
-          icon={Target}
-          color="purple"
-          loading={loading}
-        />
-        <StatCard
-          title="Total Orders"
-          value={menuData.totalOrders.toLocaleString()}
-          subtitle="Menu item orders"
-          icon={BarChart3}
-          color="orange"
-          loading={loading}
-        />
-      </div>
-
-      {/* Menu Classification Overview */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <Star className="w-5 h-5 text-yellow-500" />
-          Menu Engineering Classification
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-green-700 dark:text-green-400">Stars ⭐</span>
-              <span className="text-2xl font-bold text-green-700 dark:text-green-400">{classificationCounts.star || 0}</span>
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">High popularity & profit</p>
-          </div>
-          <div className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Puzzles 🧩</span>
-              <span className="text-2xl font-bold text-blue-700 dark:text-blue-400">{classificationCounts.puzzle || 0}</span>
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">High profit, low popularity</p>
-          </div>
-          <div className="border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-yellow-700 dark:text-yellow-400">Plow Horses 🐴</span>
-              <span className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">{classificationCounts.plow || 0}</span>
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">High popularity, low profit</p>
-          </div>
-          <div className="border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-red-700 dark:text-red-400">Dogs 🐕</span>
-              <span className="text-2xl font-bold text-red-700 dark:text-red-400">{classificationCounts.dog || 0}</span>
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Low popularity & profit</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Menu Engineering Matrix Table */}
+      {/* Menu Performance Matrix Table */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-blue-500" />
             Menu Performance Matrix
- main
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -554,40 +336,25 @@ export default function MenuIntelligence() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Recommendation
                 </th>
-
-            <thead className="bg-gray-50 dark:bg-gray-900/50">
-              <tr>
-                <th className="text-left py-3 px-6 text-sm font-semibold text-gray-700 dark:text-gray-300">Item</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Orders</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Revenue</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Margin</th>
-                <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Trend</th>
-                <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Classification</th>
- main
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
                   <td colSpan="8" className="px-6 py-12 text-center">
-
-                  <td colSpan="6" className="py-12 text-center">
- main
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
                     </div>
                   </td>
                 </tr>
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
-              ) : menuItems.length === 0 ? (
+              ) : menuData.items.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     No menu items found
                   </td>
                 </tr>
               ) : (
-                menuItems.map((item) => {
+                menuData.items.map((item) => {
                   const classification = getClassification(item);
                   const ClassIcon = classification.icon;
 
@@ -617,7 +384,8 @@ export default function MenuIntelligence() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium
+                        <span className={`
+                          inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium
                           ${classification.color === 'green' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' : ''}
                           ${classification.color === 'blue' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' : ''}
                           ${classification.color === 'yellow' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400' : ''}
@@ -633,60 +401,12 @@ export default function MenuIntelligence() {
                     </tr>
                   );
                 })
-
-              ) : menuData.items.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="py-12">
-                    <EmptyState
-                      icon={UtensilsCrossed}
-                      title="No Menu Data"
-                      message="Menu performance data will appear here."
-                    />
-                  </td>
-                </tr>
-              ) : (
-                menuData.items.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-900/30 transition-colors">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{item.image}</span>
-                        <div>
-                          <div className="font-medium text-gray-900 dark:text-white">{item.name}</div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">{item.category}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="text-right py-4 px-4 font-semibold text-gray-900 dark:text-white">
-                      {item.orders.toLocaleString()}
-                    </td>
-                    <td className="text-right py-4 px-4 font-semibold text-gray-900 dark:text-white">
-                      {formatCurrency(item.revenue)}
-                    </td>
-                    <td className="text-right py-4 px-4 font-semibold text-gray-900 dark:text-white">
-                      {(item.margin * 100).toFixed(0)}%
-                    </td>
-                    <td className="text-center py-4 px-4">
-                      <span className={`inline-flex items-center gap-1 font-medium ${item.trend.includes('+') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                        {item.trend.includes('+') ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {item.trend}
-                      </span>
-                    </td>
-                    <td className="text-center py-4 px-4">
-                      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium border ${item.classification.bgClass} ${item.classification.textClass} ${item.classification.borderClass}`}>
-                        <span>{item.classification.icon}</span>
-                        <span>{item.classification.label}</span>
-                      </span>
-                    </td>
-                  </tr>
-                ))
- main
               )}
             </tbody>
           </table>
         </div>
       </div>
 
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
       {/* Menu Engineering Matrix Legend */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -728,6 +448,9 @@ export default function MenuIntelligence() {
             <p className="text-sm text-gray-700 dark:text-gray-300">
               Low profitability and low popularity. Consider removing from menu or completely redesigning the dish.
             </p>
+          </div>
+        </div>
+      </div>
 
       {/* Strategic Recommendations */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
@@ -779,33 +502,9 @@ export default function MenuIntelligence() {
                 </div>
               </div>
             </div>
- main
           </div>
         </div>
       </div>
     </div>
   );
 }
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
-
-// Main Menu Intelligence Component
-export default function MenuIntelligence() {
-  return (
-    <div className="space-y-6">
-      {/* Header with gradient background */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl shadow-lg p-6">
-        <PageHeader
-          title="Menu Intelligence"
-          subtitle="Strategic menu performance analysis & optimization recommendations"
-          icon={UtensilsCrossed}
-          className="text-white"
-        />
-      </div>
-
-      {/* Menu Engineering Content */}
-      <MenuEngineering />
-    </div>
-  );
-}
-
- main

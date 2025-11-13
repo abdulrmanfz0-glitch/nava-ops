@@ -29,11 +29,8 @@ const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence')
 const MenuIntelligence = lazy(() => import('./pages/MenuIntelligence'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
- claude/nava-ops-ai-intelligence-011CV5xbEoWSSfHrz8o5gdme
 const Intelligence = lazy(() => import('./pages/Intelligence'));
-
 const ExecutiveHQ = lazy(() => import('./pages/ExecutiveHQ'));
- main
 const GitOperations = lazy(() => import('./GitOperations'));
 const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
@@ -218,12 +215,14 @@ export default function App() {
                     </RequireAuth>
                   } />
 
- claude/nava-ops-ai-intelligence-011CV5xbEoWSSfHrz8o5gdme
                   {/* Intelligence Hub - AI-Powered Analytics */}
                   <Route path="/intelligence" element={
                     <RequireAuth>
                       <Layout>
                         <Intelligence />
+                      </Layout>
+                    </RequireAuth>
+                  } />
 
                   {/* Executive HQ Dashboard - Premium Feature */}
                   <Route path="/executive-hq" element={
@@ -248,7 +247,6 @@ export default function App() {
                     <RequireAuth requiredPermissions={['reports:view']}>
                       <Layout>
                         <MenuIntelligence />
- main
                       </Layout>
                     </RequireAuth>
                   } />

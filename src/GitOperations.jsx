@@ -24,6 +24,7 @@ import {
   Download,
   Loader
 } from 'lucide-react';
+import logger from './lib/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -80,7 +81,7 @@ export default function GitOperations() {
         fetchConfig();
       }
     } catch (err) {
-      console.error('API health check failed:', err);
+      logger.error('API health check failed', { error: err.message });
     }
   };
 
@@ -109,7 +110,7 @@ export default function GitOperations() {
         setConfig(data);
       }
     } catch (err) {
-      console.error('Failed to fetch config:', err);
+      // Failed to fetch config silently
     }
   };
 

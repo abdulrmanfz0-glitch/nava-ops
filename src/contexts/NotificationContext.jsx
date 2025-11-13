@@ -1,5 +1,5 @@
 // src/contexts/NotificationContext.jsx
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { 
   CheckCircle, 
   XCircle, 
@@ -105,21 +105,6 @@ export function NotificationProvider({ children }) {
     return id;
   }, []);
 
-  // إشعارات سريعة
-  const notificationHelpers = {
-    success: (title, message, options) => 
-      addNotification({ title, message, type: NOTIFICATION_TYPES.SUCCESS, ...options }),
-    
-    error: (title, message, options) =>
-      addNotification({ title, message, type: NOTIFICATION_TYPES.ERROR, ...options }),
-    
-    warning: (title, message, options) =>
-      addNotification({ title, message, type: NOTIFICATION_TYPES.WARNING, ...options }),
-    
-    info: (title, message, options) =>
-      addNotification({ title, message, type: NOTIFICATION_TYPES.INFO, ...options })
-  };
-
   // إزالة إشعار
   const removeNotification = useCallback((id) => {
     setNotifications(prev => {
@@ -165,7 +150,7 @@ export function NotificationProvider({ children }) {
     const total = notifications.length;
     const unread = notifications.filter(n => !n.read).length;
     const read = total - unread;
-    
+
     const byType = {
       [NOTIFICATION_TYPES.SUCCESS]: notifications.filter(n => n.type === NOTIFICATION_TYPES.SUCCESS).length,
       [NOTIFICATION_TYPES.ERROR]: notifications.filter(n => n.type === NOTIFICATION_TYPES.ERROR).length,
@@ -176,7 +161,20 @@ export function NotificationProvider({ children }) {
     return { total, unread, read, byType };
   }, [notifications]);
 
-  const value = {
+  // إشعارات سريعة - memoized
+  const success = useCallback((title, message, options) =>
+    addNotification({ title, message, type: NOTIFICATION_TYPES.SUCCESS, ...options }), [addNotification]);
+
+  const error = useCallback((title, message, options) =>
+    addNotification({ title, message, type: NOTIFICATION_TYPES.ERROR, ...options }), [addNotification]);
+
+  const warning = useCallback((title, message, options) =>
+    addNotification({ title, message, type: NOTIFICATION_TYPES.WARNING, ...options }), [addNotification]);
+
+  const info = useCallback((title, message, options) =>
+    addNotification({ title, message, type: NOTIFICATION_TYPES.INFO, ...options }), [addNotification]);
+
+  const value = useMemo(() => ({
     notifications,
     unreadCount,
     addNotification,
@@ -186,8 +184,11 @@ export function NotificationProvider({ children }) {
     clearAll,
     clearRead,
     getNotificationStats,
-    ...notificationHelpers
-  };
+    success,
+    error,
+    warning,
+    info
+  }), [notifications, unreadCount, addNotification, removeNotification, markAsRead, markAllAsRead, clearAll, clearRead, getNotificationStats, success, error, warning, info]);
 
   return (
     <NotificationContext.Provider value={value}>

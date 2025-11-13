@@ -27,7 +27,7 @@ class Logger {
       this.logs.shift();
     }
 
-    // Console output in development
+    // Console output in development only
     if (import.meta.env.DEV) {
       const consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log';
       console[consoleMethod](`[${level.toUpperCase()}]`, message, data);
@@ -95,7 +95,7 @@ class Logger {
 
       localStorage.setItem('nava_error_logs', JSON.stringify(storedErrors));
     } catch (e) {
-      console.error('Failed to store error locally:', e);
+      // Silent fail - can't log errors in error logger
     }
   }
 
@@ -128,8 +128,10 @@ class Logger {
 
   // Send to Sentry (placeholder - implement when Sentry is configured)
   sendToSentry(logEntry) {
-    // TODO: Implement Sentry integration
-    console.log('Would send to Sentry:', logEntry);
+    // TODO: Implement Sentry integration when VITE_SENTRY_DSN is configured
+    if (import.meta.env.DEV) {
+      console.log('Would send to Sentry:', logEntry);
+    }
   }
 }
 
@@ -157,7 +159,7 @@ export class ErrorBoundaryLogger {
       sessionErrors.push(errorData);
       sessionStorage.setItem('react_errors', JSON.stringify(sessionErrors.slice(-10))); // Keep last 10
     } catch (e) {
-      console.error('Failed to store error in session:', e);
+      // Silent fail
     }
   }
 
@@ -174,11 +176,16 @@ export class ErrorBoundaryLogger {
   }
 }
 
+ claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
  
+
+ claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
+ main
 // Performance Logger
 
-// Performance Logger for tracking app performance
+
  main
+// Performance Logger for tracking app performance
 export class PerformanceLogger {
   static timers = new Map();
 
@@ -186,11 +193,16 @@ export class PerformanceLogger {
     this.timers.set(label, performance.now());
   }
 
+ claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
  
+
+ main
   static end(label, warnThreshold = 1000) {
     const startTime = this.timers.get(label);
     if (!startTime) {
-      console.warn(`No timer found for label: ${label}`);
+      if (import.meta.env.DEV) {
+        console.warn(`No timer found for label: ${label}`);
+      }
       return null;
     }
 
@@ -217,6 +229,19 @@ export class PerformanceLogger {
   }
 
   static async measureAsync(label, fn) {
+ claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
+
+ claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
+    const start = performance.now();
+    const result = await fn();
+    const duration = performance.now() - start;
+
+    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+
+
+
+ main
+ main
     this.start(label);
     const result = await fn();
     this.end(label);

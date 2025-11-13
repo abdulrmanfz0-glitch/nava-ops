@@ -1,5 +1,5 @@
 // src/contexts/LocaleContext.jsx
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import logger from '../lib/logger';
 
 const LocaleContext = createContext();
@@ -375,7 +375,7 @@ export function LocaleProvider({ children }) {
     }
   }, [locale, formatDate, t]);
 
-  const value = {
+  const value = useMemo(() => ({
     locale,
     direction,
     setLocale,
@@ -393,7 +393,7 @@ export function LocaleProvider({ children }) {
       ar: 'العربية',
       en: 'English',
     },
-  };
+  }), [locale, direction, setLocale, toggleLocale, isRTL, t, formatNumber, formatCurrency, formatDate, formatRelativeTime]);
 
   return (
     <LocaleContext.Provider value={value}>

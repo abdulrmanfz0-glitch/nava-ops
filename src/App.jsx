@@ -4,40 +4,45 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
 import ErrorBoundary from './components/ErrorBoundary';
 import { logger, PerformanceLogger } from './lib/logger';
 
-console.log('🚀 App.jsx loaded - Vite + React running');
+// Initialize app
 logger.info('Application started', {
   version: import.meta.env.VITE_APP_VERSION,
   environment: import.meta.env.VITE_ENVIRONMENT,
   devMode: import.meta.env.DEV
 });
 
-// Lazy loading للمكونات لتحسين الأداء
+// Lazy load page components for performance
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
-const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics'));
+const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew'));
+const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
+const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence'));
+const MenuIntelligence = lazy(() => import('./pages/MenuIntelligence'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
+const Intelligence = lazy(() => import('./pages/Intelligence'));
+const ExecutiveHQ = lazy(() => import('./pages/ExecutiveHQ'));
 const GitOperations = lazy(() => import('./GitOperations'));
+const Subscriptions = lazy(() => import('./pages/Subscriptions'));
+const Billing = lazy(() => import('./pages/Billing'));
 
-// حارس متقدم للمسارات الخاصة
+// Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
   const { connectionStatus, user, hasPermission, isAuthenticated } = useAuth();
   const location = useLocation();
 
-  console.log('🔐 RequireAuth check:', { connectionStatus, isAuthenticated, user: !!user });
-
-  // أثناء التحقق من الجلسة
+  // Show loading state while checking session
   if (connectionStatus === 'checking') {
-    console.log('⏳ Connection status is checking...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -49,7 +54,7 @@ function RequireAuth({ children, requiredPermissions = [] }) {
     );
   }
 
-  // التحقق من الاتصال بالإنترنت
+  // Show offline message if no internet connection
   if (!navigator.onLine) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -61,7 +66,7 @@ function RequireAuth({ children, requiredPermissions = [] }) {
           </div>
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">لا يوجد اتصال بالإنترنت</h3>
           <p className="text-gray-600 dark:text-gray-300 mb-4">يجب أن تكون متصلاً بالإنترنت للوصول إلى المنصة</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg transition-colors duration-200"
           >
@@ -72,15 +77,13 @@ function RequireAuth({ children, requiredPermissions = [] }) {
     );
   }
 
-  // لو غير مسجل دخول -> رجّعه للّوجن
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    console.log('❌ Not authenticated, redirecting to login');
+    logger.debug('User not authenticated, redirecting to login');
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  console.log('✅ Authenticated, rendering protected content');
-
-  // التحقق من الصلاحيات إذا كانت مطلوبة
+  // Check permissions if required
   if (requiredPermissions.length > 0 && !hasPermission(requiredPermissions)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -92,7 +95,7 @@ function RequireAuth({ children, requiredPermissions = [] }) {
           </div>
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">غير مصرح بالوصول</h3>
           <p className="text-gray-600 dark:text-gray-300">ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة</p>
-          <button 
+          <button
             onClick={() => window.history.back()}
             className="mt-4 bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors duration-200"
           >
@@ -103,11 +106,10 @@ function RequireAuth({ children, requiredPermissions = [] }) {
     );
   }
 
-  // كل شيء جيد -> اعرض الصفحة
   return children;
 }
 
-// مكون تحميل عالمي
+// Global loading component
 function GlobalLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -123,14 +125,28 @@ function GlobalLoading() {
   );
 }
 
+// 404 Not Found Page
+function NotFoundPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="text-center">
+        <h1 className="text-6xl font-bold text-gray-300 dark:text-gray-600 mb-4">404</h1>
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">الصفحة غير موجودة</h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">عذراً، الصفحة التي تبحث عنها غير موجودة.</p>
+        <Navigate to="/" replace />
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
-  // Performance tracking for app initialization
+  // Track app initialization performance
   useEffect(() => {
-    PerformanceLogger.start('app-init')
+    PerformanceLogger.start('app-init');
     return () => {
-      PerformanceLogger.end('app-init', 3000)
-    }
-  }, [])
+      PerformanceLogger.end('app-init', 3000);
+    };
+  }, []);
 
   return (
     <ErrorBoundary
@@ -142,115 +158,194 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <NotificationProvider>
-            <BrowserRouter>
-              <div className="App">
-                <OfflineIndicator />
-                <Suspense fallback={<GlobalLoading />}>
-                <Routes>
-                  {/* صفحة تسجيل الدخول */}
-                  <Route path="/login" element={<Login />} />
+            <SubscriptionProvider>
+              <BrowserRouter>
+                <div className="App">
+                  <OfflineIndicator />
+                  <Suspense fallback={<GlobalLoading />}>
+                    <Routes>
+                      {/* Public Routes */}
+                      <Route path="/login" element={<Login />} />
 
-                  {/* المسارات الرئيسية مع Layout */}
-                  <Route path="/" element={
-                    <RequireAuth>
-                      <Layout>
-                        <Dashboard />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      {/* Protected Routes */}
+                      <Route path="/" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <Dashboard />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* إدارة الفروع */}
-                  <Route path="/branches" element={
-                    <RequireAuth requiredPermissions={['restaurants:view']}>
-                      <Layout>
-                        <BranchesManagement />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      <Route path="/branches" element={
+                        <RequireAuth requiredPermissions={['restaurants:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <BranchesManagement />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* Keep old route for backwards compatibility */}
-                  <Route path="/restaurants" element={
-                    <RequireAuth requiredPermissions={['restaurants:view']}>
-                      <Layout>
-                        <BranchesManagement />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      {/* Backwards compatibility route */}
+                      <Route path="/restaurants" element={
+                        <RequireAuth requiredPermissions={['restaurants:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <BranchesManagement />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* التقارير والتحليلات */}
-                  <Route path="/reports" element={
-                    <RequireAuth requiredPermissions={['reports:view']}>
-                      <Layout>
-                        <ReportsAnalytics />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      <Route path="/reports" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <ReportsAnalytics />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* إدارة الفريق */}
-                  <Route path="/team" element={
-                    <RequireAuth requiredPermissions={['team:manage']}>
-                      <Layout>
-                        <TeamManagement />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      {/* Executive Dashboard */}
+                      <Route path="/executive" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <ExecutiveDashboard />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* التقارير المالية */}
-                  <Route path="/financial" element={
-                    <RequireAuth requiredPermissions={['financial:view']}>
-                      <Layout>
-                        <FinancialReports />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      {/* Team Management */}
+                      <Route path="/team" element={
+                        <RequireAuth requiredPermissions={['team:manage']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <TeamManagement />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* مركز الإشعارات */}
-                  <Route path="/notifications" element={
-                    <RequireAuth>
-                      <Layout>
-                        <NotificationsCenter />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      <Route path="/financial" element={
+                        <RequireAuth requiredPermissions={['financial:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <FinancialReports />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* الإعدادات */}
-                  <Route path="/settings" element={
-                    <RequireAuth>
-                      <Layout>
-                        <Settings />
-                      </Layout>
-                    </RequireAuth>
-                  } />
+                      {/* Intelligence Hub - AI-Powered Analytics */}
+                      <Route path="/intelligence" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <Intelligence />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* Git Operations Dashboard */}
-                  <Route path="/git-ops" element={
-                    <RequireAuth>
-                      <GitOperations />
-                    </RequireAuth>
-                  } />
+                      {/* Executive HQ Dashboard - Premium Feature */}
+                      <Route path="/executive-hq" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <ExecutiveHQ />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
 
-                  {/* صفحة 404 مخصصة */}
-                  <Route path="*" element={
-                    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-                      <div className="text-center">
-                        <h1 className="text-6xl font-bold text-gray-300 dark:text-gray-600 mb-4">404</h1>
-                        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">الصفحة غير موجودة</h2>
-                        <p className="text-gray-500 dark:text-gray-400 mb-8">عذراً، الصفحة التي تبحث عنها غير موجودة.</p>
-                        <Navigate to="/" replace>
-                          <button className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg transition-colors duration-200">
-                            العودة للرئيسية
-                          </button>
-                        </Navigate>
-                      </div>
-                    </div>
-                  } />
-                </Routes>
-              </Suspense>
-            </div>
-          </BrowserRouter>
-        </NotificationProvider>
-      </AuthProvider>
-    </ThemeProvider>
+                      {/* Financial Intelligence - Advanced Analytics */}
+                      <Route path="/financial-intelligence" element={
+                        <RequireAuth requiredPermissions={['financial:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <FinancialIntelligence />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Menu Intelligence - Menu Performance Analysis */}
+                      <Route path="/menu-intelligence" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <MenuIntelligence />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Notifications Center */}
+                      <Route path="/notifications" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <NotificationsCenter />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      <Route path="/settings" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <Settings />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      <Route path="/git-ops" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <GitOperations />
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Subscription Management */}
+                      <Route path="/subscriptions" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <Subscriptions />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Billing */}
+                      <Route path="/billing" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <Billing />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* 404 Route */}
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                  </Suspense>
+                </div>
+              </BrowserRouter>
+            </SubscriptionProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

@@ -1,625 +1,409 @@
+ claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
 /* src/styles/globals.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+
+/* NAVA OPS - Modern Design System */
+ main
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+ claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+ main
 :root {
-  /* الألوان المخصصة لـ NAVA */
+  /* Modern Color Palette */
   --nava-primary: 0 136 255;
   --nava-secondary: 139 92 246;
   --nava-success: 16 185 129;
   --nava-warning: 245 158 11;
   --nava-error: 239 68 68;
-  --nava-dark: 17 24 39;
-  --nava-light: 249 250 251;
-  
-  /* التدرجات */
-  --gradient-primary: linear-gradient(135deg, rgb(0 136 255) 0%, rgb(139 92 246) 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  --gradient-dark: linear-gradient(135deg, rgb(17 24 39) 0%, rgb(31 41 55) 100%);
-  
-  /* الظلال */
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-glow: 0 0 20px -10px rgba(59, 130, 246, 0.5);
+
+  /* Neutral Colors */
+  --nava-dark: 23 23 23;
+  --nava-light: 250 250 250;
+  --nava-muted: 115 115 115;
+
+  /* Modern Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.08), 0 3px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 20px -3px rgba(0, 0, 0, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 30px -5px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+
+  /* Modern Gradients */
+  --gradient-primary: linear-gradient(135deg, rgb(0 136 255) 0%, rgb(0 112 224) 100%);
+  --gradient-subtle: linear-gradient(135deg, rgb(250 250 250) 0%, rgb(245 245 245) 100%);
+  --gradient-mesh: radial-gradient(at 40% 20%, rgba(0 136 255 / 0.15) 0px, transparent 50%),
+                   radial-gradient(at 80% 0%, rgba(139 92 246 / 0.15) 0px, transparent 50%),
+                   radial-gradient(at 0% 50%, rgba(16 185 129 / 0.15) 0px, transparent 50%);
 }
 
 @layer base {
   * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    @apply border-border;
   }
 
   html {
-    font-family: 'Inter', 'Tahoma', 'Arial', system-ui, sans-serif;
+    @apply antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     direction: rtl;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   body {
-    background: linear-gradient(135deg, #1e3a8a 0%, #7e22ce 50%, #1e40af 100%);
-    min-height: 100vh;
+    @apply bg-gradient-to-br from-gray-50 via-white to-gray-50;
+    @apply text-gray-900 min-h-screen;
     background-attachment: fixed;
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    line-height: 1.6;
-    color: #1f2937;
   }
 
-  /* تحسين النصوص للغة العربية */
+  /* Dark mode styles */
+  .dark body {
+    @apply bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950;
+    @apply text-gray-50;
+  }
+
+  /* Modern Typography */
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.025em;
+    @apply font-semibold tracking-tight;
   }
 
   h1 {
-    @apply text-3xl md:text-4xl font-bold;
+    @apply text-3xl md:text-4xl lg:text-5xl;
   }
 
   h2 {
-    @apply text-2xl md:text-3xl font-semibold;
+    @apply text-2xl md:text-3xl lg:text-4xl;
   }
 
   h3 {
-    @apply text-xl md:text-2xl font-semibold;
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  h4 {
+    @apply text-lg md:text-xl;
   }
 
   p {
-    @apply text-gray-600 leading-relaxed;
+    @apply text-gray-600 dark:text-gray-400 leading-relaxed;
   }
 
-  /* تحسينات للأداء والحركات */
-  * {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* تحسينات النماذج */
-  input, select, textarea {
+  /* Smooth transitions */
+  a, button, input, select, textarea {
     @apply transition-all duration-200;
   }
 
-  /* تحسينات الروابط */
-  a {
-    @apply transition-colors duration-200;
-  }
-
-  /* تحسينات الصور */
-  img {
-    @apply max-w-full h-auto;
+  /* Focus styles */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  a:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
   }
 }
 
 @layer components {
-  /* ========== التصميم الزجاجي المتقدم ========== */
-  .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-glass;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-  
-  .glass-card {
-    @apply bg-white/15 backdrop-blur-md border border-white/20 shadow-2xl rounded-2xl;
-    backdrop-filter: blur(16px) saturate(180%);
-  }
-  
-  .glass-panel {
-    @apply bg-white/20 backdrop-blur-lg border border-white/30 shadow-xl rounded-2xl;
-  }
-
-  .glass-nav {
-    @apply bg-white/8 backdrop-blur-xl border-b border-white/10 shadow-sm;
-    backdrop-filter: blur(24px) saturate(180%);
-  }
-
-  /* ========== النصوص المتدرجة ========== */
-  .gradient-text {
-    @apply bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent;
-    background-size: 200% 200%;
-    animation: gradientShift 3s ease infinite;
-  }
-
-  .gradient-text-primary {
-    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
-  }
-
-  .gradient-text-nava {
-    background: linear-gradient(135deg, #0088FF 0%, #8b5cf6 50%, #0088FF 100%);
-    @apply bg-clip-text text-transparent;
-    background-size: 200% 200%;
-    animation: gradientShift 4s ease infinite;
-  }
-
-  /* ========== نظام الأزرار المتقدم ========== */
-  .btn {
-    @apply inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 
-           focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed
-           transform hover:scale-105 active:scale-95;
-  }
-
-  .btn-lg {
-    @apply px-6 py-3 text-lg;
-  }
-
-  .btn-md {
-    @apply px-4 py-2 text-base;
-  }
-
-  .btn-sm {
-    @apply px-3 py-1.5 text-sm;
-  }
-
-  .btn-primary {
-    @apply btn bg-primary-500 hover:bg-primary-600 text-white focus:ring-primary-500 
-           shadow-lg hover:shadow-xl border border-primary-600;
-  }
-
-  .btn-secondary {
-    @apply btn bg-secondary-500 hover:bg-secondary-600 text-white focus:ring-secondary-500 
-           shadow-lg hover:shadow-xl border border-secondary-600;
-  }
-
-  .btn-success {
-    @apply btn bg-green-500 hover:bg-green-600 text-white focus:ring-green-500 
-           shadow-lg hover:shadow-xl border border-green-600;
-  }
-
-  .btn-warning {
-    @apply btn bg-yellow-500 hover:bg-yellow-600 text-white focus:ring-yellow-500 
-           shadow-lg hover:shadow-xl border border-yellow-600;
-  }
-
-  .btn-error {
-    @apply btn bg-red-500 hover:bg-red-600 text-white focus:ring-red-500 
-           shadow-lg hover:shadow-xl border border-red-600;
-  }
-
-  .btn-ghost {
-    @apply btn bg-transparent hover:bg-white/10 text-white border border-white/20 
-           hover:border-white/30 focus:ring-white/50;
-  }
-
-  .btn-glass {
-    @apply btn glass hover:bg-white/20 text-white font-medium backdrop-blur-sm 
-           border border-white/30 hover:border-white/40 hover:shadow-lg;
-  }
-
-  .btn-outline {
-    @apply btn bg-transparent border-2 border-primary-500 text-primary-600 
-           hover:bg-primary-500 hover:text-white focus:ring-primary-500;
-  }
-
-  /* ========== نظام البطاقات المتقدم ========== */
+  /* ========== Modern Card System ========== */
   .card {
-    @apply bg-white rounded-2xl shadow-card border border-gray-200 overflow-hidden 
-           transition-all duration-300 hover:shadow-xl;
-  }
-
-  .card-glass {
-    @apply glass-card rounded-2xl p-6 text-white transition-all duration-300 
-           hover:bg-white/20 hover:shadow-2xl;
-  }
-
-  .card-hover {
-    @apply card transform hover:-translate-y-2 cursor-pointer;
-  }
-
-  .card-header {
-    @apply p-6 border-b border-gray-200 bg-gray-50;
+    @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800;
+    @apply shadow-sm hover:shadow-md transition-all duration-300;
   }
 
   .card-body {
     @apply p-6;
   }
 
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200 dark:border-gray-800;
+  }
+
   .card-footer {
-    @apply p-6 border-t border-gray-200 bg-gray-50;
+    @apply px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50;
   }
 
-  /* ========== نظام النماذج المتقدم ========== */
-  .form-group {
-    @apply space-y-2;
+  .card-glass {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-gray-900/80;
+    @apply border border-gray-200/50 dark:border-gray-700/50;
+    @apply shadow-lg rounded-2xl;
   }
 
-  .form-label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+  .card-hover {
+    @apply card cursor-pointer;
+    @apply hover:shadow-lg hover:-translate-y-1 hover:border-primary-200 dark:hover:border-primary-800;
   }
 
-  .form-error {
-    @apply text-red-600 text-sm mt-1 flex items-center gap-1;
+  /* ========== Modern Button System ========== */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2;
+    @apply px-4 py-2 rounded-xl font-medium;
+    @apply transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
   }
 
-  .form-hint {
-    @apply text-gray-500 text-sm mt-1;
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm rounded-lg;
   }
 
+  .btn-lg {
+    @apply px-6 py-3 text-lg rounded-xl;
+  }
+
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white;
+    @apply shadow-sm hover:shadow-md hover:shadow-primary-500/20;
+    @apply focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-900;
+    @apply dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100;
+    @apply focus:ring-gray-500;
+  }
+
+  .btn-outline {
+    @apply border-2 border-gray-300 dark:border-gray-700;
+    @apply hover:border-primary-500 hover:text-primary-500 dark:hover:border-primary-500;
+    @apply focus:ring-primary-500;
+  }
+
+  .btn-ghost {
+    @apply hover:bg-gray-100 dark:hover:bg-gray-800;
+    @apply focus:ring-gray-500;
+  }
+
+  .btn-success {
+    @apply bg-success-500 hover:bg-success-600 text-white;
+    @apply shadow-sm hover:shadow-md hover:shadow-success-500/20;
+  }
+
+  .btn-warning {
+    @apply bg-warning-500 hover:bg-warning-600 text-white;
+    @apply shadow-sm hover:shadow-md hover:shadow-warning-500/20;
+  }
+
+  .btn-error {
+    @apply bg-error-500 hover:bg-error-600 text-white;
+    @apply shadow-sm hover:shadow-md hover:shadow-error-500/20;
+  }
+
+  /* ========== Modern Form System ========== */
   .input-field {
-    @apply w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none 
-           focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all 
-           duration-200 bg-white/90 backdrop-blur-sm placeholder-gray-400
-           disabled:bg-gray-100 disabled:cursor-not-allowed;
+    @apply w-full px-4 py-2.5 rounded-xl;
+    @apply bg-white dark:bg-gray-900;
+    @apply border border-gray-300 dark:border-gray-700;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply placeholder:text-gray-400 dark:placeholder:text-gray-600;
+    @apply disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed;
+    @apply transition-all duration-200;
   }
 
-  .input-glass {
-    @apply glass rounded-lg px-4 py-2.5 text-white placeholder-white/70 focus:outline-none 
-           focus:ring-2 focus:ring-white/50 transition-all duration-200 backdrop-blur-sm;
+  .input-error {
+    @apply border-error-500 focus:ring-error-500;
   }
 
   .textarea-field {
-    @apply input-field resize-vertical min-h-24;
+    @apply input-field min-h-24 resize-y;
   }
 
   .select-field {
-    @apply input-field pr-10 appearance-none;
+    @apply input-field cursor-pointer;
   }
 
-  /* ========== نظام التنقل المتقدم ========== */
-  .nav-container {
-    @apply glass-nav sticky top-0 z-50;
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5;
   }
 
-  .nav-item {
-    @apply flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 
-           rounded-lg transition-all duration-200 backdrop-blur-sm relative
-           overflow-hidden group;
+  .form-error {
+    @apply text-error-600 dark:text-error-400 text-sm mt-1 flex items-center gap-1;
   }
 
-  .nav-item::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-primary-500/20 to-transparent 
-           opacity-0 transition-opacity duration-200;
+  .form-hint {
+    @apply text-gray-500 dark:text-gray-400 text-sm mt-1;
   }
 
-  .nav-item:hover::before {
-    @apply opacity-100;
-  }
-
-  .nav-item.active {
-    @apply bg-white/20 text-white font-medium;
-  }
-
-  .nav-item.active::before {
-    @apply opacity-100;
-  }
-
-  .nav-badge {
-    @apply absolute -top-1 -left-1 bg-red-500 text-white text-xs rounded-full 
-           w-5 h-5 flex items-center justify-center animate-pulse;
-  }
-
-  /* ========== نظام الجداول المتقدم ========== */
-  .table-container {
-    @apply overflow-hidden rounded-2xl;
-  }
-
-  .table-glass {
-    @apply glass rounded-2xl overflow-hidden backdrop-blur-md w-full;
-  }
-
-  .table {
-    @apply w-full divide-y divide-white/10;
-  }
-
-  .table-header {
-    @apply bg-white/20 text-white/90 font-semibold text-right px-6 py-4 
-           border-b border-white/20 backdrop-blur-sm;
-  }
-
-  .table-cell {
-    @apply px-6 py-4 text-white/80 border-b border-white/10 transition-colors 
-           duration-200 hover:bg-white/5;
-  }
-
-  .table-row {
-    @apply hover:bg-white/5 transition-colors duration-200;
-  }
-
-  /* ========== نظام الحالات والعلامات المتقدم ========== */
+  /* ========== Modern Badge System ========== */
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
-           border transition-colors duration-200;
-  }
-
-  .badge-sm {
-    @apply px-2 py-0.5 text-xs;
-  }
-
-  .badge-lg {
-    @apply px-4 py-1.5 text-base;
-  }
-
-  .badge-success {
-    @apply bg-green-100 text-green-800 border-green-200;
-  }
-
-  .badge-warning {
-    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
-  }
-
-  .badge-error {
-    @apply bg-red-100 text-red-800 border-red-200;
-  }
-
-  .badge-info {
-    @apply bg-blue-100 text-blue-800 border-blue-200;
+    @apply inline-flex items-center gap-1 px-2.5 py-1;
+    @apply text-xs font-medium rounded-lg;
+    @apply transition-colors duration-200;
   }
 
   .badge-primary {
-    @apply bg-primary-100 text-primary-800 border-primary-200;
+    @apply bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300;
   }
 
-  .badge-secondary {
-    @apply bg-secondary-100 text-secondary-800 border-secondary-200;
+  .badge-success {
+    @apply bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-300;
   }
 
-  .badge-glass {
-    @apply glass text-white border-white/20;
+  .badge-warning {
+    @apply bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300;
   }
 
-  /* ========== نظام التقدم والإحصائيات المتقدم ========== */
-  .progress-container {
-    @apply w-full bg-white/20 rounded-full h-2 overflow-hidden;
+  .badge-error {
+    @apply bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-300;
   }
 
-  .progress-bar {
-    @apply h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full 
-           transition-all duration-500 relative overflow-hidden;
+  .badge-gray {
+    @apply bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300;
   }
 
-  .progress-bar::after {
-    content: '';
-    @apply absolute inset-0 bg-white/20 animate-pulse;
-    animation: shimmer 2s infinite;
-  }
-
-  .stats-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
-  }
-
+  /* ========== Modern Stats Card ========== */
   .stats-card {
-    @apply glass-card rounded-2xl p-6 text-white backdrop-blur-md transition-all 
-           duration-300 hover:shadow-2xl hover:bg-white/20;
+    @apply card-glass p-6 relative overflow-hidden;
+    @apply hover:shadow-xl transition-all duration-300;
   }
 
   .stats-value {
-    @apply text-3xl font-bold text-white mb-2;
+    @apply text-3xl font-bold text-gray-900 dark:text-white;
   }
 
   .stats-label {
-    @apply text-white/70 text-sm;
+    @apply text-sm text-gray-600 dark:text-gray-400 font-medium;
   }
 
   .stats-trend {
-    @apply flex items-center text-sm mt-2;
+    @apply flex items-center gap-1 text-sm font-medium;
   }
 
   .stats-trend.up {
-    @apply text-green-300;
+    @apply text-success-600 dark:text-success-400;
   }
 
   .stats-trend.down {
-    @apply text-red-300;
+    @apply text-error-600 dark:text-error-400;
   }
 
-  /* ========== نظام التنبيهات والإشعارات ========== */
+  /* ========== Modern Table System ========== */
+  .table-container {
+    @apply overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800;
+  }
+
+  .table {
+    @apply w-full;
+  }
+
+  .table-header {
+    @apply bg-gray-50 dark:bg-gray-900/50;
+    @apply px-6 py-3 text-right text-xs font-semibold;
+    @apply text-gray-700 dark:text-gray-300 uppercase tracking-wider;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 text-sm text-gray-900 dark:text-gray-100;
+  }
+
+  .table-row {
+    @apply border-b border-gray-200 dark:border-gray-800;
+    @apply hover:bg-gray-50 dark:hover:bg-gray-800/50;
+    @apply transition-colors duration-150;
+  }
+
+  /* ========== Modern Alert System ========== */
   .alert {
-    @apply p-4 rounded-lg border backdrop-blur-sm transition-all duration-300;
-  }
-
-  .alert-success {
-    @apply alert bg-green-50 border-green-200 text-green-800;
-  }
-
-  .alert-warning {
-    @apply alert bg-yellow-50 border-yellow-200 text-yellow-800;
-  }
-
-  .alert-error {
-    @apply alert bg-red-50 border-red-200 text-red-800;
+    @apply p-4 rounded-xl border;
+    @apply flex items-start gap-3;
   }
 
   .alert-info {
-    @apply alert bg-blue-50 border-blue-200 text-blue-800;
+    @apply bg-primary-50 dark:bg-primary-900/20;
+    @apply border-primary-200 dark:border-primary-800;
+    @apply text-primary-800 dark:text-primary-200;
   }
 
-  .alert-glass {
-    @apply alert glass text-white border-white/20;
+  .alert-success {
+    @apply bg-success-50 dark:bg-success-900/20;
+    @apply border-success-200 dark:border-success-800;
+    @apply text-success-800 dark:text-success-200;
   }
 
-  /* ========== نظام التحميل والحركات ========== */
+  .alert-warning {
+    @apply bg-warning-50 dark:bg-warning-900/20;
+    @apply border-warning-200 dark:border-warning-800;
+    @apply text-warning-800 dark:text-warning-200;
+  }
+
+  .alert-error {
+    @apply bg-error-50 dark:bg-error-900/20;
+    @apply border-error-200 dark:border-error-800;
+    @apply text-error-800 dark:text-error-200;
+  }
+
+  /* ========== Modern Tab System ========== */
+  .tabs-list {
+    @apply flex gap-1 p-1 bg-gray-100 dark:bg-gray-900 rounded-xl;
+  }
+
+  .tab {
+    @apply px-4 py-2 text-sm font-medium rounded-lg;
+    @apply text-gray-600 dark:text-gray-400;
+    @apply hover:text-gray-900 dark:hover:text-gray-100;
+    @apply transition-all duration-200;
+  }
+
+  .tab-active {
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm;
+  }
+
+  /* ========== Modern Modal System ========== */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+    @apply flex items-center justify-center p-4;
+  }
+
+  .modal-content {
+    @apply bg-white dark:bg-gray-900 rounded-2xl;
+    @apply shadow-2xl w-full max-w-md;
+    @apply border border-gray-200 dark:border-gray-800;
+  }
+
+  .modal-header {
+    @apply px-6 py-4 border-b border-gray-200 dark:border-gray-800;
+  }
+
+  .modal-body {
+    @apply px-6 py-4;
+  }
+
+  .modal-footer {
+    @apply px-6 py-4 border-t border-gray-200 dark:border-gray-800;
+    @apply flex items-center justify-end gap-2;
+  }
+
+  /* ========== Modern Loading States ========== */
   .loading-spinner {
-    @apply animate-spin rounded-full border-2 border-white border-t-transparent;
-  }
-
-  .loading-dots {
-    @apply flex space-x-1 space-x-reverse;
-  }
-
-  .loading-dots div {
-    @apply w-2 h-2 bg-current rounded-full animate-bounce;
-  }
-
-  .loading-dots div:nth-child(2) {
-    animation-delay: 0.1s;
-  }
-
-  .loading-dots div:nth-child(3) {
-    animation-delay: 0.2s;
+    @apply animate-spin rounded-full border-2 border-gray-300;
+    @apply border-t-primary-500;
   }
 
   .skeleton {
-    @apply bg-gray-300 animate-pulse rounded;
+    @apply bg-gray-200 dark:bg-gray-800 animate-pulse rounded;
   }
 
   .skeleton-text {
-    @apply skeleton h-4 rounded;
+    @apply skeleton h-4;
   }
 
   .skeleton-circle {
     @apply skeleton rounded-full;
   }
-
-  /* ========== نظام الرسوم البيانية والتخيل ========== */
-  .chart-container {
-    @apply glass-card p-6 rounded-2xl;
-  }
-
-  .metric-card {
-    @apply card p-6 text-center transition-all duration-300 hover:shadow-lg;
-  }
-
-  .metric-value {
-    @apply text-3xl font-bold text-gray-900 mb-2;
-  }
-
-  .metric-label {
-    @apply text-gray-600 text-sm;
-  }
-
-  /* ========== نظام التبويبات المتقدم ========== */
-  .tabs-container {
-    @apply border-b border-gray-200;
-  }
-
-  .tab-list {
-    @apply flex space-x-8 space-x-reverse -mb-px;
-  }
-
-  .tab {
-    @apply py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 
-           hover:border-gray-300 transition-all duration-200 font-medium;
-  }
-
-  .tab.active {
-    @apply border-primary-500 text-primary-600;
-  }
-
-  .tab-panel {
-    @apply py-6;
-  }
 }
 
 @layer utilities {
-  /* ========== الظلال والتأثيرات المتقدمة ========== */
-  .shadow-glass {
-    box-shadow: 
-      0 8px 32px 0 rgba(31, 38, 135, 0.37),
-      0 4px 16px 0 rgba(31, 38, 135, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-
-  .shadow-card {
-    box-shadow: 
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
-  }
-
-  .shadow-glow {
-    box-shadow: 0 0 20px -10px rgba(59, 130, 246, 0.5);
-  }
-
-  .shadow-glow-primary {
-    box-shadow: 0 0 30px -10px rgba(0, 136, 255, 0.6);
-  }
-
-  /* ========== التحريك والحركات المتقدمة ========== */
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-float-slow {
-    animation: float 8s ease-in-out infinite;
-  }
-
-  .animate-float-fast {
-    animation: float 4s ease-in-out infinite;
-  }
-
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-
-  .animate-pulse-slow {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .animate-bounce-slow {
-    animation: bounce 3s infinite;
-  }
-
-  .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-
-  .fade-in-up {
-    animation: fadeInUp 0.6s ease-out;
-  }
-
-  .fade-in-down {
-    animation: fadeInDown 0.6s ease-out;
-  }
-
-  .slide-in-right {
-    animation: slideInRight 0.3s ease-out;
-  }
-
-  .slide-in-left {
-    animation: slideInLeft 0.3s ease-out;
-  }
-
-  .scale-in {
-    animation: scaleIn 0.3s ease-out;
-  }
-
-  /* ========== التدرجات المتقدمة ========== */
-  .bg-gradient-primary {
-    background: linear-gradient(135deg, #0088FF 0%, #8b5cf6 100%);
-  }
-
-  .bg-gradient-glass {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  }
-
-  .bg-gradient-dark {
-    background: linear-gradient(135deg, rgb(17 24 39) 0%, rgb(31 41 55) 100%);
-  }
-
-  .bg-gradient-nava {
-    background: linear-gradient(135deg, #1e3a8a 0%, #7e22ce 50%, #1e40af 100%);
-  }
-
-  /* ========== النصوص والتخطيط ========== */
-  .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .text-shadow-lg {
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .text-shadow-none {
-    text-shadow: none;
-  }
-
+  /* ========== Modern Utilities ========== */
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
   .section-padding {
-    @apply py-8 lg:py-12;
-  }
-
-  .section-padding-lg {
     @apply py-12 lg:py-16;
   }
 
-  /* ========== التخطيط والمرونة ========== */
   .flex-center {
     @apply flex items-center justify-center;
   }
@@ -628,23 +412,28 @@
     @apply flex items-center justify-between;
   }
 
-  .flex-start {
-    @apply flex items-center justify-start;
+  .text-balance {
+    text-wrap: balance;
   }
 
-  .flex-end {
-    @apply flex items-center justify-end;
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-gray-900/80;
+    @apply border border-gray-200/50 dark:border-gray-700/50;
   }
 
-  .grid-responsive {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-500 to-secondary-500;
+    @apply bg-clip-text text-transparent;
   }
 
-  .grid-auto-fit {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1;
   }
 
-  /* ========== المرونة والاستجابة ========== */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -653,200 +442,47 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  .backdrop-safari {
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-
-  /* ========== تحسينات اللغة العربية ========== */
-  .arabic-text {
-    line-height: 1.8;
-    letter-spacing: 0;
-    text-align: right;
-  }
-
-  .arabic-digits {
-    font-feature-settings: "ss01";
-  }
-
-  .text-rtl {
-    direction: rtl;
-    text-align: right;
-  }
-
-  /* ========== تأثيرات خاصة ========== */
-  .blur-backdrop {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-
-  .gradient-border {
-    border: double 1px transparent;
-    background-image: linear-gradient(white, white), 
-                      linear-gradient(135deg, #0088FF, #8b5cf6);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-  }
-
-  .hover-lift {
-    @apply transition-transform duration-300 hover:-translate-y-1;
-  }
-
-  .hover-glow:hover {
-    @apply shadow-glow-primary;
-  }
 }
 
-/* ========== تحريك المفاتيح المتقدم ========== */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes glow {
-  from {
-    box-shadow: 0 0 20px -10px rgba(59, 130, 246, 0.5);
-  }
-  to {
-    box-shadow: 0 0 30px -5px rgba(139, 92, 246, 0.8);
-  }
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* ========== شريط التمرير المخصص ========== */
+/* ========== Modern Scrollbar ========== */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  @apply w-2 h-2;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  @apply bg-gray-100 dark:bg-gray-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-  transition: background 0.3s ease;
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  @apply hover:bg-gray-400 dark:hover:bg-gray-600;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+/* ========== Print Styles ========== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    @apply bg-white text-black;
+  }
 }
 
-::-webkit-scrollbar-thumb:active {
-  background: rgba(255, 255, 255, 0.7);
+/* ========== Accessibility ========== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* ========== تحسينات للشاشات الصغيرة ========== */
+/* ========== Responsive Helpers ========== */
 @media (max-width: 768px) {
-  .container-custom {
-    @apply px-4;
-  }
-  
-  .section-padding {
-    @apply py-6;
-  }
-
-  .section-padding-lg {
-    @apply py-8;
-  }
-
-  .mobile-menu-open {
-    @apply overflow-hidden;
-  }
-
   .mobile-only {
     @apply block;
   }
@@ -864,147 +500,4 @@
   .desktop-only {
     @apply block;
   }
-}
-
-/* ========== طباعة ========== */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-  
-  .print-break {
-    page-break-after: always;
-  }
-
-  .print-full {
-    width: 100% !important;
-  }
-
-  body {
-    background: white !important;
-    color: black !important;
-  }
-}
-
-/* ========== تحسينات إمكانية الوصول ========== */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* التركيز المرئي المحسن */
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-a:focus-visible {
-  @apply outline-2 outline-offset-2 outline-primary-500 outline-dashed;
-}
-
-/* تحسينات للنماذج */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-/* تحسينات للقراءة القوية */
-@media (prefers-contrast: high) {
-  .glass {
-    @apply bg-white border-2 border-white;
-  }
-
-  .btn {
-    @apply border-2;
-  }
-}
-
-/* تحسينات للوضع المظلم */
-@media (prefers-color-scheme: dark) {
-  .dark-mode-fallback {
-    @apply bg-gray-900 text-white;
-  }
-}
-
-/* تحسينات للشاشات عالية الدقة */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .high-dpi {
-    image-rendering: -webkit-optimize-contrast;
-  }
-}
-
-/* ========== فئات مساعدة إضافية ========== */
-.line-clamp-1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-}
-
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.line-clamp-3 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-}
-
-.truncate-multiline {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* تأثيرات الظل النصي للنصوص الفاتحة على خلفيات داكنة */
-.text-shadow-on-dark {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* تحسينات للتفاعلات اللمسية على الأجهزة المحمولة */
-@media (hover: none) and (pointer: coarse) {
-  .hover-lift {
-    @apply transition-none hover:transform-none;
-  }
-
-  .btn:hover {
-    @apply transform-none;
-  }
-}
-
-/* فئات مساعدة للرسوم المتحركة المخصصة */
-.delay-100 {
-  animation-delay: 100ms;
-}
-
-.delay-200 {
-  animation-delay: 200ms;
-}
-
-.delay-300 {
-  animation-delay: 300ms;
-}
-
-.duration-1000 {
-  animation-duration: 1000ms;
-}
-
-.duration-2000 {
-  animation-duration: 2000ms;
 }

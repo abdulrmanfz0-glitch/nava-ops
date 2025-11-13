@@ -20,7 +20,7 @@ logger.info('Application started', {
 // Lazy loading للمكونات لتحسين الأداء
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const RestaurantsManagement = lazy(() => import('./pages/RestaurantsManagement'));
+const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
@@ -159,11 +159,20 @@ export default function App() {
                     </RequireAuth>
                   } />
 
-                  {/* إدارة المطاعم */}
+                  {/* إدارة الفروع */}
+                  <Route path="/branches" element={
+                    <RequireAuth requiredPermissions={['restaurants:view']}>
+                      <Layout>
+                        <BranchesManagement />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Keep old route for backwards compatibility */}
                   <Route path="/restaurants" element={
                     <RequireAuth requiredPermissions={['restaurants:view']}>
                       <Layout>
-                        <RestaurantsManagement />
+                        <BranchesManagement />
                       </Layout>
                     </RequireAuth>
                   } />

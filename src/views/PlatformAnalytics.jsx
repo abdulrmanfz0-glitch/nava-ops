@@ -1,9 +1,9 @@
-// src/components/analytics/PlatformAnalytics.jsx
+// src/views/PlatformAnalytics.jsx
 import React, { useMemo, useState, useEffect } from "react";
-import { supabase } from '@lib/supabase';
-import { useAuth } from '@contexts/AuthContext';
-import { useNotification } from '@contexts/NotificationContext';
-import { exportUtils } from '@utils/exportUtils';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotification } from '@/contexts/NotificationContext';
+import { exportUtils } from '@/utils/exportUtils';
 import { 
   TrendingUp, BarChart3, PieChart, Download, Search, Filter, Award, TrendingDown,
   DollarSign, ShoppingBag, Percent, Target, Calendar, RefreshCw, Eye, MoreVertical,

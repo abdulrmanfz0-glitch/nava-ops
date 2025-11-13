@@ -1,16 +1,14 @@
 // src/App.jsx
 import React, { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { NotificationProvider } from './contexts/NotificationContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
 import ErrorBoundary from './components/ErrorBoundary';
 import { logger, PerformanceLogger } from './lib/logger';
 
-console.log('🚀 App.jsx loaded - Vite + React running');
+logger.info('App.jsx loaded - Vite + React running');
 logger.info('Application started', {
   version: import.meta.env.VITE_APP_VERSION,
   environment: import.meta.env.VITE_ENVIRONMENT,
@@ -33,11 +31,11 @@ function RequireAuth({ children, requiredPermissions = [] }) {
   const { connectionStatus, user, hasPermission, isAuthenticated } = useAuth();
   const location = useLocation();
 
-  console.log('🔐 RequireAuth check:', { connectionStatus, isAuthenticated, user: !!user });
+  logger.debug('RequireAuth check', { connectionStatus, isAuthenticated, hasUser: !!user });
 
   // أثناء التحقق من الجلسة
   if (connectionStatus === 'checking') {
-    console.log('⏳ Connection status is checking...');
+    logger.debug('Connection status is checking');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -74,11 +72,11 @@ function RequireAuth({ children, requiredPermissions = [] }) {
 
   // لو غير مسجل دخول -> رجّعه للّوجن
   if (!isAuthenticated) {
-    console.log('❌ Not authenticated, redirecting to login');
+    logger.debug('Not authenticated, redirecting to login');
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  console.log('✅ Authenticated, rendering protected content');
+  logger.debug('Authenticated, rendering protected content');
 
   // التحقق من الصلاحيات إذا كانت مطلوبة
   if (requiredPermissions.length > 0 && !hasPermission(requiredPermissions)) {
@@ -139,14 +137,10 @@ export default function App() {
         logger.fatal('Critical Application Error', { errorInfo }, error)
       }}
     >
-      <ThemeProvider>
-        <AuthProvider>
-          <NotificationProvider>
-            <BrowserRouter>
-              <div className="App">
-                <OfflineIndicator />
-                <Suspense fallback={<GlobalLoading />}>
-                <Routes>
+      <div className="App">
+        <OfflineIndicator />
+        <Suspense fallback={<GlobalLoading />}>
+          <Routes>
                   {/* صفحة تسجيل الدخول */}
                   <Route path="/login" element={<Login />} />
 
@@ -244,13 +238,9 @@ export default function App() {
                       </div>
                     </div>
                   } />
-                </Routes>
-              </Suspense>
-            </div>
-          </BrowserRouter>
-        </NotificationProvider>
-      </AuthProvider>
-    </ThemeProvider>
+          </Routes>
+        </Suspense>
+      </div>
     </ErrorBoundary>
   );
 }

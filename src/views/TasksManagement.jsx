@@ -1,9 +1,9 @@
-// src/components/tasks/TasksManagement.jsx
+// src/views/TasksManagement.jsx
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { supabase } from '@lib/supabase';
-import { useAuth } from '@contexts/AuthContext';
-import { useNotification } from '@contexts/NotificationContext';
-import { exportUtils } from '@utils/exportUtils';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotification } from '@/contexts/NotificationContext';
+import { exportUtils } from '@/utils/exportUtils';
 import { 
   Plus, Download, FileText, Search, Filter, Calendar, User, 
   Clock, AlertTriangle, CheckCircle, MoreVertical, Edit, Trash2,

@@ -23,7 +23,8 @@ import {
   ShoppingCart,
   Calendar,
   BarChart3,
-  Eye
+  Eye,
+  Activity
 } from 'lucide-react';
 
 export default function BranchesManagement() {
@@ -343,7 +344,11 @@ export default function BranchesManagement() {
           loading={loading}
           searchable
           exportable
-          onExport={() => showNotification('Export feature coming soon!', 'info')}
+          onExport={() => addNotification({
+            title: 'Info',
+            message: 'Export feature coming soon!',
+            type: 'info'
+          })}
           onRowClick={(row) => handleEdit(row)}
         />
       )}

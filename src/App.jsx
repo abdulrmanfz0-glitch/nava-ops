@@ -10,7 +10,6 @@ import OfflineIndicator from './components/UI/OfflineIndicator';
 import ErrorBoundary from './components/ErrorBoundary';
 import { logger, PerformanceLogger } from './lib/logger';
 
-console.log('🚀 App.jsx loaded - Vite + React running');
 logger.info('Application started', {
   version: import.meta.env.VITE_APP_VERSION,
   environment: import.meta.env.VITE_ENVIRONMENT,
@@ -33,11 +32,8 @@ function RequireAuth({ children, requiredPermissions = [] }) {
   const { connectionStatus, user, hasPermission, isAuthenticated } = useAuth();
   const location = useLocation();
 
-  console.log('🔐 RequireAuth check:', { connectionStatus, isAuthenticated, user: !!user });
-
   // أثناء التحقق من الجلسة
   if (connectionStatus === 'checking') {
-    console.log('⏳ Connection status is checking...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -74,11 +70,8 @@ function RequireAuth({ children, requiredPermissions = [] }) {
 
   // لو غير مسجل دخول -> رجّعه للّوجن
   if (!isAuthenticated) {
-    console.log('❌ Not authenticated, redirecting to login');
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
-
-  console.log('✅ Authenticated, rendering protected content');
 
   // التحقق من الصلاحيات إذا كانت مطلوبة
   if (requiredPermissions.length > 0 && !hasPermission(requiredPermissions)) {

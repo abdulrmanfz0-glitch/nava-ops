@@ -1,5 +1,5 @@
 // src/contexts/ThemeContext.jsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const ThemeContext = createContext();
 
@@ -38,17 +38,17 @@ export function ThemeProvider({ children }) {
     localStorage.setItem('nava-theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
+  }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     theme,
     setTheme,
     toggleTheme,
     isDark: theme === 'dark',
     isLight: theme === 'light'
-  };
+  }), [theme, toggleTheme]);
 
   return (
     <ThemeContext.Provider value={value}>

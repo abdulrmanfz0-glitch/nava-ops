@@ -1,5 +1,5 @@
 // src/contexts/AuthContext.jsx
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase, checkSupabaseConnection, handleSupabaseError } from '../lib/supabase';
 import { useNotification } from './NotificationContext';
 
@@ -27,7 +27,6 @@ export function AuthProvider({ children }) {
   // DEV MODE: Skip authentication checks
   useEffect(() => {
     if (DEV_BYPASS_AUTH) {
-      console.log('🔧 DEV MODE: Authentication bypassed');
       const mockUser = {
         id: 'dev-user-id',
         email: 'dev@nava-ops.local',
@@ -82,16 +81,13 @@ export function AuthProvider({ children }) {
   // Initialize authentication
   const initializeAuth = async () => {
     try {
-      console.log('🔐 Initializing authentication...');
       setLoading(true);
       const connection = await checkSupabaseConnection();
-      console.log('📡 Connection status:', connection);
       setConnectionStatus(connection.connected ? 'connected' : 'disconnected');
 
       if (connection.connected) {
         await setupAuthListener();
       } else {
-        console.warn('⚠️ Supabase not connected, setting loading to false');
         addNotification({
           type: 'warning',
           title: 'Connection Warning',
@@ -101,7 +97,6 @@ export function AuthProvider({ children }) {
         setLoading(false);
       }
     } catch (error) {
-      console.error('❌ Auth initialization error:', error);
       setConnectionStatus('error');
       setLoading(false);
     }
@@ -112,7 +107,6 @@ export function AuthProvider({ children }) {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
       if (sessionError) {
-        console.error('Session error:', sessionError);
         setLoading(false);
         return;
       }
@@ -125,8 +119,6 @@ export function AuthProvider({ children }) {
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
-          console.log('Auth state changed:', event);
-
           switch (event) {
             case 'SIGNED_IN':
               if (session?.user) {
@@ -171,7 +163,6 @@ export function AuthProvider({ children }) {
 
       return () => subscription.unsubscribe();
     } catch (error) {
-      console.error('Error setting up auth listener:', error);
       setLoading(false);
     }
   };
@@ -199,14 +190,12 @@ export function AuthProvider({ children }) {
         .single();
 
       if (error) {
-        console.warn('User profile not found, creating default...');
         await createDefaultUserProfile(user);
       } else {
         setUserProfile(profile);
         await logUserActivity(user.id, 'login');
       }
     } catch (error) {
-      console.error('Error handling user session:', error);
       await createDefaultUserProfile(user);
     }
   };
@@ -236,7 +225,6 @@ export function AuthProvider({ children }) {
       setUserProfile(defaultProfile);
       return defaultProfile;
     } catch (error) {
-      console.error('Error creating default profile:', error);
       const fallbackProfile = {
         id: user.id,
         email: user.email,
@@ -264,7 +252,7 @@ export function AuthProvider({ children }) {
           }
         ]);
     } catch (error) {
-      console.error('Error logging user activity:', error);
+      // Silently fail for activity logging
     }
   };
 
@@ -293,7 +281,6 @@ export function AuthProvider({ children }) {
         user: data.user
       };
     } catch (error) {
-      console.error('Login error:', error);
       const handledError = handleSupabaseError(error);
 
       await logUserActivity(null, 'login_failed', {
@@ -344,7 +331,6 @@ export function AuthProvider({ children }) {
         requiresConfirmation: !data.session
       };
     } catch (error) {
-      console.error('Signup error:', error);
       const handledError = handleSupabaseError(error);
 
       return {
@@ -358,7 +344,6 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     if (DEV_BYPASS_AUTH) {
-      console.log('🔧 DEV MODE: Logout skipped');
       return;
     }
 
@@ -377,7 +362,6 @@ export function AuthProvider({ children }) {
       setSessionExpiry(null);
 
     } catch (error) {
-      console.error('Logout error:', error);
       throw error;
     }
   };
@@ -399,7 +383,6 @@ export function AuthProvider({ children }) {
 
       return { success: true, error: null };
     } catch (error) {
-      console.error('Password reset error:', error);
       const handledError = handleSupabaseError(error);
       return { success: false, error: handledError.message };
     }
@@ -432,7 +415,6 @@ export function AuthProvider({ children }) {
 
       return { success: true, error: null, profile: data };
     } catch (error) {
-      console.error('Profile update error:', error);
       const handledError = handleSupabaseError(error);
 
       addNotification({
@@ -477,7 +459,12 @@ export function AuthProvider({ children }) {
     return userPermissions.includes(permission);
   };
 
-  const value = {
+  const getSessionTimeLeft = useCallback(() => {
+    if (!sessionExpiry) return null;
+    return Math.max(0, sessionExpiry - new Date());
+  }, [sessionExpiry]);
+
+  const value = useMemo(() => ({
     user,
     userProfile,
     loading,
@@ -498,11 +485,8 @@ export function AuthProvider({ children }) {
     hasPermission,
     checkPermission,
 
-    getSessionTimeLeft: () => {
-      if (!sessionExpiry) return null;
-      return Math.max(0, sessionExpiry - new Date());
-    }
-  };
+    getSessionTimeLeft
+  }), [user, userProfile, loading, connectionStatus, sessionExpiry, login, signUp, logout, resetPassword, updateProfile, hasPermission, getSessionTimeLeft]);
 
   return (
     <AuthContext.Provider value={value}>

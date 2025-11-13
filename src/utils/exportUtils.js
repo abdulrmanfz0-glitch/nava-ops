@@ -83,7 +83,6 @@ export const csvUtils = {
 
       return { success: true, filename: `${filename}.csv` };
     } catch (error) {
-      console.error('CSV export error:', error);
       return { success: false, error: error.message };
     }
   },
@@ -148,10 +147,7 @@ export const pdfUtils = {
       // محاولة التقاط العنصر إذا كان موجوداً
       if (elementId && typeof window !== 'undefined') {
         const element = document.getElementById(elementId);
-        if (element) {
-          // يمكن إضافة مكتبة html2canvas هنا لالتقاط screenshots
-          console.log('Element found for PDF export:', elementId);
-        }
+        // يمكن إضافة مكتبة html2canvas هنا لالتقاط screenshots
       }
 
       // حفظ الملف
@@ -159,7 +155,6 @@ export const pdfUtils = {
 
       return { success: true, filename: `${filename}.pdf` };
     } catch (error) {
-      console.error('PDF export error:', error);
       return { success: false, error: error.message };
     }
   },
@@ -195,7 +190,6 @@ export const pdfUtils = {
       doc.save(`${filename}.pdf`);
       return { success: true };
     } catch (error) {
-      console.error('Table PDF export error:', error);
       return { success: false, error: error.message };
     }
   }
@@ -238,7 +232,6 @@ export const generalUtils = {
       saveAs(blob, `${filename}.json`);
       return { success: true };
     } catch (error) {
-      console.error('JSON export error:', error);
       return { success: false, error: error.message };
     }
   }

@@ -52,7 +52,6 @@ export default function PlatformAnalytics() {
         message: 'تم تحميل أحدث بيانات التحليلات'
       });
     } catch (error) {
-      console.error('Error fetching analytics data:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في تحميل البيانات',
@@ -84,7 +83,7 @@ export default function PlatformAnalytics() {
       if (error) throw error;
       setPlatforms(data || []);
     } catch (error) {
-      console.error('Error fetching platforms:', error);
+      // Error fetching platforms silently
     }
   };
 

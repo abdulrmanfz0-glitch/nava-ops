@@ -241,7 +241,6 @@ export default function App() {
                         </RequireAuth>
                       } />
 
- claude/resolve-merge-conflicts-011CV6BydX7m5gpScFVYoS4J
                       {/* Intelligence Hub - AI-Powered Analytics */}
                       <Route path="/intelligence" element={
                         <RequireAuth>
@@ -252,16 +251,6 @@ export default function App() {
                           </ErrorBoundary>
                         </RequireAuth>
                       } />
-
-                  {/* Intelligence Hub - AI-Powered Analytics */}
-                  <Route path="/intelligence" element={
-                    <RequireAuth>
-                      <Layout>
-                        <Intelligence />
-                      </Layout>
-                    </RequireAuth>
-                  } />
- main
 
                       {/* Executive HQ Dashboard - Premium Feature */}
                       <Route path="/executive-hq" element={
@@ -285,7 +274,6 @@ export default function App() {
                         </RequireAuth>
                       } />
 
- claude/resolve-merge-conflicts-011CV6BydX7m5gpScFVYoS4J
                       {/* Menu Intelligence - Menu Performance Analysis */}
                       <Route path="/menu-intelligence" element={
                         <RequireAuth requiredPermissions={['reports:view']}>
@@ -296,16 +284,6 @@ export default function App() {
                           </ErrorBoundary>
                         </RequireAuth>
                       } />
-
-                  {/* Menu Intelligence - Menu Performance Analysis */}
-                  <Route path="/menu-intelligence" element={
-                    <RequireAuth requiredPermissions={['reports:view']}>
-                      <Layout>
-                        <MenuIntelligence />
-                      </Layout>
-                    </RequireAuth>
-                  } />
- main
 
                       {/* Notifications Center */}
                       <Route path="/notifications" element={

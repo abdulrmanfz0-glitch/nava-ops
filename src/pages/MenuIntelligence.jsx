@@ -1,5 +1,4 @@
 // NAVA OPS - Menu Intelligence
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
 // Strategic menu performance analysis & optimization recommendations
 
 // Strategic menu performance analysis with engineering matrix
@@ -9,7 +8,6 @@ import React, { useState, useEffect } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
 import api from '@/services/api';
 import PageHeader from '@/components/UI/PageHeader';
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
 import { UtensilsCrossed, TrendingUp, TrendingDown, Star, AlertTriangle, CheckCircle } from 'lucide-react';
 
 // Menu Engineering Matrix Component
@@ -90,7 +88,6 @@ export default function MenuIntelligence() {
           popularity: 0.28,
           profitability: 0.40,
           trend: '+15%',
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
           classification: 'Star',
           image: '🍔'
         },
@@ -286,7 +283,6 @@ export default function MenuIntelligence() {
     }
   };
 
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
   // Classify items into BCG matrix categories
   const getClassification = (item) => {
     const avgPopularity = 0.20;
@@ -527,7 +523,6 @@ export default function MenuIntelligence() {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -569,7 +564,6 @@ export default function MenuIntelligence() {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
                   <td colSpan="8" className="px-6 py-12 text-center">
 
                   <td colSpan="6" className="py-12 text-center">
@@ -579,7 +573,6 @@ export default function MenuIntelligence() {
                     </div>
                   </td>
                 </tr>
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
               ) : menuItems.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
@@ -686,7 +679,6 @@ export default function MenuIntelligence() {
         </div>
       </div>
 
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
       {/* Menu Engineering Matrix Legend */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -786,7 +778,6 @@ export default function MenuIntelligence() {
     </div>
   );
 }
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
 
 // Main Menu Intelligence Component
 export default function MenuIntelligence() {

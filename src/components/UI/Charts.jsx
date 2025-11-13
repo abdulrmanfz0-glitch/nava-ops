@@ -30,7 +30,6 @@ const COLOR_PALETTE = [
   CHART_COLORS.teal
 ];
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Modern Custom Tooltip with refined styling
 const CustomTooltip = ({ active, payload, label, prefix = '', suffix = '' }) => {
 
@@ -67,7 +66,6 @@ const CustomTooltip = memo(({ active, payload, label, prefix = '', suffix = '' }
   return null;
 });
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Modern Loading State
 const ChartLoading = () => (
   <div className="w-full h-80 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-2xl">
@@ -137,7 +135,6 @@ export const RevenueTrendChart = memo(({ data, loading = false }) => {
   );
 });
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Orders Bar Chart with rounded corners
 export function OrdersBarChart({ data, loading = false }) {
   if (loading) return <ChartLoading />;
@@ -194,7 +191,6 @@ export const OrdersBarChart = memo(({ data, loading = false }) => {
   );
 });
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Modern Area Chart with gradient fills
 export function TrendAreaChart({ data, dataKeys = [], colors = [], loading = false }) {
   if (loading) return <ChartLoading />;
@@ -264,7 +260,6 @@ export const TrendAreaChart = memo(({ data, dataKeys = [], colors = [], loading 
   );
 });
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Branch Comparison Chart with modern horizontal bars
 export function BranchComparisonChart({ data, loading = false }) {
   if (loading) return <ChartLoading />;
@@ -325,7 +320,6 @@ export const BranchComparisonChart = memo(({ data, loading = false }) => {
   );
 });
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Modern Pie Chart with clean design
 export function CategoryPieChart({ data, loading = false }) {
   if (loading) return <ChartLoading />;
@@ -390,7 +384,6 @@ export const CategoryPieChart = memo(({ data, loading = false }) => {
   );
 });
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Multi-Line Chart for modern comparisons
 export function MultiLineChart({ data, lines = [], loading = false }) {
   if (loading) return <ChartLoading />;
@@ -452,7 +445,6 @@ export const MultiLineChart = memo(({ data, lines = [], loading = false }) => {
   );
 });
 
- claude/ui-design-overhaul-011CV5xogYtprfQkRSM6J4Sx
 // Modern Stacked Bar Chart
 export function StackedBarChart({ data, bars = [], loading = false }) {
   if (loading) return <ChartLoading />;

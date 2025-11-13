@@ -174,7 +174,6 @@ export class ErrorBoundaryLogger {
   }
 }
 
- claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
 // Performance Logger
 
 // Performance Logger for tracking app performance
@@ -186,7 +185,6 @@ export class PerformanceLogger {
     this.timers.set(label, performance.now());
   }
 
- claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
   static end(label, warnThreshold = 1000) {
     const startTime = this.timers.get(label);
     if (!startTime) {
@@ -249,7 +247,6 @@ export class PerformanceLogger {
   }
 
   static async measureAsync(label, fn) {
- claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
     const start = performance.now();
     const result = await fn();
     const duration = performance.now() - start;

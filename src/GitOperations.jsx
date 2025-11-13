@@ -80,7 +80,7 @@ export default function GitOperations() {
         fetchConfig();
       }
     } catch (err) {
-      console.error('API health check failed:', err);
+      // API health check failed silently
     }
   };
 
@@ -109,7 +109,7 @@ export default function GitOperations() {
         setConfig(data);
       }
     } catch (err) {
-      console.error('Failed to fetch config:', err);
+      // Failed to fetch config silently
     }
   };
 

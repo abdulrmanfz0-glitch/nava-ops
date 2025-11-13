@@ -10,7 +10,6 @@ import OfflineIndicator from './components/UI/OfflineIndicator';
 import ErrorBoundary from './components/ErrorBoundary';
 import { logger, PerformanceLogger } from './lib/logger';
 
-console.log('🚀 App.jsx loaded - Vite + React running');
 logger.info('Application started', {
   version: import.meta.env.VITE_APP_VERSION,
   environment: import.meta.env.VITE_ENVIRONMENT,
@@ -24,6 +23,8 @@ const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
+const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence'));
+const MenuIntelligence = lazy(() => import('./pages/MenuIntelligence'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
 const ExecutiveHQ = lazy(() => import('./pages/ExecutiveHQ'));
@@ -34,11 +35,8 @@ function RequireAuth({ children, requiredPermissions = [] }) {
   const { connectionStatus, user, hasPermission, isAuthenticated } = useAuth();
   const location = useLocation();
 
-  console.log('🔐 RequireAuth check:', { connectionStatus, isAuthenticated, user: !!user });
-
   // أثناء التحقق من الجلسة
   if (connectionStatus === 'checking') {
-    console.log('⏳ Connection status is checking...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -75,11 +73,8 @@ function RequireAuth({ children, requiredPermissions = [] }) {
 
   // لو غير مسجل دخول -> رجّعه للّوجن
   if (!isAuthenticated) {
-    console.log('❌ Not authenticated, redirecting to login');
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
-
-  console.log('✅ Authenticated, rendering protected content');
 
   // التحقق من الصلاحيات إذا كانت مطلوبة
   if (requiredPermissions.length > 0 && !hasPermission(requiredPermissions)) {
@@ -205,11 +200,28 @@ export default function App() {
                     </RequireAuth>
                   } />
 
+ claude/executive-hq-dashboard-011CV5xmu1Rsj55VbfmLRVxT
                   {/* Executive HQ Dashboard - Premium Feature */}
                   <Route path="/executive-hq" element={
                     <RequireAuth>
                       <Layout>
                         <ExecutiveHQ />
+
+                  {/* Financial Intelligence */}
+                  <Route path="/financial-intelligence" element={
+                    <RequireAuth requiredPermissions={['financial:view']}>
+                      <Layout>
+                        <FinancialIntelligence />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Menu Intelligence */}
+                  <Route path="/menu-intelligence" element={
+                    <RequireAuth>
+                      <Layout>
+                        <MenuIntelligence />
+ main
                       </Layout>
                     </RequireAuth>
                   } />

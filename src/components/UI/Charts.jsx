@@ -1,7 +1,7 @@
 // NAVA OPS - Chart Components
 // Professional chart components using Recharts
 
-import React from 'react';
+import React, { memo } from 'react';
 import {
   LineChart, Line, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -30,8 +30,8 @@ const COLOR_PALETTE = [
   CHART_COLORS.teal
 ];
 
-// Custom Tooltip
-const CustomTooltip = ({ active, payload, label, prefix = '', suffix = '' }) => {
+// Custom Tooltip - Memoized
+const CustomTooltip = memo(({ active, payload, label, prefix = '', suffix = '' }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3">
@@ -48,10 +48,10 @@ const CustomTooltip = ({ active, payload, label, prefix = '', suffix = '' }) => 
     );
   }
   return null;
-};
+});
 
-// Revenue Trend Line Chart
-export function RevenueTrendChart({ data, loading = false }) {
+// Revenue Trend Line Chart - Memoized
+export const RevenueTrendChart = memo(({ data, loading = false }) => {
   if (loading) {
     return (
       <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
@@ -88,10 +88,10 @@ export function RevenueTrendChart({ data, loading = false }) {
       </LineChart>
     </ResponsiveContainer>
   );
-}
+});
 
-// Orders Bar Chart
-export function OrdersBarChart({ data, loading = false }) {
+// Orders Bar Chart - Memoized
+export const OrdersBarChart = memo(({ data, loading = false }) => {
   if (loading) {
     return (
       <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
@@ -124,10 +124,10 @@ export function OrdersBarChart({ data, loading = false }) {
       </BarChart>
     </ResponsiveContainer>
   );
-}
+});
 
-// Area Chart for Trends
-export function TrendAreaChart({ data, dataKeys = [], colors = [], loading = false }) {
+// Area Chart for Trends - Memoized
+export const TrendAreaChart = memo(({ data, dataKeys = [], colors = [], loading = false }) => {
   if (loading) {
     return (
       <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
@@ -173,10 +173,10 @@ export function TrendAreaChart({ data, dataKeys = [], colors = [], loading = fal
       </AreaChart>
     </ResponsiveContainer>
   );
-}
+});
 
-// Branch Comparison Chart
-export function BranchComparisonChart({ data, loading = false }) {
+// Branch Comparison Chart - Memoized
+export const BranchComparisonChart = memo(({ data, loading = false }) => {
   if (loading) {
     return (
       <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
@@ -213,10 +213,10 @@ export function BranchComparisonChart({ data, loading = false }) {
       </BarChart>
     </ResponsiveContainer>
   );
-}
+});
 
-// Pie Chart for Category Distribution
-export function CategoryPieChart({ data, loading = false }) {
+// Pie Chart for Category Distribution - Memoized
+export const CategoryPieChart = memo(({ data, loading = false }) => {
   if (loading) {
     return (
       <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
@@ -247,10 +247,10 @@ export function CategoryPieChart({ data, loading = false }) {
       </PieChart>
     </ResponsiveContainer>
   );
-}
+});
 
-// Multi-Line Chart for Comparison
-export function MultiLineChart({ data, lines = [], loading = false }) {
+// Multi-Line Chart for Comparison - Memoized
+export const MultiLineChart = memo(({ data, lines = [], loading = false }) => {
   if (loading) {
     return (
       <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
@@ -288,10 +288,10 @@ export function MultiLineChart({ data, lines = [], loading = false }) {
       </LineChart>
     </ResponsiveContainer>
   );
-}
+});
 
-// Stacked Bar Chart
-export function StackedBarChart({ data, bars = [], loading = false }) {
+// Stacked Bar Chart - Memoized
+export const StackedBarChart = memo(({ data, bars = [], loading = false }) => {
   if (loading) {
     return (
       <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
@@ -327,7 +327,7 @@ export function StackedBarChart({ data, bars = [], loading = false }) {
       </BarChart>
     </ResponsiveContainer>
   );
-}
+});
 
 // Pie Chart Component (Enhanced version for Executive Dashboard)
 export function PieChartComponent({ data, loading = false }) {

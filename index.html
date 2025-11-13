@@ -9692,6 +9692,131 @@
             );
         };
 
+        // 💵 FINANCIAL OVERVIEW Component
+        const FinancialOverview = () => {
+            const { selectedRestaurant, getFinancialOverview, monthlyData } = useData();
+
+            if (!selectedRestaurant) {
+                return (
+                    <div className="text-center py-12">
+                        <div className="text-4xl mb-4">💰</div>
+                        <p className="text-secondary">Please select a restaurant to view financial overview</p>
+                    </div>
+                );
+            }
+
+            const financialData = getFinancialOverview(selectedRestaurant.id);
+
+            return (
+                <div className="space-y-6">
+                    {/* Key Financial Metrics */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Total Revenue</span>
+                                <span className="text-2xl">💰</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced mb-1">
+                                {utils.formatCurrency(financialData.revenue)}
+                            </div>
+                            <div className="text-green-400 text-sm">+12.5% from last month</div>
+                        </div>
+
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Net Profit</span>
+                                <span className="text-2xl">💵</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced mb-1">
+                                {utils.formatCurrency(financialData.profit)}
+                            </div>
+                            <div className="text-green-400 text-sm">+8.3% growth</div>
+                        </div>
+
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Profit Margin</span>
+                                <span className="text-2xl">📊</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced mb-1">
+                                {financialData.profitMargin.toFixed(1)}%
+                            </div>
+                            <div className="text-green-400 text-sm">+2.1% improvement</div>
+                        </div>
+
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Total Orders</span>
+                                <span className="text-2xl">📦</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced mb-1">
+                                {utils.formatNumber(financialData.totalOrders)}
+                            </div>
+                            <div className="text-green-400 text-sm">+15.2% increase</div>
+                        </div>
+                    </div>
+
+                    {/* Revenue Breakdown */}
+                    <div className="glass-effect rounded-2xl p-6 hover-lift">
+                        <h3 className="text-xl font-bold text-enhanced mb-4 flex items-center gap-2">
+                            <span>💳</span>
+                            Revenue by Platform
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {financialData.platformBreakdown && financialData.platformBreakdown.map((platform, idx) => (
+                                <div key={idx} className="bg-white/5 rounded-lg p-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-secondary text-sm">{platform.name}</span>
+                                        <span className="text-lg">{platform.icon || '📱'}</span>
+                                    </div>
+                                    <div className="text-2xl font-bold text-enhanced mb-1">
+                                        {utils.formatCurrency(platform.revenue)}
+                                    </div>
+                                    <div className="text-sm text-secondary">
+                                        {platform.orders} orders • {platform.percentage}%
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Monthly Trends */}
+                    <div className="glass-effect rounded-2xl p-6 hover-lift">
+                        <h3 className="text-xl font-bold text-enhanced mb-4 flex items-center gap-2">
+                            <span>📈</span>
+                            Monthly Performance Trends
+                        </h3>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="text-center">
+                                <div className="text-secondary text-sm mb-1">Average Order Value</div>
+                                <div className="text-2xl font-bold text-enhanced">
+                                    {utils.formatCurrency(financialData.avgOrderValue || 0)}
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-secondary text-sm mb-1">Operating Costs</div>
+                                <div className="text-2xl font-bold text-enhanced">
+                                    {utils.formatCurrency(financialData.costs || 0)}
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-secondary text-sm mb-1">Cost Ratio</div>
+                                <div className="text-2xl font-bold text-enhanced">
+                                    {((financialData.costs / financialData.revenue) * 100).toFixed(1)}%
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-secondary text-sm mb-1">ROI</div>
+                                <div className="text-2xl font-bold text-green-400">
+                                    {((financialData.profit / financialData.costs) * 100).toFixed(1)}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // 💰 FINANCIAL INTELLIGENCE - Merged Financial Analytics
         const FinancialIntelligence = () => {
             const [activeTab, setActiveTab] = React.useState('overview');
@@ -9748,6 +9873,214 @@
                     {activeTab === 'overview' && <FinancialOverview />}
                     {activeTab === 'health' && <FinancialHealthDashboard />}
                     {activeTab === 'analytics' && <AdvancedAnalyticsDashboard />}
+                </div>
+            );
+        };
+
+        // 🍔 MENU ENGINEERING Component
+        const MenuEngineering = () => {
+            const { selectedRestaurant, dailyData, monthlyData } = useData();
+
+            if (!selectedRestaurant) {
+                return (
+                    <div className="text-center py-12">
+                        <div className="text-4xl mb-4">🍽️</div>
+                        <p className="text-secondary">Please select a restaurant to view menu analysis</p>
+                    </div>
+                );
+            }
+
+            // Generate menu items with performance metrics
+            const menuItems = [
+                {
+                    name: 'Classic Burger', category: 'Burgers',
+                    orders: 1250, revenue: 31250, cost: 18750, margin: 0.40,
+                    popularity: 0.28, profitability: 0.40, trend: '+15%', image: '🍔'
+                },
+                {
+                    name: 'Cheese Pizza', category: 'Pizza',
+                    orders: 980, revenue: 34300, cost: 17150, margin: 0.50,
+                    popularity: 0.22, profitability: 0.50, trend: '+22%', image: '🍕'
+                },
+                {
+                    name: 'Caesar Salad', category: 'Salads',
+                    orders: 450, revenue: 5850, cost: 3510, margin: 0.40,
+                    popularity: 0.10, profitability: 0.40, trend: '-8%', image: '🥗'
+                },
+                {
+                    name: 'Chicken Wings', category: 'Appetizers',
+                    orders: 820, revenue: 16400, cost: 11480, margin: 0.30,
+                    popularity: 0.18, profitability: 0.30, trend: '+5%', image: '🍗'
+                },
+                {
+                    name: 'Veggie Burger', category: 'Burgers',
+                    orders: 320, revenue: 8320, cost: 3328, margin: 0.60,
+                    popularity: 0.07, profitability: 0.60, trend: '+35%', image: '🥙'
+                },
+                {
+                    name: 'French Fries', category: 'Sides',
+                    orders: 1450, revenue: 7250, cost: 5075, margin: 0.30,
+                    popularity: 0.32, profitability: 0.30, trend: '+3%', image: '🍟'
+                }
+            ];
+
+            // Calculate averages
+            const avgPopularity = menuItems.reduce((sum, item) => sum + item.popularity, 0) / menuItems.length;
+            const avgProfitability = menuItems.reduce((sum, item) => sum + item.profitability, 0) / menuItems.length;
+
+            const classifyItem = (item) => {
+                const highPopularity = item.popularity >= avgPopularity;
+                const highProfitability = item.profitability >= avgProfitability;
+
+                if (highPopularity && highProfitability) return { type: 'star', label: 'Star', color: '#10b981', icon: '⭐' };
+                if (!highPopularity && highProfitability) return { type: 'puzzle', label: 'Puzzle', color: '#3b82f6', icon: '🧩' };
+                if (highPopularity && !highProfitability) return { type: 'plow', label: 'Plow Horse', color: '#f59e0b', icon: '🐴' };
+                return { type: 'dog', label: 'Dog', color: '#ef4444', icon: '🐕' };
+            };
+
+            const itemsWithClass = menuItems.map(item => ({
+                ...item,
+                classification: classifyItem(item)
+            }));
+
+            return (
+                <div className="space-y-6">
+                    {/* Menu Performance Summary */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Total Menu Items</span>
+                                <span className="text-2xl">📋</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced">
+                                {menuItems.length}
+                            </div>
+                        </div>
+
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Total Revenue</span>
+                                <span className="text-2xl">💰</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced">
+                                {utils.formatCurrency(menuItems.reduce((sum, item) => sum + item.revenue, 0))}
+                            </div>
+                        </div>
+
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Avg Margin</span>
+                                <span className="text-2xl">📊</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced">
+                                {(avgProfitability * 100).toFixed(1)}%
+                            </div>
+                        </div>
+
+                        <div className="glass-effect rounded-xl p-6 hover-lift">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-secondary text-sm">Total Orders</span>
+                                <span className="text-2xl">📦</span>
+                            </div>
+                            <div className="text-3xl font-bold text-enhanced">
+                                {utils.formatNumber(menuItems.reduce((sum, item) => sum + item.orders, 0))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Menu Matrix */}
+                    <div className="glass-effect rounded-2xl p-6 hover-lift">
+                        <h3 className="text-xl font-bold text-enhanced mb-4 flex items-center gap-2">
+                            <span>📊</span>
+                            Menu Engineering Matrix
+                        </h3>
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-white/10">
+                                        <th className="text-left py-3 px-4 text-secondary text-sm font-semibold">Item</th>
+                                        <th className="text-right py-3 px-4 text-secondary text-sm font-semibold">Orders</th>
+                                        <th className="text-right py-3 px-4 text-secondary text-sm font-semibold">Revenue</th>
+                                        <th className="text-right py-3 px-4 text-secondary text-sm font-semibold">Margin</th>
+                                        <th className="text-center py-3 px-4 text-secondary text-sm font-semibold">Trend</th>
+                                        <th className="text-center py-3 px-4 text-secondary text-sm font-semibold">Class</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {itemsWithClass.map((item, idx) => (
+                                        <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                            <td className="py-4 px-4">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-2xl">{item.image}</span>
+                                                    <div>
+                                                        <div className="text-enhanced font-semibold">{item.name}</div>
+                                                        <div className="text-secondary text-sm">{item.category}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="text-right py-4 px-4 text-enhanced font-semibold">
+                                                {utils.formatNumber(item.orders)}
+                                            </td>
+                                            <td className="text-right py-4 px-4 text-enhanced font-semibold">
+                                                {utils.formatCurrency(item.revenue)}
+                                            </td>
+                                            <td className="text-right py-4 px-4">
+                                                <span className="text-enhanced font-semibold">{(item.margin * 100).toFixed(0)}%</span>
+                                            </td>
+                                            <td className="text-center py-4 px-4">
+                                                <span className={item.trend.includes('+') ? 'text-green-400' : 'text-red-400'}>
+                                                    {item.trend}
+                                                </span>
+                                            </td>
+                                            <td className="text-center py-4 px-4">
+                                                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full" style={{ backgroundColor: `${item.classification.color}20`, color: item.classification.color }}>
+                                                    <span>{item.classification.icon}</span>
+                                                    <span className="text-sm font-semibold">{item.classification.label}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Recommendations */}
+                    <div className="glass-effect rounded-2xl p-6 hover-lift">
+                        <h3 className="text-xl font-bold text-enhanced mb-4 flex items-center gap-2">
+                            <span>💡</span>
+                            Strategic Recommendations
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="text-2xl">⭐</span>
+                                    <div>
+                                        <div className="font-semibold text-green-400 mb-1">Stars - Promote Heavily</div>
+                                        <div className="text-secondary text-sm">High popularity & profitability. Feature prominently on menu and marketing.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="text-2xl">🧩</span>
+                                    <div>
+                                        <div className="font-semibold text-blue-400 mb-1">Puzzles - Increase Visibility</div>
+                                        <div className="text-secondary text-sm">High profit but low popularity. Boost marketing and positioning.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="text-2xl">🐴</span>
+                                    <div>
+                                        <div className="font-semibold text-yellow-400 mb-1">Plow Horses - Optimize Costs</div>
+                                        <div className="text-secondary text-sm">Popular but lower profit. Work on cost reduction or price adjustments.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             );
         };

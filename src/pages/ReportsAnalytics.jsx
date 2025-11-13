@@ -11,7 +11,7 @@ import DateRangePicker from '@/components/UI/DateRangePicker';
 import { FileText, Download, Calendar, TrendingUp, BarChart3, PieChart } from 'lucide-react';
 
 export default function ReportsAnalytics() {
-  const { showNotification } = useNotification();
+  const { addNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
   const [selectedType, setSelectedType] = useState('all');
@@ -32,7 +32,11 @@ export default function ReportsAnalytics() {
       const data = await api.reports.getAll({ type: selectedType !== 'all' ? selectedType : undefined });
       setReports(data);
     } catch (error) {
-      showNotification('Failed to load reports', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to load reports',
+        type: 'error'
+      });
     } finally {
       setLoading(false);
     }
@@ -44,7 +48,11 @@ export default function ReportsAnalytics() {
 
   const handleGenerateReport = async (type) => {
     try {
-      showNotification('Generating report...', 'info');
+      addNotification({
+        title: 'Info',
+        message: 'Generating report...',
+        type: 'info'
+      });
       await api.reports.create({
         report_name: `${type} Report`,
         report_type: type,
@@ -52,10 +60,18 @@ export default function ReportsAnalytics() {
         end_date: dateRange.endDate,
         status: 'pending'
       });
-      showNotification('Report generation started', 'success');
+      addNotification({
+        title: 'Success',
+        message: 'Report generation started',
+        type: 'success'
+      });
       fetchReports();
     } catch (error) {
-      showNotification('Failed to generate report', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to generate report',
+        type: 'error'
+      });
     }
   };
 

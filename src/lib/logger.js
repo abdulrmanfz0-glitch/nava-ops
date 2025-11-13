@@ -174,13 +174,48 @@ export class ErrorBoundaryLogger {
   }
 }
 
+ claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
+// Performance Logger
+
 // Performance Logger for tracking app performance
+ main
 export class PerformanceLogger {
   static timers = new Map();
 
   static start(label) {
     this.timers.set(label, performance.now());
   }
+
+ claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
+  static end(label, warnThreshold = 1000) {
+    const startTime = this.timers.get(label);
+    if (!startTime) {
+      console.warn(`No timer found for label: ${label}`);
+      return null;
+    }
+
+    const duration = performance.now() - startTime;
+    this.timers.delete(label);
+
+    if (duration > warnThreshold) {
+      logger.warn(`Performance: ${label} took ${duration.toFixed(2)}ms (exceeded threshold of ${warnThreshold}ms)`, {
+        duration,
+        threshold: warnThreshold
+      });
+    } else {
+      logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+    }
+
+    return duration;
+  }
+
+  static measure(label, fn) {
+    const start = performance.now();
+    const result = fn();
+    const duration = performance.now() - start;
+
+    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+
 
   static end(label, threshold = 1000) {
     const startTime = this.timers.get(label);
@@ -209,13 +244,23 @@ export class PerformanceLogger {
     this.start(label);
     const result = fn();
     this.end(label);
+ main
     return result;
   }
 
   static async measureAsync(label, fn) {
+ claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
+    const start = performance.now();
+    const result = await fn();
+    const duration = performance.now() - start;
+
+    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+
+
     this.start(label);
     const result = await fn();
     this.end(label);
+ main
     return result;
   }
 }
@@ -226,6 +271,7 @@ const logger = new Logger();
 // Make available globally in development
 if (import.meta.env.DEV) {
   window.logger = logger;
+  window.PerformanceLogger = PerformanceLogger;
 }
 
 // Export logger as both default and named export for flexibility

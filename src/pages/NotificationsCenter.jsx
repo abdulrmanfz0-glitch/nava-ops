@@ -9,7 +9,7 @@ import EmptyState from '@/components/UI/EmptyState';
 import { Bell, Check, X, AlertCircle, Info, CheckCircle, AlertTriangle } from 'lucide-react';
 
 export default function NotificationsCenter() {
-  const { showNotification } = useNotification();
+  const { addNotification } = useNotification();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -22,7 +22,11 @@ export default function NotificationsCenter() {
       });
       setNotifications(data);
     } catch (error) {
-      showNotification('Failed to load notifications', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to load notifications',
+        type: 'error'
+      });
     } finally {
       setLoading(false);
     }
@@ -37,27 +41,47 @@ export default function NotificationsCenter() {
       await api.notifications.markAsRead(id);
       fetchNotifications();
     } catch (error) {
-      showNotification('Failed to mark as read', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to mark as read',
+        type: 'error'
+      });
     }
   };
 
   const handleMarkAllAsRead = async () => {
     try {
       await api.notifications.markAllAsRead();
-      showNotification('All notifications marked as read', 'success');
+      addNotification({
+        title: 'Success',
+        message: 'All notifications marked as read',
+        type: 'success'
+      });
       fetchNotifications();
     } catch (error) {
-      showNotification('Failed to mark all as read', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to mark all as read',
+        type: 'error'
+      });
     }
   };
 
   const handleDelete = async (id) => {
     try {
       await api.notifications.delete(id);
-      showNotification('Notification deleted', 'success');
+      addNotification({
+        title: 'Success',
+        message: 'Notification deleted',
+        type: 'success'
+      });
       fetchNotifications();
     } catch (error) {
-      showNotification('Failed to delete notification', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to delete notification',
+        type: 'error'
+      });
     }
   };
 

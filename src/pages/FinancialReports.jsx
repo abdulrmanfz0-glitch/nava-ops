@@ -11,7 +11,7 @@ import DateRangePicker from '@/components/UI/DateRangePicker';
 import { DollarSign, Wallet, CreditCard, Target, AlertCircle } from 'lucide-react';
 
 export default function FinancialReports() {
-  const { showNotification } = useNotification();
+  const { addNotification } = useNotification();
   const [loading, setLoading] = useState(true);
   const [financialData, setFinancialData] = useState({
     totalRevenue: 0,
@@ -48,7 +48,11 @@ export default function FinancialReports() {
         trends
       });
     } catch (error) {
-      showNotification('Failed to load financial data', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to load financial data',
+        type: 'error'
+      });
     } finally {
       setLoading(false);
     }

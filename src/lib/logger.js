@@ -58,6 +58,12 @@ class Logger {
     return this.log('error', message, data);
   }
 
+  fatal(message, data, error) {
+    const logEntry = this.log('error', message, { ...data, fatal: true, error: error?.message, stack: error?.stack });
+    // Could trigger additional alerts for fatal errors
+    return logEntry;
+  }
+
   debug(message, data) {
     if (import.meta.env.DEV) {
       return this.log('debug', message, data);
@@ -168,7 +174,11 @@ export class ErrorBoundaryLogger {
   }
 }
 
+ claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
 // Performance Logger
+
+// Performance Logger for tracking app performance
+ main
 export class PerformanceLogger {
   static timers = new Map();
 
@@ -176,6 +186,7 @@ export class PerformanceLogger {
     this.timers.set(label, performance.now());
   }
 
+ claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
   static end(label, warnThreshold = 1000) {
     const startTime = this.timers.get(label);
     if (!startTime) {
@@ -205,16 +216,51 @@ export class PerformanceLogger {
 
     logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
 
+
+  static end(label, threshold = 1000) {
+    const startTime = this.timers.get(label);
+    if (startTime) {
+      const duration = performance.now() - startTime;
+      this.timers.delete(label);
+
+      // Log if duration exceeds threshold
+      if (duration > threshold) {
+        logger.warn(`Performance: ${label} took longer than expected`, {
+          duration: `${duration.toFixed(2)}ms`,
+          threshold: `${threshold}ms`
+        });
+      } else {
+        logger.info(`Performance: ${label}`, {
+          duration: `${duration.toFixed(2)}ms`
+        });
+      }
+
+      return duration;
+    }
+    return null;
+  }
+
+  static measure(label, fn) {
+    this.start(label);
+    const result = fn();
+    this.end(label);
+ main
     return result;
   }
 
   static async measureAsync(label, fn) {
+ claude/nava-ops-platform-rebuild-011CV5tHqrCAZUdhTe9AYaMt
     const start = performance.now();
     const result = await fn();
     const duration = performance.now() - start;
 
     logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
 
+
+    this.start(label);
+    const result = await fn();
+    this.end(label);
+ main
     return result;
   }
 }
@@ -228,4 +274,6 @@ if (import.meta.env.DEV) {
   window.PerformanceLogger = PerformanceLogger;
 }
 
+// Export logger as both default and named export for flexibility
+export { logger };
 export default logger;

@@ -26,6 +26,7 @@ const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
+const ExecutiveHQ = lazy(() => import('./pages/ExecutiveHQ'));
 const GitOperations = lazy(() => import('./GitOperations'));
 
 // حارس متقدم للمسارات الخاصة
@@ -200,6 +201,15 @@ export default function App() {
                     <RequireAuth requiredPermissions={['financial:view']}>
                       <Layout>
                         <FinancialReports />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Executive HQ Dashboard - Premium Feature */}
+                  <Route path="/executive-hq" element={
+                    <RequireAuth>
+                      <Layout>
+                        <ExecutiveHQ />
                       </Layout>
                     </RequireAuth>
                   } />

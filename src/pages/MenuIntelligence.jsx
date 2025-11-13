@@ -5,33 +5,6 @@ import React, { useState, useEffect } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
 import api from '@/services/api';
 import PageHeader from '@/components/UI/PageHeader';
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-import { UtensilsCrossed, TrendingUp, TrendingDown, Star, AlertTriangle, CheckCircle } from 'lucide-react';
-
-// Menu Engineering Matrix Component
-function MenuEngineering() {
-  const [selectedBranch, setSelectedBranch] = useState(null);
-  const [branches, setBranches] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchData();
-  }, [selectedBranch]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const branchesData = await api.branches.getAll();
-      setBranches(branchesData);
-
-      // Generate sample menu items with performance metrics
-      const sampleMenuItems = [
-        {
-          id: 1,
-
-
- main
 import StatCard from '@/components/UI/StatCard';
 import DateRangePicker from '@/components/UI/DateRangePicker';
 import EmptyState from '@/components/UI/EmptyState';
@@ -211,13 +184,9 @@ export default function MenuIntelligence() {
     }
   };
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-
   useEffect(() => {
     fetchMenuData();
   }, [dateRange]);
-
- main
   // Classify items into BCG matrix categories
   const getClassification = (item) => {
     const avgPopularity = 0.20;
@@ -377,11 +346,7 @@ export default function MenuIntelligence() {
                     </div>
                   </td>
                 </tr>
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-              ) : menuItems.length === 0 ? (
-
               ) : menuData.items.length === 0 ? (
- main
                 <tr>
                   <td colSpan="8" className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     No menu items found
@@ -542,28 +507,3 @@ export default function MenuIntelligence() {
     </div>
   );
 }
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-
-// Main Menu Intelligence Component
-export default function MenuIntelligence() {
-  return (
-    <div className="space-y-6">
-      {/* Header with gradient background */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl shadow-lg p-6">
-        <PageHeader
-          title="Menu Intelligence"
-          subtitle="Strategic menu performance analysis & optimization recommendations"
-          icon={UtensilsCrossed}
-          className="text-white"
-        />
-      </div>
-
-      {/* Menu Engineering Content */}
-      <MenuEngineering />
-    </div>
-  );
-}
-
- main
-
- main

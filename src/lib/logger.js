@@ -58,6 +58,12 @@ class Logger {
     return this.log('error', message, data);
   }
 
+  fatal(message, data, error) {
+    const logEntry = this.log('error', message, { ...data, fatal: true, error: error?.message, stack: error?.stack });
+    // Could trigger additional alerts for fatal errors
+    return logEntry;
+  }
+
   debug(message, data) {
     if (import.meta.env.DEV) {
       return this.log('debug', message, data);
@@ -168,6 +174,52 @@ export class ErrorBoundaryLogger {
   }
 }
 
+// Performance Logger for tracking app performance
+export class PerformanceLogger {
+  static timers = new Map();
+
+  static start(label) {
+    this.timers.set(label, performance.now());
+  }
+
+  static end(label, threshold = 1000) {
+    const startTime = this.timers.get(label);
+    if (startTime) {
+      const duration = performance.now() - startTime;
+      this.timers.delete(label);
+
+      // Log if duration exceeds threshold
+      if (duration > threshold) {
+        logger.warn(`Performance: ${label} took longer than expected`, {
+          duration: `${duration.toFixed(2)}ms`,
+          threshold: `${threshold}ms`
+        });
+      } else {
+        logger.info(`Performance: ${label}`, {
+          duration: `${duration.toFixed(2)}ms`
+        });
+      }
+
+      return duration;
+    }
+    return null;
+  }
+
+  static measure(label, fn) {
+    this.start(label);
+    const result = fn();
+    this.end(label);
+    return result;
+  }
+
+  static async measureAsync(label, fn) {
+    this.start(label);
+    const result = await fn();
+    this.end(label);
+    return result;
+  }
+}
+
 // Create singleton instance
 const logger = new Logger();
 
@@ -176,4 +228,6 @@ if (import.meta.env.DEV) {
   window.logger = logger;
 }
 
+// Export logger as both default and named export for flexibility
+export { logger };
 export default logger;

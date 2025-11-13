@@ -168,12 +168,64 @@ export class ErrorBoundaryLogger {
   }
 }
 
+// Performance Logger
+export class PerformanceLogger {
+  static timers = new Map();
+
+  static start(label) {
+    this.timers.set(label, performance.now());
+  }
+
+  static end(label, warnThreshold = 1000) {
+    const startTime = this.timers.get(label);
+    if (!startTime) {
+      console.warn(`No timer found for label: ${label}`);
+      return null;
+    }
+
+    const duration = performance.now() - startTime;
+    this.timers.delete(label);
+
+    if (duration > warnThreshold) {
+      logger.warn(`Performance: ${label} took ${duration.toFixed(2)}ms (exceeded threshold of ${warnThreshold}ms)`, {
+        duration,
+        threshold: warnThreshold
+      });
+    } else {
+      logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+    }
+
+    return duration;
+  }
+
+  static measure(label, fn) {
+    const start = performance.now();
+    const result = fn();
+    const duration = performance.now() - start;
+
+    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+
+    return result;
+  }
+
+  static async measureAsync(label, fn) {
+    const start = performance.now();
+    const result = await fn();
+    const duration = performance.now() - start;
+
+    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+
+    return result;
+  }
+}
+
 // Create singleton instance
 const logger = new Logger();
 
 // Make available globally in development
 if (import.meta.env.DEV) {
   window.logger = logger;
+  window.PerformanceLogger = PerformanceLogger;
 }
 
 export default logger;

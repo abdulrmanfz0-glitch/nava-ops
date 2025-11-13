@@ -28,7 +28,7 @@ import {
 
 export default function Dashboard() {
   const { userProfile } = useAuth();
-  const { showNotification } = useNotification();
+  const { addNotification } = useNotification();
 
   // State
   const [loading, setLoading] = useState(true);
@@ -81,10 +81,18 @@ export default function Dashboard() {
       setBranchComparison(branchCompData);
 
       if (!showLoader) {
-        showNotification('Dashboard refreshed successfully', 'success');
+        addNotification({
+          title: 'Success',
+          message: 'Dashboard refreshed successfully',
+          type: 'success'
+        });
       }
     } catch (error) {
-      showNotification('Failed to load dashboard data', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to load dashboard data',
+        type: 'error'
+      });
       console.error('Dashboard error:', error);
     } finally {
       setLoading(false);
@@ -379,18 +387,28 @@ export default function Dashboard() {
               { action: 'Monthly report generated', branch: 'All Branches', time: '1 hour ago', icon: Download, color: 'green' },
               { action: 'Inventory alert', branch: 'Westside Branch', time: '3 hours ago', icon: AlertCircle, color: 'orange' },
               { action: 'Team member joined', branch: 'System', time: '5 hours ago', icon: Users, color: 'purple' }
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-lg transition-colors duration-200">
-                <div className={`p-2 rounded-lg bg-${activity.color}-100 dark:bg-${activity.color}-900/20`}>
-                  <activity.icon className={`w-5 h-5 text-${activity.color}-600 dark:text-${activity.color}-400`} />
+            ].map((activity, index) => {
+              const colorClasses = {
+                blue: { bg: 'bg-blue-100 dark:bg-blue-900/20', icon: 'text-blue-600 dark:text-blue-400' },
+                green: { bg: 'bg-green-100 dark:bg-green-900/20', icon: 'text-green-600 dark:text-green-400' },
+                orange: { bg: 'bg-orange-100 dark:bg-orange-900/20', icon: 'text-orange-600 dark:text-orange-400' },
+                purple: { bg: 'bg-purple-100 dark:bg-purple-900/20', icon: 'text-purple-600 dark:text-purple-400' }
+              };
+              const colors = colorClasses[activity.color] || colorClasses.blue;
+
+              return (
+                <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-lg transition-colors duration-200">
+                  <div className={`p-2 rounded-lg ${colors.bg}`}>
+                    <activity.icon className={`w-5 h-5 ${colors.icon}`} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 dark:text-white">{activity.action}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{activity.branch}</p>
+                  </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{activity.time}</span>
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900 dark:text-white">{activity.action}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{activity.branch}</p>
-                </div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">{activity.time}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

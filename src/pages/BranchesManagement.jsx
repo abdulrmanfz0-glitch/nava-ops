@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function BranchesManagement() {
-  const { showNotification } = useNotification();
+  const { addNotification } = useNotification();
 
   // State
   const [branches, setBranches] = useState([]);
@@ -55,7 +55,11 @@ export default function BranchesManagement() {
       const data = await api.branches.getAll();
       setBranches(data);
     } catch (error) {
-      showNotification('Failed to load branches', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to load branches',
+        type: 'error'
+      });
     } finally {
       setLoading(false);
     }
@@ -72,17 +76,29 @@ export default function BranchesManagement() {
     try {
       if (selectedBranch) {
         await api.branches.update(selectedBranch.id, formData);
-        showNotification('Branch updated successfully', 'success');
+        addNotification({
+          title: 'Success',
+          message: 'Branch updated successfully',
+          type: 'success'
+        });
       } else {
         await api.branches.create(formData);
-        showNotification('Branch created successfully', 'success');
+        addNotification({
+          title: 'Success',
+          message: 'Branch created successfully',
+          type: 'success'
+        });
       }
 
       setShowModal(false);
       resetForm();
       fetchBranches();
     } catch (error) {
-      showNotification(`Failed to ${selectedBranch ? 'update' : 'create'} branch`, 'error');
+      addNotification({
+        title: 'Error',
+        message: `Failed to ${selectedBranch ? 'update' : 'create'} branch`,
+        type: 'error'
+      });
     }
   };
 
@@ -90,12 +106,20 @@ export default function BranchesManagement() {
   const handleDelete = async () => {
     try {
       await api.branches.delete(selectedBranch.id);
-      showNotification('Branch deleted successfully', 'success');
+      addNotification({
+        title: 'Success',
+        message: 'Branch deleted successfully',
+        type: 'success'
+      });
       setShowDeleteDialog(false);
       setSelectedBranch(null);
       fetchBranches();
     } catch (error) {
-      showNotification('Failed to delete branch', 'error');
+      addNotification({
+        title: 'Error',
+        message: 'Failed to delete branch',
+        type: 'error'
+      });
     }
   };
 

@@ -11,7 +11,7 @@ import { Settings as SettingsIcon, User, Bell, Shield, Palette, CreditCard, Data
 export default function Settings() {
   const { userProfile } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { showNotification } = useNotification();
+  const { addNotification } = useNotification();
   const [activeTab, setActiveTab] = useState('profile');
 
   const tabs = [
@@ -24,7 +24,11 @@ export default function Settings() {
   ];
 
   const handleSave = () => {
-    showNotification('Settings saved successfully', 'success');
+    addNotification({
+      title: 'Success',
+      message: 'Settings saved successfully',
+      type: 'success'
+    });
   };
 
   return (

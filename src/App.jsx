@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
@@ -27,6 +28,8 @@ const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
 const GitOperations = lazy(() => import('./GitOperations'));
+const Subscriptions = lazy(() => import('./pages/Subscriptions'));
+const Billing = lazy(() => import('./pages/Billing'));
 
 // حارس متقدم للمسارات الخاصة
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -142,10 +145,11 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <NotificationProvider>
-            <BrowserRouter>
-              <div className="App">
-                <OfflineIndicator />
-                <Suspense fallback={<GlobalLoading />}>
+            <SubscriptionProvider>
+              <BrowserRouter>
+                <div className="App">
+                  <OfflineIndicator />
+                  <Suspense fallback={<GlobalLoading />}>
                 <Routes>
                   {/* صفحة تسجيل الدخول */}
                   <Route path="/login" element={<Login />} />
@@ -229,6 +233,24 @@ export default function App() {
                     </RequireAuth>
                   } />
 
+                  {/* Subscription Management */}
+                  <Route path="/subscriptions" element={
+                    <RequireAuth>
+                      <Layout>
+                        <Subscriptions />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Billing */}
+                  <Route path="/billing" element={
+                    <RequireAuth>
+                      <Layout>
+                        <Billing />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
                   {/* صفحة 404 مخصصة */}
                   <Route path="*" element={
                     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -245,9 +267,10 @@ export default function App() {
                     </div>
                   } />
                 </Routes>
-              </Suspense>
-            </div>
-          </BrowserRouter>
+                </Suspense>
+              </div>
+            </BrowserRouter>
+          </SubscriptionProvider>
         </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>

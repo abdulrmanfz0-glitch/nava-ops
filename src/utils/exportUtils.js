@@ -1,5 +1,6 @@
 // src/utils/exportUtils.js
 import { saveAs } from 'file-saver';
+import logger from '@/lib/logger';
 
 // تنسيق الأرقام والعملات
 export const formatters = {
@@ -83,7 +84,7 @@ export const csvUtils = {
 
       return { success: true, filename: `${filename}.csv` };
     } catch (error) {
-      console.error('CSV export error:', error);
+      logger.error('CSV export error:', { error: error.message });
       return { success: false, error: error.message };
     }
   },
@@ -150,7 +151,7 @@ export const pdfUtils = {
         const element = document.getElementById(elementId);
         if (element) {
           // يمكن إضافة مكتبة html2canvas هنا لالتقاط screenshots
-          console.log('Element found for PDF export:', elementId);
+          logger.debug('Element found for PDF export:', elementId);
         }
       }
 
@@ -159,7 +160,7 @@ export const pdfUtils = {
 
       return { success: true, filename: `${filename}.pdf` };
     } catch (error) {
-      console.error('PDF export error:', error);
+      logger.error('PDF export error:', { error: error.message });
       return { success: false, error: error.message };
     }
   },
@@ -195,7 +196,7 @@ export const pdfUtils = {
       doc.save(`${filename}.pdf`);
       return { success: true };
     } catch (error) {
-      console.error('Table PDF export error:', error);
+      logger.error('Table PDF export error:', { error: error.message });
       return { success: false, error: error.message };
     }
   }
@@ -238,7 +239,7 @@ export const generalUtils = {
       saveAs(blob, `${filename}.json`);
       return { success: true };
     } catch (error) {
-      console.error('JSON export error:', error);
+      logger.error('JSON export error:', { error: error.message });
       return { success: false, error: error.message };
     }
   }

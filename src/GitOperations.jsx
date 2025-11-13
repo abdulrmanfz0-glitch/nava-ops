@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import logger from '@/lib/logger';
 import {
   GitBranch,
   GitMerge,
@@ -80,7 +81,7 @@ export default function GitOperations() {
         fetchConfig();
       }
     } catch (err) {
-      console.error('API health check failed:', err);
+      logger.error('API health check failed:', { error: err.message });
     }
   };
 
@@ -109,7 +110,7 @@ export default function GitOperations() {
         setConfig(data);
       }
     } catch (err) {
-      console.error('Failed to fetch config:', err);
+      logger.error('Failed to fetch config:', { error: err.message });
     }
   };
 

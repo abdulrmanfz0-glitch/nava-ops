@@ -1,6 +1,7 @@
 // src/views/TasksManagement.jsx
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { supabase } from '@/lib/supabase';
+import logger from '@/lib/logger';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/contexts/NotificationContext';
 import { exportUtils } from '@/utils/exportUtils';
@@ -143,7 +144,7 @@ export default function TasksManagement() {
       if (error) throw error;
       setTasks(data || []);
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+      logger.error('Error fetching tasks:', { error: error.message });
       addNotification({
         type: 'error',
         title: 'خطأ في جلب البيانات',
@@ -171,7 +172,7 @@ export default function TasksManagement() {
       if (error) throw error;
       setEmployees(data || []);
     } catch (error) {
-      console.error('Error fetching employees:', error);
+      logger.error('Error fetching employees:', { error: error.message });
     }
   };
 
@@ -185,7 +186,7 @@ export default function TasksManagement() {
       if (error) throw error;
       setBrands(data || []);
     } catch (error) {
-      console.error('Error fetching brands:', error);
+      logger.error('Error fetching brands:', { error: error.message });
     }
   };
 
@@ -194,13 +195,13 @@ export default function TasksManagement() {
     const subscription = supabase
       .channel('tasks-changes')
       .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: 'tasks' 
-        }, 
+        {
+          event: '*',
+          schema: 'public',
+          table: 'tasks'
+        },
         (payload) => {
-          console.log('Task change received:', payload);
+          logger.debug('Task change received:', payload);
           fetchTasks(); // إعادة جلب البيانات للتأكد من التحديث
         }
       )
@@ -256,7 +257,7 @@ export default function TasksManagement() {
         message: 'تم إنشاء المهمة بنجاح'
       });
     } catch (error) {
-      console.error('Error creating task:', error);
+      logger.error('Error creating task:', { error: error.message });
       addNotification({
         type: 'error',
         title: 'خطأ في الإنشاء',
@@ -288,7 +289,7 @@ export default function TasksManagement() {
         message: 'تم تحديث المهمة بنجاح'
       });
     } catch (error) {
-      console.error('Error updating task:', error);
+      logger.error('Error updating task:', { error: error.message });
       addNotification({
         type: 'error',
         title: 'خطأ في التحديث',
@@ -317,7 +318,7 @@ export default function TasksManagement() {
         message: 'تم حذف المهمة بنجاح'
       });
     } catch (error) {
-      console.error('Error deleting task:', error);
+      logger.error('Error deleting task:', { error: error.message });
       addNotification({
         type: 'error',
         title: 'خطأ في الحذف',

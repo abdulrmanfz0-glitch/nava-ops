@@ -1,6 +1,7 @@
 // src/views/PlatformAnalytics.jsx
 import React, { useMemo, useState, useEffect } from "react";
 import { supabase } from '@/lib/supabase';
+import logger from '@/lib/logger';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/contexts/NotificationContext';
 import { exportUtils } from '@/utils/exportUtils';
@@ -52,7 +53,7 @@ export default function PlatformAnalytics() {
         message: 'تم تحميل أحدث بيانات التحليلات'
       });
     } catch (error) {
-      console.error('Error fetching analytics data:', error);
+      logger.error('Error fetching analytics data:', { error: error.message });
       addNotification({
         type: 'error',
         title: 'خطأ في تحميل البيانات',
@@ -84,7 +85,7 @@ export default function PlatformAnalytics() {
       if (error) throw error;
       setPlatforms(data || []);
     } catch (error) {
-      console.error('Error fetching platforms:', error);
+      logger.error('Error fetching platforms:', { error: error.message });
     }
   };
 

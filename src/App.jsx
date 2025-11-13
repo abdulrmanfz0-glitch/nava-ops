@@ -214,6 +214,9 @@ export default function App() {
                     </RequireAuth>
                   } />
 
+ claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
+                  {/* Financial Intelligence - Advanced Analytics */}
+
  claude/executive-hq-dashboard-011CV5xmu1Rsj55VbfmLRVxT
                   {/* Executive HQ Dashboard - Premium Feature */}
                   <Route path="/executive-hq" element={
@@ -222,6 +225,7 @@ export default function App() {
                         <ExecutiveHQ />
 
                   {/* Financial Intelligence */}
+ main
                   <Route path="/financial-intelligence" element={
                     <RequireAuth requiredPermissions={['financial:view']}>
                       <Layout>
@@ -230,11 +234,19 @@ export default function App() {
                     </RequireAuth>
                   } />
 
+ claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
+                  {/* Menu Intelligence - Menu Performance Analysis */}
+                  <Route path="/menu-intelligence" element={
+                    <RequireAuth requiredPermissions={['reports:view']}>
+                      <Layout>
+                        <MenuIntelligence />
+
                   {/* Menu Intelligence */}
                   <Route path="/menu-intelligence" element={
                     <RequireAuth>
                       <Layout>
                         <MenuIntelligence />
+ main
  main
                       </Layout>
                     </RequireAuth>

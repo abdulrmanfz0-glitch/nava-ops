@@ -24,6 +24,8 @@ const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
+const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence'));
+const MenuIntelligence = lazy(() => import('./pages/MenuIntelligence'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
 const GitOperations = lazy(() => import('./GitOperations'));
@@ -200,6 +202,24 @@ export default function App() {
                     <RequireAuth requiredPermissions={['financial:view']}>
                       <Layout>
                         <FinancialReports />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Financial Intelligence */}
+                  <Route path="/financial-intelligence" element={
+                    <RequireAuth requiredPermissions={['financial:view']}>
+                      <Layout>
+                        <FinancialIntelligence />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Menu Intelligence */}
+                  <Route path="/menu-intelligence" element={
+                    <RequireAuth>
+                      <Layout>
+                        <MenuIntelligence />
                       </Layout>
                     </RequireAuth>
                   } />

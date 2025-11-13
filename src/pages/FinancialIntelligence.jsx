@@ -1,5 +1,4 @@
 // NAVA OPS - Financial Intelligence
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
 // Comprehensive financial analytics dashboard with advanced insights
 
 // Advanced financial analytics with AI insights and predictions
@@ -12,7 +11,6 @@ import PageHeader from '@/components/UI/PageHeader';
 import StatCard from '@/components/UI/StatCard';
 import { RevenueTrendChart, MultiLineChart } from '@/components/UI/Charts';
 import DateRangePicker from '@/components/UI/DateRangePicker';
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
 import { DollarSign, Wallet, CreditCard, Target, AlertCircle, TrendingUp, PieChart } from 'lucide-react';
 
 // Financial Overview Tab Component
@@ -140,7 +138,6 @@ export default function FinancialIntelligence() {
           icon={DollarSign}
           color="green"
           trend="up"
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
           trendValue="+12.5%"
 
           trendValue="+15.3%"
@@ -159,7 +156,6 @@ export default function FinancialIntelligence() {
         />
         <StatCard
           title="Net Profit"
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
           value={`SAR ${financialData.netProfit.toLocaleString()}`}
 
           value={formatCurrency(financialData.netProfit)}
@@ -168,7 +164,6 @@ export default function FinancialIntelligence() {
           icon={Wallet}
           color="blue"
           trend="up"
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
           trendValue="+8.3%"
 
           trendValue="+22.8%"
@@ -182,7 +177,6 @@ export default function FinancialIntelligence() {
           icon={Target}
           color="purple"
           trend="up"
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
           trendValue="+2.1%"
           loading={loading}
         />
@@ -201,7 +195,6 @@ export default function FinancialIntelligence() {
         />
       </div>
 
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
       {/* Revenue Breakdown */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -404,7 +397,6 @@ function AdvancedAnalytics({ trends, loading }) {
         </div>
       </div>
 
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
       {/* Strategic Insights */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -456,7 +448,6 @@ function AdvancedAnalytics({ trends, loading }) {
           {[
             {
               title: 'Revenue Growth Opportunity',
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
               description: 'Your revenue has grown 15% this quarter. Consider expanding to new locations.',
               severity: 'info',
               metric: '+15% growth'
@@ -544,7 +535,6 @@ function AdvancedAnalytics({ trends, loading }) {
     </div>
   );
 }
- claude/fix-intelligence-pages-errors-011CV5xYn7LzULNSSchNhaby
 
 // Main Financial Intelligence Component
 export default function FinancialIntelligence() {

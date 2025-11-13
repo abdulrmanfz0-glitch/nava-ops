@@ -176,6 +176,11 @@ export class ErrorBoundaryLogger {
   }
 }
 
+ claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
+// Performance Logger
+
+
+ main
 // Performance Logger for tracking app performance
 export class PerformanceLogger {
   static timers = new Map();
@@ -216,6 +221,16 @@ export class PerformanceLogger {
   }
 
   static async measureAsync(label, fn) {
+ claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
+    const start = performance.now();
+    const result = await fn();
+    const duration = performance.now() - start;
+
+    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+
+
+
+ main
     this.start(label);
     const result = await fn();
     this.end(label);

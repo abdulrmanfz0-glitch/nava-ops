@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function Layout({ children }) {
-  const { user, userProfile, logout, isAdmin } = useAuth();
+  const { user, userProfile, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

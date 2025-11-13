@@ -55,6 +55,7 @@ const NOTIFICATION_COLORS = {
 
 const NotificationContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useNotification() {
   const context = useContext(NotificationContext);
   if (!context) {
@@ -358,7 +359,7 @@ export function NotificationBadge({ className = '' }) {
 
 // مكون زر الإشعارات للشريط العلوي
 export function NotificationBell() {
-  const { unreadCount, markAllAsRead } = useNotification();
+  const { markAllAsRead } = useNotification();
 
   return (
     <div className="relative">
@@ -375,6 +376,7 @@ export function NotificationBell() {
 }
 
 // تصدير أنواع الإشعارات للاستخدام الخارجي
+// eslint-disable-next-line react-refresh/only-export-components
 export { NOTIFICATION_TYPES };
 
 export default NotificationContext;

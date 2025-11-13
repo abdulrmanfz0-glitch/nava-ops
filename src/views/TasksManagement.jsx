@@ -22,7 +22,6 @@ export default function TasksManagement() {
   const [loading, setLoading] = useState(true);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const [bulkActions, setBulkActions] = useState([]);
   
   const [form, setForm] = useState({
     title: "",
@@ -619,7 +618,7 @@ export default function TasksManagement() {
         setForm={setForm}
         employees={employees}
         brands={brands}
-        onSubmit={editingTask ? (e) => updateTask(editingTask.id, form) : createTask}
+        onSubmit={editingTask ? () => updateTask(editingTask.id, form) : createTask}
         editingTask={editingTask}
         userProfile={userProfile}
       />
@@ -807,7 +806,7 @@ function AdvancedTaskCard({
 }
 
 // مكون البطاقة الإحصائية
-function StatCard({ title, value, icon: Icon, color, percentage }) {
+function StatCard({ title, value, icon: Icon, color, percentage }) { // eslint-disable-line no-unused-vars
   const colorClasses = {
     blue: 'bg-blue-50 border-blue-200 text-blue-700',
     green: 'bg-green-50 border-green-200 text-green-700',

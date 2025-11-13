@@ -12,7 +12,7 @@ console.log('🚀 App.jsx loaded - Vite + React running');
 
 // Lazy loading للمكونات لتحسين الأداء
 const Login = lazy(() => import('./pages/Login'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Dashboard = lazy(() => import('./Dashboard'));
 const RestaurantsManagement = lazy(() => import('./pages/RestaurantsManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
@@ -119,8 +119,8 @@ function GlobalLoading() {
 export default function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <NotificationProvider>
+      <NotificationProvider>
+        <AuthProvider>
           <BrowserRouter>
             <div className="App">
               <OfflineIndicator />
@@ -218,8 +218,8 @@ export default function App() {
               </Suspense>
             </div>
           </BrowserRouter>
-        </NotificationProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </NotificationProvider>
     </ThemeProvider>
   );
 }

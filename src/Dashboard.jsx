@@ -3,7 +3,6 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { supabase } from '@lib/supabase';
 import { useAuth } from '@contexts/AuthContext';
 import { useNotification } from '@contexts/NotificationContext';
-import { exportUtils } from '@utils/exportUtils';
 import { 
   Plus, Edit2, Trash2, AlertTriangle, CheckCircle, Clock, Filter, 
   Download, BarChart3, Calendar, TrendingUp, Users, DollarSign, 
@@ -929,7 +928,7 @@ const EnhancedAlertsSystem = () => {
 
 /* ========= المكوّن الجامع (Dashboard) ========= */
 export default function Dashboard() {
-  const { userProfile } = useAuth();
+  // const { userProfile } = useAuth(); // Not used currently
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800">

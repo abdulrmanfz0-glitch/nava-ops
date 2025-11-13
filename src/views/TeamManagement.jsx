@@ -662,15 +662,14 @@ export default function TeamManagement() {
 }
 
 // مكون صف الموظف المنفصل
-function EmployeeTableRow({ 
-  employee, 
-  roleConfig, 
-  departmentConfig, 
-  formatDate, 
-  formatDateTime, 
+function EmployeeTableRow({
+  employee,
+  roleConfig,
+  departmentConfig,
+  formatDateTime,
   getWorkDuration,
-  onEdit, 
-  onToggleStatus, 
+  onEdit,
+  onToggleStatus,
   onResetPassword,
   onViewDetails,
   hasPermission,
@@ -864,7 +863,7 @@ function EmployeeTableRow({
 }
 
 // مكون البطاقة الإحصائية
-function StatCard({ title, value, icon: Icon, color, percentage }) {
+function StatCard({ title, value, icon: Icon, color, percentage }) { // eslint-disable-line no-unused-vars
   const colorClasses = {
     blue: 'bg-blue-50 border-blue-200 text-blue-700',
     green: 'bg-green-50 border-green-200 text-green-700',
@@ -961,17 +960,16 @@ function AdvancedFilterBar({ filters, setFilters, employees, brands }) {
 }
 
 // مكون النموذج المحسن
-function EmployeeFormModal({ 
-  show, 
-  onClose, 
-  form, 
-  setForm, 
-  editingEmployee, 
-  onSubmit, 
-  roleConfig, 
-  departmentConfig, 
+function EmployeeFormModal({
+  show,
+  onClose,
+  form,
+  setForm,
+  editingEmployee,
+  onSubmit,
+  departmentConfig,
   brands,
-  userProfile 
+  userProfile
 }) {
   if (!show) return null;
 

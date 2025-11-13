@@ -1,10 +1,10 @@
 // src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { supabase, checkSupabaseConnection, handleSupabaseError } from '../lib/supabase';
+import supabase, {
+  checkSupabaseConnection,
+  handleSupabaseError
+} from "./lib/supabase";
 import { useNotification } from './NotificationContext';
-
-// DEV MODE: Set to true to bypass authentication during development
-const DEV_BYPASS_AUTH = import.meta.env.VITE_DEV_BYPASS_AUTH === 'true' || false;
 
 const AuthContext = createContext();
 
@@ -25,45 +25,8 @@ export function AuthProvider({ children }) {
   const [sessionExpiry, setSessionExpiry] = useState(null);
   const { addNotification } = useNotification();
 
-  // DEV MODE: Skip authentication checks
+  // التحقق من انتهاء الجلسة
   useEffect(() => {
-    if (DEV_BYPASS_AUTH) {
-      console.log('🔧 DEV MODE: Authentication bypassed');
-      const mockUser = {
-        id: 'dev-user-id',
-        email: 'dev@nava-ops.local',
-        user_metadata: { full_name: 'Dev User' }
-      };
-      const mockProfile = {
-        id: 'dev-user-id',
-        email: 'dev@nava-ops.local',
-        role: 'admin',
-        full_name: 'Dev User',
-        is_active: true
-      };
-
-      setUser(mockUser);
-      setUserProfile(mockProfile);
-      setConnectionStatus('connected');
-      setLoading(false);
-
-      addNotification({
-        type: 'info',
-        title: 'Development Mode',
-        message: 'Authentication bypassed for development',
-        duration: 3000
-      });
-
-      return;
-    }
-
-    initializeAuth();
-  }, []);
-
-  // Check session expiry
-  useEffect(() => {
-    if (DEV_BYPASS_AUTH) return;
-
     const checkSessionExpiry = () => {
       if (sessionExpiry && new Date() > new Date(sessionExpiry)) {
         addNotification({
@@ -76,114 +39,113 @@ export function AuthProvider({ children }) {
       }
     };
 
-    const interval = setInterval(checkSessionExpiry, 60000);
+    const interval = setInterval(checkSessionExpiry, 60000); // التحقق كل دقيقة
     return () => clearInterval(interval);
   }, [sessionExpiry, addNotification]);
 
-  // Initialize authentication
-  const initializeAuth = async () => {
-    try {
-      console.log('🔐 Initializing authentication...');
-      setLoading(true);
-      const connection = await checkSupabaseConnection();
-      console.log('📡 Connection status:', connection);
-      setConnectionStatus(connection.connected ? 'connected' : 'disconnected');
-
-      if (connection.connected) {
-        await setupAuthListener();
-      } else {
-        console.warn('⚠️ Supabase not connected, setting loading to false');
-        addNotification({
-          type: 'warning',
-          title: 'Connection Warning',
-          message: 'Cannot connect to authentication server. Running in offline mode.',
-          duration: 5000
-        });
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('❌ Auth initialization error:', error);
-      setConnectionStatus('error');
-      setLoading(false);
-    }
-  };
-
-  const setupAuthListener = async () => {
-    try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        setLoading(false);
-        return;
-      }
-
-      if (session?.user) {
-        await handleUserSession(session.user, session.expires_at);
-      } else {
-        setLoading(false);
-      }
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          console.log('Auth state changed:', event);
-
-          switch (event) {
-            case 'SIGNED_IN':
-              if (session?.user) {
-                await handleUserSession(session.user, session.expires_at);
-                addNotification({
-                  type: 'success',
-                  title: 'تم تسجيل الدخول بنجاح',
-                  message: 'مرحباً بعودتك!',
-                  duration: 3000
-                });
-              }
-              break;
-
-            case 'SIGNED_OUT':
-              setUser(null);
-              setUserProfile(null);
-              setSessionExpiry(null);
-              addNotification({
-                type: 'info',
-                title: 'تم تسجيل الخروج',
-                message: 'تم تسجيل خروجك بنجاح',
-                duration: 3000
-              });
-              break;
-
-            case 'TOKEN_REFRESHED':
-              if (session?.expires_at) {
-                setSessionExpiry(new Date(session.expires_at * 1000));
-              }
-              break;
-
-            case 'USER_UPDATED':
-              if (session?.user) {
-                setUser(session.user);
-              }
-              break;
-          }
-
+  // تهيئة المصادقة
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        setLoading(true);
+        const connection = await checkSupabaseConnection();
+        setConnectionStatus(connection.connected ? 'connected' : 'disconnected');
+        
+        if (connection.connected) {
+          await setupAuthListener();
+        } else {
+          addNotification({
+            type: 'error',
+            title: 'خطأ في الاتصال',
+            message: 'لا يمكن الاتصال بالخادم',
+            duration: 3000
+          });
           setLoading(false);
         }
-      );
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setConnectionStatus('error');
+        setLoading(false);
+      }
+    };
 
-      return () => subscription.unsubscribe();
-    } catch (error) {
-      console.error('Error setting up auth listener:', error);
+    initializeAuth();
+  }, [addNotification]);
+
+  const setupAuthListener = async () => {
+    // جلب الجلسة الحالية
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error('Session error:', sessionError);
+      setLoading(false);
+      return;
+    }
+
+    if (session?.user) {
+      await handleUserSession(session.user, session.expires_at);
+    } else {
       setLoading(false);
     }
+
+    // إعداد مستمع لتغيرات المصادقة
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event);
+        
+        switch (event) {
+          case 'SIGNED_IN':
+            if (session?.user) {
+              await handleUserSession(session.user, session.expires_at);
+              addNotification({
+                type: 'success',
+                title: 'تم تسجيل الدخول بنجاح',
+                message: `مرحباً بعودتك!`,
+                duration: 3000
+              });
+            }
+            break;
+            
+          case 'SIGNED_OUT':
+            setUser(null);
+            setUserProfile(null);
+            setSessionExpiry(null);
+            addNotification({
+              type: 'info',
+              title: 'تم تسجيل الخروج',
+              message: 'تم تسجيل خروجك بنجاح',
+              duration: 3000
+            });
+            break;
+            
+          case 'TOKEN_REFRESHED':
+            if (session?.expires_at) {
+              setSessionExpiry(new Date(session.expires_at * 1000));
+            }
+            break;
+            
+          case 'USER_UPDATED':
+            if (session?.user) {
+              setUser(session.user);
+            }
+            break;
+        }
+        
+        setLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   };
 
   const handleUserSession = async (user, expiresAt = null) => {
     setUser(user);
-
+    
     if (expiresAt) {
       setSessionExpiry(new Date(expiresAt * 1000));
     }
 
+    // جلب بيانات المستخدم الإضافية
     try {
       const { data: profile, error } = await supabase
         .from('user_profiles')
@@ -202,8 +164,12 @@ export function AuthProvider({ children }) {
       if (error) {
         console.warn('User profile not found, creating default...');
         await createDefaultUserProfile(user);
+        // إعادة محاولة جلب البيانات بعد الإنشاء
+        await handleUserSession(user, expiresAt);
       } else {
         setUserProfile(profile);
+        
+        // تسجيل نشاط الدخول
         await logUserActivity(user.id, 'login');
       }
     } catch (error) {
@@ -218,7 +184,7 @@ export function AuthProvider({ children }) {
         id: user.id,
         email: user.email,
         role: 'viewer',
-        full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+        full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'مستخدم',
         phone: user.user_metadata?.phone || null,
         avatar_url: user.user_metadata?.avatar_url || null,
         is_active: true,
@@ -238,11 +204,12 @@ export function AuthProvider({ children }) {
       return defaultProfile;
     } catch (error) {
       console.error('Error creating default profile:', error);
+      // ملف تعريف افتراضي في حالة الخطأ
       const fallbackProfile = {
         id: user.id,
         email: user.email,
         role: 'viewer',
-        full_name: 'User',
+        full_name: 'مستخدم',
         is_active: true
       };
       setUserProfile(fallbackProfile);
@@ -270,10 +237,6 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password, rememberMe = false) => {
-    if (DEV_BYPASS_AUTH) {
-      return { success: true, error: null, user: user };
-    }
-
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -288,24 +251,24 @@ export function AuthProvider({ children }) {
         rememberMe
       });
 
-      return {
-        success: true,
+      return { 
+        success: true, 
         error: null,
-        user: data.user
+        user: data.user 
       };
     } catch (error) {
       console.error('Login error:', error);
       const handledError = handleSupabaseError(error);
-
+      
       await logUserActivity(null, 'login_failed', {
         email: email.trim().toLowerCase(),
         error: handledError.message,
         ipAddress: await getClientIP()
       });
 
-      return {
-        success: false,
-        error: handledError.message
+      return { 
+        success: false, 
+        error: handledError.message 
       };
     } finally {
       setLoading(false);
@@ -313,10 +276,6 @@ export function AuthProvider({ children }) {
   };
 
   const signUp = async (email, password, userData = {}) => {
-    if (DEV_BYPASS_AUTH) {
-      return { success: true, error: null, user: user };
-    }
-
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -338,19 +297,19 @@ export function AuthProvider({ children }) {
         });
       }
 
-      return {
-        success: true,
-        error: null,
+      return { 
+        success: true, 
+        error: null, 
         user: data.user,
-        requiresConfirmation: !data.session
+        requiresConfirmation: !data.session // إذا كان يحتاج تأكيد البريد
       };
     } catch (error) {
       console.error('Signup error:', error);
       const handledError = handleSupabaseError(error);
-
-      return {
-        success: false,
-        error: handledError.message
+      
+      return { 
+        success: false, 
+        error: handledError.message 
       };
     } finally {
       setLoading(false);
@@ -358,11 +317,6 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    if (DEV_BYPASS_AUTH) {
-      console.log('🔧 DEV MODE: Logout skipped');
-      return;
-    }
-
     try {
       if (user) {
         await logUserActivity(user.id, 'logout', {
@@ -373,10 +327,11 @@ export function AuthProvider({ children }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
+      // تنظيف الحالة المحلية
       setUser(null);
       setUserProfile(null);
       setSessionExpiry(null);
-
+      
     } catch (error) {
       console.error('Logout error:', error);
       throw error;
@@ -386,12 +341,12 @@ export function AuthProvider({ children }) {
   const resetPassword = async (email) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(
-        email.trim().toLowerCase(),
+        email.trim().toLowerCase(), 
         {
           redirectTo: `${window.location.origin}/reset-password`,
         }
       );
-
+      
       if (error) throw error;
 
       await logUserActivity(user?.id, 'password_reset_requested', {
@@ -423,7 +378,7 @@ export function AuthProvider({ children }) {
       if (error) throw error;
 
       setUserProfile(data);
-
+      
       addNotification({
         type: 'success',
         title: 'تم التحديث',
@@ -435,7 +390,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error('Profile update error:', error);
       const handledError = handleSupabaseError(error);
-
+      
       addNotification({
         type: 'error',
         title: 'خطأ في التحديث',
@@ -457,13 +412,14 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // نظام الصلاحيات المتقدم
   const hasPermission = useCallback((permissions) => {
     if (!userProfile) return false;
-
+    
     if (Array.isArray(permissions)) {
       return permissions.some(permission => checkPermission(permission));
     }
-
+    
     return checkPermission(permissions);
   }, [userProfile]);
 
@@ -479,26 +435,31 @@ export function AuthProvider({ children }) {
   };
 
   const value = {
+    // البيانات
     user,
     userProfile,
     loading,
     connectionStatus,
     sessionExpiry,
-
-    isAuthenticated: DEV_BYPASS_AUTH ? true : !!user,
+    
+    // الحالة
+    isAuthenticated: !!user,
     isAdmin: userProfile?.role === 'admin',
     isOps: userProfile?.role === 'ops' || userProfile?.role === 'admin',
     isViewer: userProfile?.role === 'viewer',
-
+    
+    // الإجراءات
     login,
     signUp,
     logout,
     resetPassword,
     updateProfile,
-
+    
+    // الصلاحيات
     hasPermission,
     checkPermission,
-
+    
+    // الأدوات
     getSessionTimeLeft: () => {
       if (!sessionExpiry) return null;
       return Math.max(0, sessionExpiry - new Date());

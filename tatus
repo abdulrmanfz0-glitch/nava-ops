@@ -1,0 +1,40 @@
+*   [33mb2e1785[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #8 from abdulrmanfz0-glitch/claude/fix-json-parsing-error-011CV3vryMXTQxHXMWKViBdx
+[31m|[m[32m\[m  
+[31m|[m * [33mf6ae404[m Fix JSON parsing error with enhanced error handling
+[31m|[m[31m/[m  
+*   [33m772e996[m Merge pull request #7 from abdulrmanfz0-glitch/claude/fix-branchconfig-is-default-011CV3tQH7t9yqCxJrUKipxp
+[33m|[m[34m\[m  
+[33m|[m * [33m53992dd[m[33m ([m[1;31morigin/claude/fix-branchconfig-is-default-011CV3tQH7t9yqCxJrUKipxp[m[33m)[m Fix BranchConfig to support is_default parameter
+* [34m|[m   [33m9b834fe[m Merge pull request #6 from abdulrmanfz0-glitch/claude/nava-ops-error-fixes-011CV3jfj8vfaz6BPZzj5VTf
+[34m|[m[36m\[m [34m\[m  
+[34m|[m [36m|[m[34m/[m  
+[34m|[m[34m/[m[36m|[m   
+[34m|[m * [33mfb012af[m[33m ([m[1;31morigin/claude/nava-ops-error-fixes-011CV3jfj8vfaz6BPZzj5VTf[m[33m, [m[1;32merror-fixes[m[33m)[m 📝 Add comprehensive documentation and test configuration
+[34m|[m * [33m0a687ab[m 🐛 Fix critical type mismatch errors across reporting modules
+[34m|[m[34m/[m  
+*   [33ma0f880c[m Merge pull request #5 from abdulrmanfz0-glitch/claude/nava-ops-reporting-revolution-011CV3f6KYiT5vbrvYHjuWgt
+[1;31m|[m[1;32m\[m  
+[1;31m|[m * [33m919046c[m[33m ([m[1;31morigin/claude/nava-ops-reporting-revolution-011CV3f6KYiT5vbrvYHjuWgt[m[33m, [m[1;32mreporting-revolution[m[33m)[m 🚀 Nava Ops v2.0 - Revolutionary Reporting System
+* [1;32m|[m   [33m8177af0[m Merge pull request #4 from abdulrmanfz0-glitch/claude/nava-ops-api-dashboard-011CV3eAXER1vTtTnh2Dgv9g
+[1;32m|[m[1;34m\[m [1;32m\[m  
+[1;32m|[m [1;34m|[m[1;32m/[m  
+[1;32m|[m[1;32m/[m[1;34m|[m   
+[1;32m|[m * [33m783a4e0[m[33m ([m[1;31morigin/claude/nava-ops-api-dashboard-011CV3eAXER1vTtTnh2Dgv9g[m[33m)[m Add REST API layer and React dashboard for Git operations
+[1;32m|[m[1;32m/[m  
+*   [33m715222b[m Merge pull request #3 from abdulrmanfz0-glitch/claude/nava-ops-codebase-review-011CV3czGcCwmM5VXACeFKN2
+[1;35m|[m[1;36m\[m  
+[1;35m|[m * [33me37f70d[m[33m ([m[1;31morigin/claude/nava-ops-codebase-review-011CV3czGcCwmM5VXACeFKN2[m[33m)[m Resolve merge conflict in .gitignore and add Python exclusions
+[1;35m|[m * [33m45df607[m Fix critical bug: Correct execute_git_command argument order across modules
+[1;35m|[m[1;35m/[m  
+*   [33me38bfc2[m Merge pull request #2 from abdulrmanfz0-glitch/claude/nava-ops-orchestration-refactor-011CV3bN341MLhkkRK5skrYC
+[31m|[m[32m\[m  
+[31m|[m * [33m95bf64a[m[33m ([m[1;31morigin/claude/nava-ops-orchestration-refactor-011CV3bN341MLhkkRK5skrYC[m[33m)[m Major v2.0 release: Add advanced Git orchestration features
+[31m|[m[31m/[m  
+*   [33mc9f2c77[m Resolve merge conflicts manually
+[33m|[m[34m\[m  
+[33m|[m *   [33m550c255[m Merge pull request #1 from abdulrmanfz0-glitch/claude/refactor-modules-optimize-logic-011CV3U7EcJVNqr9SgW4JfHk
+[33m|[m [35m|[m[36m\[m  
+[33m|[m [35m|[m * [33m14fdc62[m[33m ([m[1;31morigin/claude/refactor-modules-optimize-logic-011CV3U7EcJVNqr9SgW4JfHk[m[33m)[m Refactor into modular architecture and optimize multi-branch operations
+[33m|[m [35m|[m[35m/[m  
+[33m|[m * [33m019e6e5[m Initial commit
+* [33m87e57ec[m Initial commit of nava-ops project

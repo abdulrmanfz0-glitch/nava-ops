@@ -1,20 +1,21 @@
 // src/components/analytics/PlatformAnalytics.jsx
 import React, { useMemo, useState, useEffect } from "react";
 import { supabase } from '@lib/supabase';
-import { useAuth } from '@contexts/AuthContext';
 import { useNotification } from '@contexts/NotificationContext';
-import { exportUtils } from '@utils/exportUtils';
-import { 
+import { exportUtils, formatters } from '@utils/exportUtils';
+import {
   TrendingUp, BarChart3, PieChart, Download, Search, Filter, Award, TrendingDown,
   DollarSign, ShoppingBag, Percent, Target, Calendar, RefreshCw, Eye, MoreVertical,
   ArrowUpRight, ArrowDownRight, Star, Crown, Zap, Activity
 } from 'lucide-react';
 
+// Import formatters for use in helper components
+const { formatMoney, formatNumber } = formatters;
+
 /**
  * نظام تحليلات المنصات المتقدم مع رؤى تنبؤية ومقارنات متقدمة
  */
 export default function PlatformAnalytics() {
-  const { user, userProfile } = useAuth();
   const { addNotification } = useNotification();
   const [analyticsData, setAnalyticsData] = useState([]);
   const [platforms, setPlatforms] = useState([]);
@@ -630,11 +631,10 @@ export default function PlatformAnalytics() {
         {/* شبكة بطاقات المنصات المحسنة */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredAndSorted.map((platform) => (
-            <EnhancedPlatformCard 
-              key={platform.id} 
-              platform={platform} 
+            <EnhancedPlatformCard
+              key={platform.id}
+              platform={platform}
               fmtMoney={fmtMoney}
-              fmtPercent={fmtPercent}
               onViewDetails={() => setSelectedPlatform(platform)}
               onExportDetails={() => handleExportPlatformDetails(platform)}
             />
@@ -664,7 +664,7 @@ export default function PlatformAnalytics() {
 }
 
 // مكون البطاقة الإحصائية المحسنة
-function StatCard({ title, value, icon: Icon, color, change, changeType = "value" }) {
+function StatCard({ title, value, icon: Icon, color, change, changeType = "value" }) { // eslint-disable-line no-unused-vars
   const colorClasses = {
     blue: 'bg-blue-50 border-blue-200 text-blue-700',
     green: 'bg-green-50 border-green-200 text-green-700',
@@ -686,7 +686,7 @@ function StatCard({ title, value, icon: Icon, color, change, changeType = "value
       {change !== undefined && (
         <div className={`text-xs flex items-center ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
           {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-          {changeType === 'percent' ? `${Math.abs(change).toFixed(1)}%` : fmtMoney(Math.abs(change))}
+          {changeType === 'percent' ? `${Math.abs(change).toFixed(1)}%` : formatMoney(Math.abs(change))}
           <span className="text-gray-500 mr-1"> عن الشهر الماضي</span>
         </div>
       )}
@@ -813,7 +813,7 @@ function PerformanceDistribution({ platforms }) {
 }
 
 // مكون بطاقة المنصة المحسنة
-function EnhancedPlatformCard({ platform, fmtMoney, fmtPercent, onViewDetails, onExportDetails }) {
+function EnhancedPlatformCard({ platform, fmtMoney, onViewDetails, onExportDetails }) {
   const [showMenu, setShowMenu] = useState(false);
   const PerformanceIcon = platform.performance.icon;
 
@@ -888,7 +888,7 @@ function EnhancedPlatformCard({ platform, fmtMoney, fmtPercent, onViewDetails, o
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-600">الطلبات:</span>
-            <span className="font-medium">{fmtNumber(platform.orders)}</span>
+            <span className="font-medium">{formatNumber(platform.orders)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">هامش الربح:</span>
@@ -953,7 +953,7 @@ function EnhancedPlatformCard({ platform, fmtMoney, fmtPercent, onViewDetails, o
 }
 
 // مكون تفاصيل المنصة
-function PlatformDetailsModal({ show, platform, onClose, fmtMoney, fmtPercent, fmtNumber }) {
+function PlatformDetailsModal({ show, platform, onClose, fmtMoney, fmtNumber }) {
   if (!show || !platform) return null;
 
   const PerformanceIcon = platform.performance.icon;

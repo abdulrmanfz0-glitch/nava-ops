@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/contexts/NotificationContext';
 import api from '@/services/api';
+import logger from '@/lib/logger';
 import PageHeader from '@/components/UI/PageHeader';
 import StatCard, { StatCardSkeleton } from '@/components/UI/StatCard';
 import { RevenueTrendChart, OrdersBarChart, BranchComparisonChart } from '@/components/UI/Charts';
@@ -93,7 +94,7 @@ export default function Dashboard() {
         message: 'Failed to load dashboard data',
         type: 'error'
       });
-      console.error('Dashboard error:', error);
+      logger.error('Dashboard error', { error: error.message });
     } finally {
       setLoading(false);
       setRefreshing(false);

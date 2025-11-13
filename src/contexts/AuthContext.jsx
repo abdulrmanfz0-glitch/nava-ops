@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase, checkSupabaseConnection, handleSupabaseError } from '../lib/supabase';
 import { useNotification } from './NotificationContext';
+import logger from '../lib/logger';
 
 // DEV MODE: Set to true to bypass authentication during development
 const DEV_BYPASS_AUTH = import.meta.env.VITE_DEV_BYPASS_AUTH === 'true' || false;
@@ -27,7 +28,7 @@ export function AuthProvider({ children }) {
   // DEV MODE: Skip authentication checks
   useEffect(() => {
     if (DEV_BYPASS_AUTH) {
-      console.log('🔧 DEV MODE: Authentication bypassed');
+      logger.debug('DEV MODE: Authentication bypassed');
       const mockUser = {
         id: 'dev-user-id',
         email: 'dev@nava-ops.local',
@@ -82,16 +83,16 @@ export function AuthProvider({ children }) {
   // Initialize authentication
   const initializeAuth = async () => {
     try {
-      console.log('🔐 Initializing authentication...');
+      logger.debug('Initializing authentication');
       setLoading(true);
       const connection = await checkSupabaseConnection();
-      console.log('📡 Connection status:', connection);
+      logger.debug('Connection status', { connection });
       setConnectionStatus(connection.connected ? 'connected' : 'disconnected');
 
       if (connection.connected) {
         await setupAuthListener();
       } else {
-        console.warn('⚠️ Supabase not connected, setting loading to false');
+        logger.warn('Supabase not connected');
         addNotification({
           type: 'warning',
           title: 'Connection Warning',
@@ -101,7 +102,7 @@ export function AuthProvider({ children }) {
         setLoading(false);
       }
     } catch (error) {
-      console.error('❌ Auth initialization error:', error);
+      logger.error('Auth initialization error', { error: error.message });
       setConnectionStatus('error');
       setLoading(false);
     }
@@ -112,7 +113,7 @@ export function AuthProvider({ children }) {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
       if (sessionError) {
-        console.error('Session error:', sessionError);
+        logger.error('Session error', { error: sessionError.message });
         setLoading(false);
         return;
       }
@@ -125,7 +126,7 @@ export function AuthProvider({ children }) {
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
-          console.log('Auth state changed:', event);
+          logger.debug('Auth state changed', { event });
 
           switch (event) {
             case 'SIGNED_IN':
@@ -171,7 +172,7 @@ export function AuthProvider({ children }) {
 
       return () => subscription.unsubscribe();
     } catch (error) {
-      console.error('Error setting up auth listener:', error);
+      logger.error('Error setting up auth listener', { error: error.message });
       setLoading(false);
     }
   };
@@ -199,14 +200,14 @@ export function AuthProvider({ children }) {
         .single();
 
       if (error) {
-        console.warn('User profile not found, creating default...');
+        logger.warn('User profile not found, creating default');
         await createDefaultUserProfile(user);
       } else {
         setUserProfile(profile);
         await logUserActivity(user.id, 'login');
       }
     } catch (error) {
-      console.error('Error handling user session:', error);
+      logger.error('Error handling user session', { error: error.message });
       await createDefaultUserProfile(user);
     }
   };
@@ -236,7 +237,7 @@ export function AuthProvider({ children }) {
       setUserProfile(defaultProfile);
       return defaultProfile;
     } catch (error) {
-      console.error('Error creating default profile:', error);
+      logger.error('Error creating default profile', { error: error.message });
       const fallbackProfile = {
         id: user.id,
         email: user.email,
@@ -264,7 +265,7 @@ export function AuthProvider({ children }) {
           }
         ]);
     } catch (error) {
-      console.error('Error logging user activity:', error);
+      logger.error('Error logging user activity', { error: error.message });
     }
   };
 
@@ -293,7 +294,7 @@ export function AuthProvider({ children }) {
         user: data.user
       };
     } catch (error) {
-      console.error('Login error:', error);
+      logger.error('Login error', { error: error.message });
       const handledError = handleSupabaseError(error);
 
       await logUserActivity(null, 'login_failed', {
@@ -344,7 +345,7 @@ export function AuthProvider({ children }) {
         requiresConfirmation: !data.session
       };
     } catch (error) {
-      console.error('Signup error:', error);
+      logger.error('Signup error', { error: error.message });
       const handledError = handleSupabaseError(error);
 
       return {
@@ -358,7 +359,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     if (DEV_BYPASS_AUTH) {
-      console.log('🔧 DEV MODE: Logout skipped');
+      logger.debug('DEV MODE: Logout skipped');
       return;
     }
 
@@ -377,7 +378,7 @@ export function AuthProvider({ children }) {
       setSessionExpiry(null);
 
     } catch (error) {
-      console.error('Logout error:', error);
+      logger.error('Logout error', { error: error.message });
       throw error;
     }
   };
@@ -399,7 +400,7 @@ export function AuthProvider({ children }) {
 
       return { success: true, error: null };
     } catch (error) {
-      console.error('Password reset error:', error);
+      logger.error('Password reset error', { error: error.message });
       const handledError = handleSupabaseError(error);
       return { success: false, error: handledError.message };
     }
@@ -432,7 +433,7 @@ export function AuthProvider({ children }) {
 
       return { success: true, error: null, profile: data };
     } catch (error) {
-      console.error('Profile update error:', error);
+      logger.error('Profile update error', { error: error.message });
       const handledError = handleSupabaseError(error);
 
       addNotification({

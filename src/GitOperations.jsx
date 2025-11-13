@@ -110,11 +110,7 @@ export default function GitOperations() {
         setConfig(data);
       }
     } catch (err) {
-<<<<<<< HEAD
       // Failed to fetch config silently
-=======
-      logger.error('Failed to fetch config', { error: err.message });
->>>>>>> origin/claude/codebase-deep-upgrade-011CV5xaRKkDeUJpoqsxBnNF
     }
   };
 

@@ -32,30 +32,17 @@ const COLOR_PALETTE = [
   CHART_COLORS.teal
 ];
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Modern Custom Tooltip with refined styling
-const CustomTooltip = ({ active, payload, label, prefix = '', suffix = '' }) => {
-
 // Chart validation helper
 const validateChartData = (data, componentName = 'Chart') => {
   if (!data) {
     logger.warn(`${componentName}: No data provided`);
     return false;
   }
- main
 
   if (!Array.isArray(data)) {
     logger.warn(`${componentName}: Data is not an array`, { data });
     return false;
   }
-
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Modern Loading State
-const ChartLoading = () => (
-  <div className="w-full h-80 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-2xl">
-    <div className="text-center space-y-3">
-      <div className="loading-spinner w-8 h-8 mx-auto" />
-      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Loading chart data...</p>
 
   if (data.length === 0) {
     logger.debug(`${componentName}: Empty data array`);
@@ -71,10 +58,11 @@ const ChartLoading = memo(() => (
     <div className="text-center">
       <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin mx-auto mb-3"></div>
       <div className="text-gray-500 dark:text-gray-400 text-sm">Loading chart...</div>
- main
     </div>
   </div>
 ));
+
+ChartLoading.displayName = 'ChartLoading';
 
 // Empty State Component
 const ChartEmpty = memo(({ message = 'No data available' }) => (
@@ -86,6 +74,8 @@ const ChartEmpty = memo(({ message = 'No data available' }) => (
   </div>
 ));
 
+ChartEmpty.displayName = 'ChartEmpty';
+
 // Error State Component
 const ChartError = memo(({ error }) => (
   <div className="w-full h-80 flex items-center justify-center bg-error-50 dark:bg-error-900/20 rounded-lg border border-error-200 dark:border-error-800">
@@ -96,6 +86,8 @@ const ChartError = memo(({ error }) => (
     </div>
   </div>
 ));
+
+ChartError.displayName = 'ChartError';
 
 // Chart Container with error boundary
 const ChartContainer = ({ data, loading, error, children, emptyMessage }) => {
@@ -127,24 +119,7 @@ const CustomTooltip = memo(({ active, payload, label, prefix = '', suffix = '' }
   );
 });
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Orders Bar Chart with rounded corners
-export function OrdersBarChart({ data, loading = false }) {
-  if (loading) return <ChartLoading />;
-
-// Orders Bar Chart - Memoized
-export const OrdersBarChart = memo(({ data, loading = false }) => {
-  if (loading) {
-    return (
-      <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
-        <div className="text-gray-400">Loading chart...</div>
-      </div>
-    );
-  }
- main
-
 CustomTooltip.displayName = 'CustomTooltip';
- main
 
 // Revenue Trend Line Chart
 export const RevenueTrendChart = memo(({ data, loading = false, error = null }) => {
@@ -187,24 +162,7 @@ export const RevenueTrendChart = memo(({ data, loading = false, error = null }) 
   );
 });
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Modern Area Chart with gradient fills
-export function TrendAreaChart({ data, dataKeys = [], colors = [], loading = false }) {
-  if (loading) return <ChartLoading />;
-
-// Area Chart for Trends - Memoized
-export const TrendAreaChart = memo(({ data, dataKeys = [], colors = [], loading = false }) => {
-  if (loading) {
-    return (
-      <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
-        <div className="text-gray-400">Loading chart...</div>
-      </div>
-    );
-  }
- main
-
 RevenueTrendChart.displayName = 'RevenueTrendChart';
- main
 
 // Orders Bar Chart
 export const OrdersBarChart = memo(({ data, loading = false, error = null }) => {
@@ -243,13 +201,7 @@ export const OrdersBarChart = memo(({ data, loading = false, error = null }) => 
   );
 });
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Branch Comparison Chart with modern horizontal bars
-export function BranchComparisonChart({ data, loading = false }) {
-  if (loading) return <ChartLoading />;
-
 OrdersBarChart.displayName = 'OrdersBarChart';
- main
 
 // Area Chart for Trends
 export const TrendAreaChart = memo(({ data, dataKeys = [], colors = [], loading = false, error = null }) => {
@@ -305,40 +257,7 @@ export const TrendAreaChart = memo(({ data, dataKeys = [], colors = [], loading 
   );
 });
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Modern Pie Chart with clean design
-export function CategoryPieChart({ data, loading = false }) {
-  if (loading) return <ChartLoading />;
-
-  const RADIAN = Math.PI / 180;
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    if (percent < 0.05) return null; // Hide labels for small slices
-
-
-// Pie Chart for Category Distribution - Memoized
-export const CategoryPieChart = memo(({ data, loading = false }) => {
-  if (loading) {
- main
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? 'start' : 'end'}
-        dominantBaseline="central"
-        className="text-xs font-semibold"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
-
 TrendAreaChart.displayName = 'TrendAreaChart';
- main
 
 // Branch Comparison Chart
 export const BranchComparisonChart = memo(({ data, loading = false, error = null }) => {
@@ -381,24 +300,7 @@ export const BranchComparisonChart = memo(({ data, loading = false, error = null
   );
 });
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Multi-Line Chart for modern comparisons
-export function MultiLineChart({ data, lines = [], loading = false }) {
-  if (loading) return <ChartLoading />;
-
-// Multi-Line Chart for Comparison - Memoized
-export const MultiLineChart = memo(({ data, lines = [], loading = false }) => {
-  if (loading) {
-    return (
-      <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
-        <div className="text-gray-400">Loading chart...</div>
-      </div>
-    );
-  }
- main
-
 BranchComparisonChart.displayName = 'BranchComparisonChart';
- main
 
 // Pie Chart for Category Distribution
 export const CategoryPieChart = memo(({ data, loading = false, error = null }) => {
@@ -433,13 +335,7 @@ export const CategoryPieChart = memo(({ data, loading = false, error = null }) =
   );
 });
 
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-// Modern Stacked Bar Chart
-export function StackedBarChart({ data, bars = [], loading = false }) {
-  if (loading) return <ChartLoading />;
-
 CategoryPieChart.displayName = 'CategoryPieChart';
- main
 
 // Multi-Line Chart for Comparison
 export const MultiLineChart = memo(({ data, lines = [], loading = false, error = null }) => {

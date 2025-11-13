@@ -1,5 +1,5 @@
-// NAVA OPS - Modal Component
-// Professional modal dialog with animations
+// NAVA OPS - Modern Modal Component
+// Minimalistic modal dialog with smooth animations
 
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
@@ -37,45 +37,53 @@ export default function Modal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 overflow-y-auto animate-fade-in">
+      {/* Enhanced Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-300"
         onClick={closable ? onClose : undefined}
       />
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl
-                     ${sizeClasses[size]} w-full
-                     transform transition-all`}
+          className={`
+            relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl
+            border border-gray-200 dark:border-gray-800
+            ${sizeClasses[size]} w-full
+            transform transition-all duration-300 animate-scale-in
+          `}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-800">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white tracking-tight">
               {title}
             </h3>
             {closable && (
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300
-                         transition-colors duration-200"
+                className="flex items-center justify-center w-8 h-8 rounded-lg
+                         text-gray-400 hover:text-gray-600 dark:hover:text-gray-300
+                         hover:bg-gray-100 dark:hover:bg-gray-800
+                         transition-all duration-200"
+                aria-label="Close modal"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             )}
           </div>
 
           {/* Content */}
-          <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+          <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
             {children}
           </div>
 
           {/* Footer */}
           {footer && (
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-end gap-3 px-6 py-4
+                          border-t border-gray-200 dark:border-gray-800
+                          bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
               {footer}
             </div>
           )}
@@ -85,7 +93,7 @@ export default function Modal({
   );
 }
 
-// Confirm Dialog
+// Modern Confirm Dialog
 export function ConfirmDialog({
   isOpen,
   onClose,
@@ -97,9 +105,9 @@ export function ConfirmDialog({
   variant = 'danger'
 }) {
   const variantClasses = {
-    danger: 'bg-red-600 hover:bg-red-700',
-    primary: 'bg-blue-600 hover:bg-blue-700',
-    success: 'bg-green-600 hover:bg-green-700'
+    danger: 'btn-error',
+    primary: 'btn-primary',
+    success: 'btn-success'
   };
 
   return (
@@ -112,9 +120,7 @@ export function ConfirmDialog({
         <>
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700
-                     transition-colors duration-200"
+            className="btn btn-secondary"
           >
             {cancelText}
           </button>
@@ -123,14 +129,14 @@ export function ConfirmDialog({
               onConfirm();
               onClose();
             }}
-            className={`px-4 py-2 rounded-lg text-white transition-colors duration-200 ${variantClasses[variant]}`}
+            className={`btn ${variantClasses[variant]}`}
           >
             {confirmText}
           </button>
         </>
       }
     >
-      <p className="text-gray-700 dark:text-gray-300">
+      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
         {message}
       </p>
     </Modal>

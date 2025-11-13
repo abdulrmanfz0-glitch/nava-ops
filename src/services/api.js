@@ -859,6 +859,14 @@ export const activitiesAPI = {
 };
 
 // ============================================================================
+// SUBSCRIPTIONS API
+// ============================================================================
+
+import subscriptionService from './subscriptionService';
+
+export const subscriptionsAPI = subscriptionService;
+
+// ============================================================================
 // EXPORT ALL
 // ============================================================================
 
@@ -871,5 +879,6 @@ export default {
   notifications: notificationsAPI,
   analytics: analyticsAPI,
   team: teamAPI,
-  activities: activitiesAPI
+  activities: activitiesAPI,
+  subscriptions: subscriptionsAPI
 };

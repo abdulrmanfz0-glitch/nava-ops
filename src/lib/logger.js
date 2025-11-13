@@ -27,7 +27,7 @@ class Logger {
       this.logs.shift();
     }
 
-    // Console output in development
+    // Console output in development only
     if (import.meta.env.DEV) {
       const consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log';
       console[consoleMethod](`[${level.toUpperCase()}]`, message, data);
@@ -95,7 +95,7 @@ class Logger {
 
       localStorage.setItem('nava_error_logs', JSON.stringify(storedErrors));
     } catch (e) {
-      console.error('Failed to store error locally:', e);
+      // Silent fail - can't log errors in error logger
     }
   }
 
@@ -128,8 +128,10 @@ class Logger {
 
   // Send to Sentry (placeholder - implement when Sentry is configured)
   sendToSentry(logEntry) {
-    // TODO: Implement Sentry integration
-    console.log('Would send to Sentry:', logEntry);
+    // TODO: Implement Sentry integration when VITE_SENTRY_DSN is configured
+    if (import.meta.env.DEV) {
+      console.log('Would send to Sentry:', logEntry);
+    }
   }
 }
 
@@ -157,7 +159,7 @@ export class ErrorBoundaryLogger {
       sessionErrors.push(errorData);
       sessionStorage.setItem('react_errors', JSON.stringify(sessionErrors.slice(-10))); // Keep last 10
     } catch (e) {
-      console.error('Failed to store error in session:', e);
+      // Silent fail
     }
   }
 
@@ -174,10 +176,12 @@ export class ErrorBoundaryLogger {
   }
 }
 
+ claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
 // Performance Logger
 
-// Performance Logger for tracking app performance
+
  main
+// Performance Logger for tracking app performance
 export class PerformanceLogger {
   static timers = new Map();
 
@@ -188,7 +192,9 @@ export class PerformanceLogger {
   static end(label, warnThreshold = 1000) {
     const startTime = this.timers.get(label);
     if (!startTime) {
-      console.warn(`No timer found for label: ${label}`);
+      if (import.meta.env.DEV) {
+        console.warn(`No timer found for label: ${label}`);
+      }
       return null;
     }
 
@@ -208,45 +214,14 @@ export class PerformanceLogger {
   }
 
   static measure(label, fn) {
-    const start = performance.now();
-    const result = fn();
-    const duration = performance.now() - start;
-
-    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
-
-
-  static end(label, threshold = 1000) {
-    const startTime = this.timers.get(label);
-    if (startTime) {
-      const duration = performance.now() - startTime;
-      this.timers.delete(label);
-
-      // Log if duration exceeds threshold
-      if (duration > threshold) {
-        logger.warn(`Performance: ${label} took longer than expected`, {
-          duration: `${duration.toFixed(2)}ms`,
-          threshold: `${threshold}ms`
-        });
-      } else {
-        logger.info(`Performance: ${label}`, {
-          duration: `${duration.toFixed(2)}ms`
-        });
-      }
-
-      return duration;
-    }
-    return null;
-  }
-
-  static measure(label, fn) {
     this.start(label);
     const result = fn();
     this.end(label);
- main
     return result;
   }
 
   static async measureAsync(label, fn) {
+ claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
     const start = performance.now();
     const result = await fn();
     const duration = performance.now() - start;
@@ -254,10 +229,11 @@ export class PerformanceLogger {
     logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
 
 
+
+ main
     this.start(label);
     const result = await fn();
     this.end(label);
- main
     return result;
   }
 }

@@ -1,10 +1,11 @@
 // NAVA OPS - Enterprise Dashboard
 // Professional SaaS Analytics Dashboard with real-time insights
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/contexts/NotificationContext';
 import api from '@/services/api';
+import logger from '@/lib/logger';
 import PageHeader from '@/components/UI/PageHeader';
 import StatCard, { StatCardSkeleton } from '@/components/UI/StatCard';
 import { RevenueTrendChart, OrdersBarChart, BranchComparisonChart } from '@/components/UI/Charts';
@@ -51,14 +52,16 @@ export default function Dashboard() {
     };
   });
 
-  // Calculate days between dates - Memoized
-  const days = useMemo(() => {
-    const diffTime = Math.abs(new Date(dateRange.endDate) - new Date(dateRange.startDate));
+  // Calculate days between dates
+  const getDaysBetween = (start, end) => {
+    const diffTime = Math.abs(new Date(end) - new Date(start));
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }, [dateRange.startDate, dateRange.endDate]);
+  };
 
-  // Fetch dashboard data - Memoized callback
-  const fetchDashboardData = useCallback(async (showLoader = true) => {
+  const days = getDaysBetween(dateRange.startDate, dateRange.endDate);
+
+  // Fetch dashboard data
+  const fetchDashboardData = async (showLoader = true) => {
     try {
       if (showLoader) setLoading(true);
       else setRefreshing(true);
@@ -91,31 +94,32 @@ export default function Dashboard() {
         message: 'Failed to load dashboard data',
         type: 'error'
       });
+      logger.error('Dashboard error', { error: error.message });
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [selectedBranch, days, addNotification]);
+  };
 
   // Initial load
   useEffect(() => {
     fetchDashboardData();
   }, [selectedBranch, dateRange]);
 
-  // Manual refresh - Memoized callback
-  const handleRefresh = useCallback(() => {
+  // Manual refresh
+  const handleRefresh = () => {
     fetchDashboardData(false);
-  }, [fetchDashboardData]);
+  };
 
-  // Handle branch selection - Memoized callback
-  const handleBranchChange = useCallback((e) => {
+  // Handle branch selection
+  const handleBranchChange = (e) => {
     setSelectedBranch(e.target.value || null);
-  }, []);
+  };
 
-  // Handle date range change - Memoized callback
-  const handleDateRangeChange = useCallback(({ startDate, endDate }) => {
+  // Handle date range change
+  const handleDateRangeChange = ({ startDate, endDate }) => {
     setDateRange({ startDate, endDate });
-  }, []);
+  };
 
   return (
     <div className="space-y-6">

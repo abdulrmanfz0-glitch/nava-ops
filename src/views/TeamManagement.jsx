@@ -131,7 +131,6 @@ export default function TeamManagement() {
       if (error) throw error;
       setEmployees(data || []);
     } catch (error) {
-      console.error('Error fetching employees:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في جلب البيانات',
@@ -152,7 +151,7 @@ export default function TeamManagement() {
       if (error) throw error;
       setBrands(data || []);
     } catch (error) {
-      console.error('Error fetching brands:', error);
+      // Error fetching brands silently
     }
   };
 
@@ -165,9 +164,8 @@ export default function TeamManagement() {
           event: '*', 
           schema: 'public', 
           table: 'user_profiles' 
-        }, 
+        },
         (payload) => {
-          console.log('Employee change received:', payload);
           fetchEmployees();
         }
       )
@@ -248,7 +246,6 @@ export default function TeamManagement() {
       await fetchEmployees();
       resetForm();
     } catch (error) {
-      console.error('Error saving employee:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في الحفظ',
@@ -284,7 +281,6 @@ export default function TeamManagement() {
         message: 'تم إرسال رابط إعادة تعيين كلمة المرور إلى البريد الإلكتروني'
       });
     } catch (error) {
-      console.error('Error resetting password:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في التعيين',
@@ -316,7 +312,6 @@ export default function TeamManagement() {
 
       await fetchEmployees();
     } catch (error) {
-      console.error('Error updating employee status:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في التحديث',

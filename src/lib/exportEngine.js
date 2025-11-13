@@ -1,0 +1,541 @@
+// NAVA OPS - Advanced Export Engine
+// Comprehensive export utilities for PDF, Excel, CSV with rich formatting
+
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { saveAs } from 'file-saver';
+import { logger } from './logger';
+
+/**
+ * PDF Export with Advanced Formatting
+ */
+export class PDFExporter {
+  constructor(options = {}) {
+    this.pdf = new jsPDF({
+      orientation: options.orientation || 'portrait',
+      unit: 'mm',
+      format: options.format || 'a4'
+    });
+
+    this.pageWidth = this.pdf.internal.pageSize.getWidth();
+    this.pageHeight = this.pdf.internal.pageSize.getHeight();
+    this.margins = { top: 20, right: 15, bottom: 20, left: 15 };
+    this.currentY = this.margins.top;
+    this.primaryColor = options.primaryColor || [0, 136, 255];
+    this.secondaryColor = options.secondaryColor || [107, 114, 128];
+  }
+
+  /**
+   * Add header with logo and title
+   */
+  addHeader(title, subtitle = '') {
+    // Background banner
+    this.pdf.setFillColor(...this.primaryColor);
+    this.pdf.rect(0, 0, this.pageWidth, 40, 'F');
+
+    // Title
+    this.pdf.setTextColor(255, 255, 255);
+    this.pdf.setFontSize(24);
+    this.pdf.setFont('helvetica', 'bold');
+    this.pdf.text(title, this.margins.left, 20);
+
+    // Subtitle
+    if (subtitle) {
+      this.pdf.setFontSize(12);
+      this.pdf.setFont('helvetica', 'normal');
+      this.pdf.text(subtitle, this.margins.left, 30);
+    }
+
+    // Company info
+    this.pdf.setFontSize(10);
+    this.pdf.text('NAVA OPS', this.pageWidth - this.margins.right - 30, 20);
+    this.pdf.text(new Date().toLocaleDateString(), this.pageWidth - this.margins.right - 30, 27);
+
+    this.currentY = 50;
+    this.pdf.setTextColor(0, 0, 0);
+  }
+
+  /**
+   * Add section header
+   */
+  addSection(title, color = null) {
+    this.checkPageBreak(20);
+
+    const sectionColor = color || this.primaryColor;
+    this.pdf.setFillColor(...sectionColor);
+    this.pdf.rect(this.margins.left, this.currentY, 5, 8, 'F');
+
+    this.pdf.setFontSize(16);
+    this.pdf.setFont('helvetica', 'bold');
+    this.pdf.setTextColor(60, 60, 60);
+    this.pdf.text(title, this.margins.left + 10, this.currentY + 6);
+
+    this.currentY += 15;
+  }
+
+  /**
+   * Add key metrics cards
+   */
+  addMetricsCards(metrics) {
+    this.checkPageBreak(40);
+
+    const cardWidth = (this.pageWidth - this.margins.left - this.margins.right - 15) / 4;
+    const cardHeight = 30;
+    let x = this.margins.left;
+
+    metrics.forEach((metric, index) => {
+      // Card background
+      this.pdf.setFillColor(249, 250, 251);
+      this.pdf.roundedRect(x, this.currentY, cardWidth, cardHeight, 3, 3, 'F');
+
+      // Metric label
+      this.pdf.setFontSize(9);
+      this.pdf.setFont('helvetica', 'normal');
+      this.pdf.setTextColor(107, 114, 128);
+      this.pdf.text(metric.label, x + 5, this.currentY + 8);
+
+      // Metric value
+      this.pdf.setFontSize(16);
+      this.pdf.setFont('helvetica', 'bold');
+      this.pdf.setTextColor(31, 41, 55);
+      this.pdf.text(String(metric.value), x + 5, this.currentY + 18);
+
+      // Trend indicator
+      if (metric.trend) {
+        const trendColor = metric.trend.direction === 'up' ? [16, 185, 129] : [239, 68, 68];
+        this.pdf.setFontSize(9);
+        this.pdf.setTextColor(...trendColor);
+        this.pdf.text(`${metric.trend.direction === 'up' ? '↑' : '↓'} ${metric.trend.value}`, x + 5, this.currentY + 25);
+      }
+
+      x += cardWidth + 5;
+    });
+
+    this.currentY += cardHeight + 10;
+  }
+
+  /**
+   * Add data table with auto-formatting
+   */
+  addTable(headers, data, options = {}) {
+    this.checkPageBreak(50);
+
+    this.pdf.autoTable({
+      startY: this.currentY,
+      head: [headers],
+      body: data,
+      theme: options.theme || 'striped',
+      headStyles: {
+        fillColor: this.primaryColor,
+        fontStyle: 'bold',
+        fontSize: 10
+      },
+      bodyStyles: {
+        fontSize: 9
+      },
+      alternateRowStyles: {
+        fillColor: [249, 250, 251]
+      },
+      margin: { left: this.margins.left, right: this.margins.right },
+      ...options
+    });
+
+    this.currentY = this.pdf.lastAutoTable.finalY + 10;
+  }
+
+  /**
+   * Add chart placeholder (for chart images)
+   */
+  addChart(chartDataUrl, title = '', height = 60) {
+    this.checkPageBreak(height + 15);
+
+    if (title) {
+      this.pdf.setFontSize(12);
+      this.pdf.setFont('helvetica', 'bold');
+      this.pdf.text(title, this.margins.left, this.currentY);
+      this.currentY += 8;
+    }
+
+    try {
+      const chartWidth = this.pageWidth - this.margins.left - this.margins.right;
+      this.pdf.addImage(chartDataUrl, 'PNG', this.margins.left, this.currentY, chartWidth, height);
+      this.currentY += height + 10;
+    } catch (error) {
+      logger.error('Failed to add chart to PDF', error);
+    }
+  }
+
+  /**
+   * Add insights section
+   */
+  addInsights(insights) {
+    this.addSection('AI-Generated Insights', [16, 185, 129]);
+
+    insights.forEach((insight, index) => {
+      this.checkPageBreak(25);
+
+      // Insight box
+      const boxColor = this.getInsightColor(insight.severity);
+      this.pdf.setFillColor(...boxColor);
+      this.pdf.rect(this.margins.left, this.currentY, 5, 8, 'F');
+
+      // Title
+      this.pdf.setFontSize(11);
+      this.pdf.setFont('helvetica', 'bold');
+      this.pdf.setTextColor(31, 41, 55);
+      this.pdf.text(insight.title, this.margins.left + 10, this.currentY + 5);
+
+      // Description
+      this.pdf.setFontSize(9);
+      this.pdf.setFont('helvetica', 'normal');
+      this.pdf.setTextColor(107, 114, 128);
+      const lines = this.pdf.splitTextToSize(insight.description, this.pageWidth - this.margins.left - this.margins.right - 15);
+      this.pdf.text(lines, this.margins.left + 10, this.currentY + 12);
+
+      this.currentY += 12 + (lines.length * 4) + 8;
+    });
+  }
+
+  /**
+   * Add executive summary
+   */
+  addExecutiveSummary(summary) {
+    this.addSection('Executive Summary');
+
+    this.pdf.setFontSize(10);
+    this.pdf.setFont('helvetica', 'normal');
+    this.pdf.setTextColor(60, 60, 60);
+
+    const summaryLines = this.pdf.splitTextToSize(summary, this.pageWidth - this.margins.left - this.margins.right);
+    summaryLines.forEach(line => {
+      this.checkPageBreak(10);
+      this.pdf.text(line, this.margins.left, this.currentY);
+      this.currentY += 6;
+    });
+
+    this.currentY += 5;
+  }
+
+  /**
+   * Add footer
+   */
+  addFooter() {
+    const pageCount = this.pdf.internal.getNumberOfPages();
+
+    for (let i = 1; i <= pageCount; i++) {
+      this.pdf.setPage(i);
+      this.pdf.setFontSize(8);
+      this.pdf.setTextColor(150, 150, 150);
+      this.pdf.text(
+        `Page ${i} of ${pageCount}`,
+        this.pageWidth / 2,
+        this.pageHeight - 10,
+        { align: 'center' }
+      );
+      this.pdf.text(
+        'Generated by NAVA OPS',
+        this.margins.left,
+        this.pageHeight - 10
+      );
+      this.pdf.text(
+        new Date().toLocaleString(),
+        this.pageWidth - this.margins.right,
+        this.pageHeight - 10,
+        { align: 'right' }
+      );
+    }
+  }
+
+  /**
+   * Check if page break is needed
+   */
+  checkPageBreak(requiredSpace) {
+    if (this.currentY + requiredSpace > this.pageHeight - this.margins.bottom - 15) {
+      this.pdf.addPage();
+      this.currentY = this.margins.top;
+    }
+  }
+
+  /**
+   * Get color for insight severity
+   */
+  getInsightColor(severity) {
+    const colors = {
+      high: [239, 68, 68],
+      medium: [251, 191, 36],
+      low: [59, 130, 246],
+      info: [16, 185, 129]
+    };
+    return colors[severity] || colors.info;
+  }
+
+  /**
+   * Save PDF
+   */
+  save(filename) {
+    this.addFooter();
+    this.pdf.save(filename);
+    logger.info('PDF exported successfully', { filename });
+  }
+
+  /**
+   * Get PDF as blob
+   */
+  getBlob() {
+    this.addFooter();
+    return this.pdf.output('blob');
+  }
+}
+
+/**
+ * Excel Export Utility
+ */
+export class ExcelExporter {
+  constructor() {
+    this.workbook = {
+      sheets: [],
+      creator: 'NAVA OPS',
+      created: new Date()
+    };
+  }
+
+  /**
+   * Add worksheet with data
+   */
+  addSheet(name, data, options = {}) {
+    const sheet = {
+      name,
+      data,
+      headers: options.headers || Object.keys(data[0] || {}),
+      styling: options.styling || {}
+    };
+    this.workbook.sheets.push(sheet);
+  }
+
+  /**
+   * Convert to CSV (simplified Excel export)
+   */
+  toCSV(sheetIndex = 0) {
+    const sheet = this.workbook.sheets[sheetIndex];
+    if (!sheet) return '';
+
+    let csv = sheet.headers.join(',') + '\n';
+
+    sheet.data.forEach(row => {
+      const values = sheet.headers.map(header => {
+        const value = row[header];
+        // Escape values containing commas or quotes
+        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      });
+      csv += values.join(',') + '\n';
+    });
+
+    return csv;
+  }
+
+  /**
+   * Save as CSV
+   */
+  saveAsCSV(filename, sheetIndex = 0) {
+    const csv = this.toCSV(sheetIndex);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, filename);
+    logger.info('CSV exported successfully', { filename });
+  }
+
+  /**
+   * Save as Excel (using simple XML format)
+   */
+  saveAsExcel(filename) {
+    // For now, we'll export the first sheet as CSV
+    // In a real implementation, you'd use a library like xlsx
+    this.saveAsCSV(filename.replace('.xlsx', '.csv'));
+  }
+}
+
+/**
+ * CSV Export Utility
+ */
+export class CSVExporter {
+  /**
+   * Convert data to CSV
+   */
+  static toCSV(data, options = {}) {
+    if (!data || data.length === 0) return '';
+
+    const headers = options.headers || Object.keys(data[0]);
+    const delimiter = options.delimiter || ',';
+    const includeHeaders = options.includeHeaders !== false;
+
+    let csv = '';
+
+    if (includeHeaders) {
+      csv = headers.join(delimiter) + '\n';
+    }
+
+    data.forEach(row => {
+      const values = headers.map(header => {
+        let value = row[header];
+
+        // Handle different data types
+        if (value === null || value === undefined) {
+          value = '';
+        } else if (typeof value === 'object') {
+          value = JSON.stringify(value);
+        } else {
+          value = String(value);
+        }
+
+        // Escape values
+        if (value.includes(delimiter) || value.includes('"') || value.includes('\n')) {
+          value = `"${value.replace(/"/g, '""')}"`;
+        }
+
+        return value;
+      });
+
+      csv += values.join(delimiter) + '\n';
+    });
+
+    return csv;
+  }
+
+  /**
+   * Download CSV
+   */
+  static download(data, filename, options = {}) {
+    const csv = this.toCSV(data, options);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, filename);
+    logger.info('CSV downloaded successfully', { filename, rows: data.length });
+  }
+}
+
+/**
+ * JSON Export Utility
+ */
+export class JSONExporter {
+  /**
+   * Download JSON
+   */
+  static download(data, filename, pretty = true) {
+    const json = pretty ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+    saveAs(blob, filename);
+    logger.info('JSON downloaded successfully', { filename });
+  }
+}
+
+/**
+ * Main Export Function - Auto-detects format
+ */
+export const exportReport = async (reportData, format, filename) => {
+  try {
+    logger.info('Starting report export', { format, filename });
+
+    switch (format.toLowerCase()) {
+      case 'pdf':
+        return await exportAsPDF(reportData, filename);
+      case 'excel':
+      case 'xlsx':
+        return await exportAsExcel(reportData, filename);
+      case 'csv':
+        return await exportAsCSV(reportData, filename);
+      case 'json':
+        return JSONExporter.download(reportData, filename);
+      default:
+        throw new Error(`Unsupported export format: ${format}`);
+    }
+  } catch (error) {
+    logger.error('Export failed', { format, filename, error: error.message });
+    throw error;
+  }
+};
+
+/**
+ * Export as PDF with full report formatting
+ */
+const exportAsPDF = async (reportData, filename) => {
+  const pdf = new PDFExporter();
+
+  pdf.addHeader(reportData.title, reportData.subtitle);
+
+  if (reportData.executiveSummary) {
+    pdf.addExecutiveSummary(reportData.executiveSummary);
+  }
+
+  if (reportData.metrics) {
+    pdf.addMetricsCards(reportData.metrics);
+  }
+
+  if (reportData.sections) {
+    reportData.sections.forEach(section => {
+      pdf.addSection(section.title);
+
+      if (section.table) {
+        pdf.addTable(section.table.headers, section.table.data);
+      }
+
+      if (section.chart) {
+        pdf.addChart(section.chart.dataUrl, section.chart.title);
+      }
+    });
+  }
+
+  if (reportData.insights) {
+    pdf.addInsights(reportData.insights);
+  }
+
+  pdf.save(filename);
+};
+
+/**
+ * Export as Excel
+ */
+const exportAsExcel = async (reportData, filename) => {
+  const excel = new ExcelExporter();
+
+  // Add summary sheet
+  if (reportData.metrics) {
+    excel.addSheet('Summary', reportData.metrics);
+  }
+
+  // Add data sheets
+  if (reportData.sections) {
+    reportData.sections.forEach(section => {
+      if (section.table) {
+        excel.addSheet(section.title, section.table.data, {
+          headers: section.table.headers
+        });
+      }
+    });
+  }
+
+  excel.saveAsExcel(filename);
+};
+
+/**
+ * Export as CSV
+ */
+const exportAsCSV = async (reportData, filename) => {
+  let data = [];
+
+  if (reportData.sections && reportData.sections[0]?.table) {
+    data = reportData.sections[0].table.data;
+  } else if (reportData.data) {
+    data = reportData.data;
+  }
+
+  CSVExporter.download(data, filename);
+};
+
+export default {
+  PDFExporter,
+  ExcelExporter,
+  CSVExporter,
+  JSONExporter,
+  exportReport
+};

@@ -143,7 +143,6 @@ export default function TasksManagement() {
       if (error) throw error;
       setTasks(data || []);
     } catch (error) {
-      console.error('Error fetching tasks:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في جلب البيانات',
@@ -171,7 +170,7 @@ export default function TasksManagement() {
       if (error) throw error;
       setEmployees(data || []);
     } catch (error) {
-      console.error('Error fetching employees:', error);
+      // Error fetching employees silently
     }
   };
 
@@ -185,7 +184,7 @@ export default function TasksManagement() {
       if (error) throw error;
       setBrands(data || []);
     } catch (error) {
-      console.error('Error fetching brands:', error);
+      // Error fetching brands silently
     }
   };
 
@@ -198,9 +197,8 @@ export default function TasksManagement() {
           event: '*', 
           schema: 'public', 
           table: 'tasks' 
-        }, 
+        },
         (payload) => {
-          console.log('Task change received:', payload);
           fetchTasks(); // إعادة جلب البيانات للتأكد من التحديث
         }
       )
@@ -256,7 +254,6 @@ export default function TasksManagement() {
         message: 'تم إنشاء المهمة بنجاح'
       });
     } catch (error) {
-      console.error('Error creating task:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في الإنشاء',
@@ -288,7 +285,6 @@ export default function TasksManagement() {
         message: 'تم تحديث المهمة بنجاح'
       });
     } catch (error) {
-      console.error('Error updating task:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في التحديث',
@@ -317,7 +313,6 @@ export default function TasksManagement() {
         message: 'تم حذف المهمة بنجاح'
       });
     } catch (error) {
-      console.error('Error deleting task:', error);
       addNotification({
         type: 'error',
         title: 'خطأ في الحذف',

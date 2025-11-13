@@ -26,6 +26,7 @@ const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
+const Intelligence = lazy(() => import('./pages/Intelligence'));
 const GitOperations = lazy(() => import('./GitOperations'));
 
 // حارس متقدم للمسارات الخاصة
@@ -200,6 +201,15 @@ export default function App() {
                     <RequireAuth requiredPermissions={['financial:view']}>
                       <Layout>
                         <FinancialReports />
+                      </Layout>
+                    </RequireAuth>
+                  } />
+
+                  {/* Intelligence Hub - AI-Powered Analytics */}
+                  <Route path="/intelligence" element={
+                    <RequireAuth>
+                      <Layout>
+                        <Intelligence />
                       </Layout>
                     </RequireAuth>
                   } />

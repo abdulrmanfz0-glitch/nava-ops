@@ -1,0 +1,202 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║               NAVA OPS - CODEBASE ARCHITECTURE SUMMARY                         ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  FRONTEND LAYER (React 19 + Vite)                                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐          │
+│  │  Dashboard       │  │  Financial       │  │  Reports &       │          │
+│  │  - KPIs          │  │  Reports         │  │  Analytics       │          │
+│  │  - Insights      │  │  - Forecasts     │  │  - Generation    │          │
+│  │  - Activity      │  │  - Trends        │  │  - Export        │          │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘          │
+│                                                                               │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐          │
+│  │  Branches        │  │  Team            │  │  Settings &      │          │
+│  │  Management      │  │  Management      │  │  Notifications   │          │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘          │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │  SHARED UI COMPONENTS & PATTERNS                                     │   │
+│  ├──────────────────────────────────────────────────────────────────────┤   │
+│  │  • Charts: Line, Bar, Area, Pie, Stacked (Recharts)                │   │
+│  │  • Tables: Sortable, Searchable, Paginated DataTable               │   │
+│  │  • Cards: StatCard (KPI displays with trends)                      │   │
+│  │  • Pickers: DateRangePicker, Filters                               │   │
+│  │  • Status: LoadingSpinner, SkeletonLoader, EmptyState              │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  STATE MANAGEMENT & CONTEXTS                                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌─────────────────────┐  ┌──────────────────┐  ┌─────────────────────┐    │
+│  │  AuthContext        │  │ NotificationCtx  │  │  ThemeContext       │    │
+│  │ ─────────────────── │  │ ──────────────── │  │ ─────────────────── │    │
+│  │ • user              │  │ • notifications  │  │ • theme (light/dark)│    │
+│  │ • userProfile       │  │ • addNotif()     │  │ • toggleTheme()     │    │
+│  │ • isAuthenticated   │  │ • removeNotif()  │  │                     │    │
+│  │ • permissions       │  │                  │  │  LocaleContext      │    │
+│  │ • login()           │  │                  │  │ ─────────────────── │    │
+│  │ • logout()          │  │                  │  │ • locale            │    │
+│  │ • hasPermission()   │  │                  │  │ • translate()       │    │
+│  └─────────────────────┘  └──────────────────┘  └─────────────────────┘    │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  API SERVICE LAYER (/src/services/api.js)                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │  apiRequest(fn, errorMessage)  ← Core error handling wrapper        │   │
+│  │  APIError class                ← Custom error type                  │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
+│                                                                               │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────────┐          │
+│  │ branchesAPI│  │ ordersAPI  │  │ metricsAPI │  │ insightsAPI  │          │
+│  └────────────┘  └────────────┘  └────────────┘  └──────────────┘          │
+│                                                                               │
+│  ┌────────────┐  ┌────────────┐  ┌──────────────┐  ┌──────────────┐        │
+│  │ reportsAPI │  │notificAPI  │  │ analyticsAPI │  │   teamAPI    │        │
+│  └────────────┘  └────────────┘  └──────────────┘  └──────────────┘        │
+│                                                                               │
+│  ┌────────────────────────────────────────────────────────────────────┐     │
+│  │ activitiesAPI                                                      │     │
+│  │ └─ Audit trail logging (login, data changes, reports, etc.)      │     │
+│  └────────────────────────────────────────────────────────────────────┘     │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  AI/INTELLIGENCE ENGINE (/src/lib/aiEngine.js)                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌──────────────────────┐  ┌──────────────────────┐  ┌─────────────────┐   │
+│  │ Revenue Forecasting  │  │ Menu Analysis        │  │ Staff           │   │
+│  │ - Linear Regression  │  │ - BCG Matrix         │  │ Optimization    │   │
+│  │ - Confidence Levels  │  │ - Star/Dog/Puzzle    │  │ - Staffing Calc │   │
+│  │ - Trend Direction    │  │ - Recommendations    │  │ - Cost Savings  │   │
+│  └──────────────────────┘  └──────────────────────┘  └─────────────────┘   │
+│                                                                               │
+│  ┌──────────────────────┐  ┌──────────────────────────────────────────┐    │
+│  │ Anomaly Detection    │  │ Smart Alerts                             │    │
+│  │ - Z-Score Method     │  │ - Revenue drop/growth alerts            │    │
+│  │ - Severity Levels    │  │ - Inventory alerts                      │    │
+│  │ - Min 10 datapoints  │  │ - Satisfaction alerts                   │    │
+│  └──────────────────────┘  └──────────────────────────────────────────┘    │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  SUPABASE BACKEND (/src/lib/supabase.js + Database)                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌────────────────────────────────────────────────────────────────────┐     │
+│  │  CORE DATA TABLES                                                  │     │
+│  ├────────────────────────────────────────────────────────────────────┤     │
+│  │  • user_profiles         (Auth, roles, subscription)              │     │
+│  │  • user_activities       (Audit trail)                            │     │
+│  │  • branches              (Business locations)                     │     │
+│  │  • orders & order_items  (Transactions)                           │     │
+│  │  • products & categories (Inventory)                              │     │
+│  │  • metrics               (Custom KPIs)                            │     │
+│  │  • performance_entries   (Daily/weekly/monthly stats)             │     │
+│  │  • insights              (AI-generated intelligence)              │     │
+│  │  • reports               (Generated reports)                      │     │
+│  │  • notifications         (User alerts)                            │     │
+│  │  • team_members          (Team access control)                    │     │
+│  └────────────────────────────────────────────────────────────────────┘     │
+│                                                                               │
+│  ┌────────────────────────────────────────────────────────────────────┐     │
+│  │  SUPABASE FEATURES UTILIZED                                        │     │
+│  ├────────────────────────────────────────────────────────────────────┤     │
+│  │  ✓ Row-level security (RLS) for multi-tenant data isolation      │     │
+│  │  ✓ Real-time subscriptions for live updates                      │     │
+│  │  ✓ PostgreSQL triggers for updated_at maintenance               │     │
+│  │  ✓ Custom function calls (RPC)                                   │     │
+│  │  ✓ Complex queries with relationships                            │     │
+│  │  ✓ Full-text search capability                                   │     │
+│  │  ✓ JSONB columns for flexible metadata                           │     │
+│  └────────────────────────────────────────────────────────────────────┘     │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  DATA FLOW EXAMPLE: Dashboard Load                                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  User loads Dashboard                                                        │
+│         ↓                                                                    │
+│  Dashboard.jsx component mounts                                             │
+│         ↓                                                                    │
+│  fetchDashboardData() calls:                                                │
+│     • api.analytics.getDashboardOverview(branchId, days)                   │
+│     • api.analytics.getRevenueTrends(branchId, days)                       │
+│     • api.branches.getAll()                                                 │
+│     • api.insights.getAll({ limit: 5, status: 'new' })                    │
+│     • api.analytics.getBranchComparison(days)                              │
+│         ↓                                                                    │
+│  Each API call goes through apiRequest() error handler                      │
+│         ↓                                                                    │
+│  Supabase queries execute (with RLS, indexing)                             │
+│         ↓                                                                    │
+│  Data aggregates and returns                                                │
+│         ↓                                                                    │
+│  Components render with data:                                               │
+│     • StatCard components (4 KPIs with trends)                             │
+│     • RevenueTrendChart (line chart)                                        │
+│     • BranchComparisonChart (bar chart)                                     │
+│     • Insights panel (alert cards)                                          │
+│     • Activity feed                                                         │
+│         ↓                                                                    │
+│  User sees complete dashboard with insights                                │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  ROLE-BASED ACCESS CONTROL                                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ROLES & PERMISSIONS:                                                        │
+│  ┌─────────┬──────────────────────────────────────────────────────────┐     │
+│  │ Viewer  │ • dashboard:view, reports:view                          │     │
+│  ├─────────┼──────────────────────────────────────────────────────────┤     │
+│  │ Ops     │ • Above + restaurants:view, restaurants:edit, team:view │     │
+│  ├─────────┼──────────────────────────────────────────────────────────┤     │
+│  │ Admin   │ • All permissions                                        │     │
+│  └─────────┴──────────────────────────────────────────────────────────┘     │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  KEY INTEGRATION POINTS FOR INTELLIGENCE LAYER                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  1. EXTEND analyticsAPI                                                     │
+│     └─ Add prediction endpoints, ML model calls                             │
+│                                                                               │
+│  2. ENHANCE aiEngine.js                                                     │
+│     └─ Add more ML algorithms, neural networks                              │
+│                                                                               │
+│  3. CREATE intelligence pages                                               │
+│     └─ Predictive analytics, recommendations, anomaly reports              │
+│                                                                               │
+│  4. LEVERAGE insights table                                                 │
+│     └─ Auto-generate insights from ML models                                │
+│                                                                               │
+│  5. ADD database tables (if needed)                                         │
+│     └─ model_predictions, model_metadata, training_data                     │
+│                                                                               │
+│  6. IMPLEMENT background jobs                                               │
+│     └─ Daily/hourly insight generation, forecast updates                    │
+│                                                                               │
+│  7. USE real-time subscriptions                                             │
+│     └─ Live dashboard updates, instant alerts                               │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+

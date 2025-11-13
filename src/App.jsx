@@ -27,6 +27,7 @@ const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence')
 const MenuIntelligence = lazy(() => import('./pages/MenuIntelligence'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
+const ExecutiveHQ = lazy(() => import('./pages/ExecutiveHQ'));
 const GitOperations = lazy(() => import('./GitOperations'));
 
 // حارس متقدم للمسارات الخاصة
@@ -199,6 +200,13 @@ export default function App() {
                     </RequireAuth>
                   } />
 
+ claude/executive-hq-dashboard-011CV5xmu1Rsj55VbfmLRVxT
+                  {/* Executive HQ Dashboard - Premium Feature */}
+                  <Route path="/executive-hq" element={
+                    <RequireAuth>
+                      <Layout>
+                        <ExecutiveHQ />
+
                   {/* Financial Intelligence */}
                   <Route path="/financial-intelligence" element={
                     <RequireAuth requiredPermissions={['financial:view']}>
@@ -213,6 +221,7 @@ export default function App() {
                     <RequireAuth>
                       <Layout>
                         <MenuIntelligence />
+ main
                       </Layout>
                     </RequireAuth>
                   } />

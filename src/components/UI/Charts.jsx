@@ -329,4 +329,76 @@ export const StackedBarChart = memo(({ data, bars = [], loading = false }) => {
   );
 });
 
+// Pie Chart Component (Enhanced version for Executive Dashboard)
+export function PieChartComponent({ data, loading = false }) {
+  if (loading) {
+    return (
+      <div className="w-full h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-750 rounded-lg animate-pulse">
+        <div className="text-gray-400">Loading chart...</div>
+      </div>
+    );
+  }
+
+  const RADIAN = Math.PI / 180;
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+        className="text-sm font-semibold"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          labelLine={false}
+          label={renderCustomizedLabel}
+          outerRadius={120}
+          fill="#8884d8"
+          dataKey="value"
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color || COLOR_PALETTE[index % COLOR_PALETTE.length]} />
+          ))}
+        </Pie>
+        <Tooltip
+          content={({ active, payload }) => {
+            if (active && payload && payload.length) {
+              return (
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                    {payload[0].name}
+                  </p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <span className="font-semibold">
+                      SAR {payload[0].value.toLocaleString()}
+                    </span>
+                  </p>
+                </div>
+              );
+            }
+            return null;
+          }}
+        />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+}
+
 export { CHART_COLORS, COLOR_PALETTE };

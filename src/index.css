@@ -497,3 +497,32 @@
     width: 0%;
   }
 }
+
+/* ========== Dev Mode Indicator ========== */
+body[data-dev-mode="true"]::before {
+  content: "🚨 DEV MODE - AUTH BYPASSED";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}

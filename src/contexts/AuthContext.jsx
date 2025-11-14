@@ -4,8 +4,21 @@ import { supabase, checkSupabaseConnection, handleSupabaseError } from '../lib/s
 import { useNotification } from './NotificationContext';
 import logger from '../lib/logger';
 
-// DEV MODE: Set to true to bypass authentication during development
-const DEV_BYPASS_AUTH = import.meta.env.VITE_DEV_BYPASS_AUTH === 'true' || false;
+/**
+ * DEV MODE AUTHENTICATION BYPASS
+ *
+ * SECURITY WARNING: This bypasses all authentication for local development only.
+ * - Automatically disabled in production builds
+ * - Requires VITE_DEV_BYPASS_AUTH='true' environment variable
+ * - Only works when NODE_ENV !== 'production'
+ *
+ * Usage: Set VITE_DEV_BYPASS_AUTH=true in .env.local for development
+ */
+const DEV_BYPASS_AUTH = (
+  import.meta.env.DEV && // Must be in development mode
+  import.meta.env.MODE !== 'production' && // Not production mode
+  import.meta.env.VITE_DEV_BYPASS_AUTH === 'true' // Explicit opt-in required
+);
 
 const AuthContext = createContext();
 
@@ -28,18 +41,35 @@ export function AuthProvider({ children }) {
   // DEV MODE: Skip authentication checks
   useEffect(() => {
     if (DEV_BYPASS_AUTH) {
-      logger.debug('DEV MODE: Authentication bypassed');
+      // Security warning in console
+      console.warn(
+        '%c⚠️ SECURITY WARNING: DEV MODE AUTHENTICATION BYPASS ACTIVE',
+        'color: #ef4444; font-size: 16px; font-weight: bold; padding: 10px; background: #fee2e2; border: 2px solid #dc2626;'
+      );
+      console.warn('Authentication is bypassed. This should NEVER happen in production.');
+      console.warn('Environment:', {
+        DEV: import.meta.env.DEV,
+        MODE: import.meta.env.MODE,
+        VITE_DEV_BYPASS_AUTH: import.meta.env.VITE_DEV_BYPASS_AUTH
+      });
+
+      logger.warn('🚨 DEV MODE: Authentication bypassed - using mock admin user', {
+        environment: import.meta.env.MODE,
+        devMode: import.meta.env.DEV
+      });
+
       const mockUser = {
         id: 'dev-user-id',
         email: 'dev@nava-ops.local',
-        user_metadata: { full_name: 'Dev User' }
+        user_metadata: { full_name: 'Dev User (Mock)' }
       };
       const mockProfile = {
         id: 'dev-user-id',
         email: 'dev@nava-ops.local',
         role: 'admin',
-        full_name: 'Dev User',
-        is_active: true
+        full_name: 'Dev User (Mock)',
+        is_active: true,
+        __devMode: true // Flag for dev mode detection
       };
 
       setUser(mockUser);
@@ -47,12 +77,19 @@ export function AuthProvider({ children }) {
       setConnectionStatus('connected');
       setLoading(false);
 
+      // Prominent dev mode notification
       addNotification({
-        type: 'info',
-        title: 'Development Mode',
-        message: 'Authentication bypassed for development',
-        duration: 3000
+        type: 'warning',
+        title: '⚠️ Development Mode Active',
+        message: 'Authentication bypassed - Using mock admin account',
+        duration: 8000 // Longer duration for visibility
       });
+
+      // Add dev mode indicator to document
+      if (typeof document !== 'undefined') {
+        document.body.setAttribute('data-dev-mode', 'true');
+        document.title = '[DEV] ' + document.title;
+      }
 
       return;
     }

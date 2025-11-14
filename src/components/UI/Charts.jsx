@@ -431,4 +431,83 @@ export const StackedBarChart = memo(({ data, bars = [], loading = false, error =
 
 StackedBarChart.displayName = 'StackedBarChart';
 
+// Generic Chart Components (Wrapper around recharts)
+export const SimpleLineChart = memo(({ data, xKey = 'name', yKey = 'value', loading = false }) => {
+  if (loading || !validateChartData(data, 'SimpleLineChart')) {
+    return <ChartContainer loading={loading} error={!data && !loading} />;
+  }
+
+  return (
+    <ChartContainer>
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+          <XAxis dataKey={xKey} />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey={yKey} stroke={CHART_COLORS.primary} strokeWidth={2} />
+        </LineChart>
+      </ResponsiveContainer>
+    </ChartContainer>
+  );
+});
+
+SimpleLineChart.displayName = 'SimpleLineChart';
+
+export const SimpleBarChart = memo(({ data, xKey = 'name', yKey = 'value', loading = false }) => {
+  if (loading || !validateChartData(data, 'SimpleBarChart')) {
+    return <ChartContainer loading={loading} error={!data && !loading} />;
+  }
+
+  return (
+    <ChartContainer>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+          <XAxis dataKey={xKey} />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey={yKey} fill={CHART_COLORS.primary} />
+        </BarChart>
+      </ResponsiveContainer>
+    </ChartContainer>
+  );
+});
+
+SimpleBarChart.displayName = 'SimpleBarChart';
+
+export const SimplePieChart = memo(({ data, nameKey = 'name', dataKey = 'value', loading = false }) => {
+  if (loading || !validateChartData(data, 'SimplePieChart')) {
+    return <ChartContainer loading={loading} error={!data && !loading} />;
+  }
+
+  return (
+    <ChartContainer>
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey={dataKey}
+            nameKey={nameKey}
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            label
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLOR_PALETTE[index % COLOR_PALETTE.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </ChartContainer>
+  );
+});
+
+SimplePieChart.displayName = 'SimplePieChart';
+
 export { CHART_COLORS, COLOR_PALETTE };

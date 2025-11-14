@@ -5,10 +5,10 @@
 
 import { useState, useEffect } from 'react';
 import { useAI } from '@/contexts/AIContext';
-import { PageHeader } from '@/components/UI/PageHeader';
-import { LoadingSpinner } from '@/components/UI/LoadingSpinner';
-import { StatCard } from '@/components/UI/StatCard';
-import { LineChart, BarChart, PieChart } from '@/components/UI/Charts';
+import PageHeader from '@/components/UI/PageHeader';
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
+import StatCard from '@/components/UI/StatCard';
+import { SimpleLineChart as LineChart, SimpleBarChart as BarChart, SimplePieChart as PieChart } from '@/components/UI/Charts';
 import {
   Brain,
   TrendingUp,

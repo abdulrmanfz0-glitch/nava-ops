@@ -2,7 +2,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
-import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
@@ -153,11 +152,10 @@ export default function App() {
         logger.fatal('Critical Application Error', { errorInfo }, error)
       }}
     >
-      <SubscriptionProvider>
-        <div className="App">
-          <OfflineIndicator />
-          <Suspense fallback={<GlobalLoading />}>
-            <Routes>
+      <div className="App">
+        <OfflineIndicator />
+        <Suspense fallback={<GlobalLoading />}>
+          <Routes>
                       {/* Public Routes */}
                       <Route path="/login" element={<Login />} />
 
@@ -335,7 +333,6 @@ export default function App() {
             </Routes>
           </Suspense>
         </div>
-      </SubscriptionProvider>
     </ErrorBoundary>
   );
 }

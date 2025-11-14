@@ -176,50 +176,254 @@ export class ErrorBoundaryLogger {
   }
 }
 
-// Performance Logger for tracking app performance
+/**
+ * NAVA OPS Performance Logger v2
+ *
+ * A comprehensive performance monitoring system with:
+ * - Precision timing with context support
+ * - Threshold-based warnings
+ * - Metrics storage and reporting
+ * - Web Vitals integration ready
+ * - Zero-overhead when not actively measuring
+ */
 export class PerformanceLogger {
-  static timers = new Map();
+  static timers = new Map();      // Active timers: label → { start, context }
+  static metrics = new Map();     // Completed measurements: label → [{ duration, timestamp, context }]
+  static config = {
+    globalThreshold: 1000,        // Default warning threshold (ms)
+    maxMetricsPerLabel: 100,      // Limit stored metrics per label
+    logSlowOperations: true,      // Auto-log slow operations
+    captureStackTrace: false      // Capture stack traces (expensive)
+  };
 
-  static start(label) {
-    this.timers.set(label, performance.now());
+  /**
+   * Start timing an operation
+   * @param {string} label - Unique identifier for this measurement
+   * @param {Object} context - Optional metadata (component, user, action, etc.)
+   */
+  static start(label, context = {}) {
+    this.timers.set(label, {
+      start: performance.now(),
+      context: { ...context, startedAt: new Date().toISOString() }
+    });
   }
 
-  static end(label, warnThreshold = 1000) {
-    const startTime = this.timers.get(label);
-    if (!startTime) {
+  /**
+   * End timing and log results
+   * @param {string} label - Timer label to end
+   * @param {Object} options - Configuration { threshold, logLevel, context }
+   * @returns {number|null} Duration in milliseconds
+   */
+  static end(label, options = {}) {
+    const timer = this.timers.get(label);
+    if (!timer) {
       if (import.meta.env.DEV) {
-        console.warn(`No timer found for label: ${label}`);
+        console.warn(`⚠️ PerformanceLogger: No timer found for "${label}"`);
       }
       return null;
     }
 
-    const duration = performance.now() - startTime;
+    const duration = performance.now() - timer.start;
+    const threshold = options.threshold ?? options ?? this.config.globalThreshold;
+    const context = { ...timer.context, ...options.context };
+    const logLevel = options.logLevel || 'info';
+
+    // Store metric
+    this._storeMetric(label, { duration, timestamp: Date.now(), context });
+
+    // Remove timer
     this.timers.delete(label);
 
-    if (duration > warnThreshold) {
-      logger.warn(`Performance: ${label} took ${duration.toFixed(2)}ms (exceeded threshold of ${warnThreshold}ms)`, {
-        duration,
-        threshold: warnThreshold
-      });
-    } else {
-      logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+    // Log result
+    const isSlowOperation = duration > threshold;
+    const emoji = isSlowOperation ? '⚠️' : '✅';
+    const contextStr = this._formatContext(context);
+
+    if (isSlowOperation && this.config.logSlowOperations) {
+      logger.warn(
+        `${emoji} Performance: ${label} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)${contextStr}`,
+        { duration, threshold, context, label }
+      );
+    } else if (logLevel !== 'silent') {
+      logger[logLevel](
+        `${emoji} Performance: ${label} completed in ${duration.toFixed(2)}ms${contextStr}`,
+        { duration, label, context }
+      );
     }
 
     return duration;
   }
 
-  static measure(label, fn) {
-    this.start(label);
-    const result = fn();
-    this.end(label);
-    return result;
+  /**
+   * Measure a synchronous function
+   * @param {string} label - Measurement label
+   * @param {Function} fn - Function to measure
+   * @param {Object} options - Configuration options
+   * @returns {*} Function result
+   */
+  static measure(label, fn, options = {}) {
+    this.start(label, options.context);
+    try {
+      const result = fn();
+      this.end(label, options);
+      return result;
+    } catch (error) {
+      this.end(label, { ...options, context: { ...options.context, error: error.message } });
+      throw error;
+    }
   }
 
-  static async measureAsync(label, fn) {
-    this.start(label);
-    const result = await fn();
-    this.end(label);
-    return result;
+  /**
+   * Measure an asynchronous function
+   * @param {string} label - Measurement label
+   * @param {Function} fn - Async function to measure
+   * @param {Object} options - Configuration options
+   * @returns {Promise<*>} Function result
+   */
+  static async measureAsync(label, fn, options = {}) {
+    this.start(label, options.context);
+    try {
+      const result = await fn();
+      this.end(label, options);
+      return result;
+    } catch (error) {
+      this.end(label, { ...options, context: { ...options.context, error: error.message } });
+      throw error;
+    }
+  }
+
+  /**
+   * Create a performance mark (uses Performance API)
+   * @param {string} name - Mark name
+   */
+  static mark(name) {
+    if (performance.mark) {
+      performance.mark(name);
+    }
+  }
+
+  /**
+   * Get stored metrics with optional filtering
+   * @param {Object} filter - { label, minDuration, maxDuration, sortBy }
+   * @returns {Array} Metrics array
+   */
+  static getMetrics(filter = {}) {
+    const allMetrics = [];
+
+    for (const [label, measurements] of this.metrics.entries()) {
+      if (filter.label && label !== filter.label) continue;
+
+      measurements.forEach(metric => {
+        if (filter.minDuration && metric.duration < filter.minDuration) return;
+        if (filter.maxDuration && metric.duration > filter.maxDuration) return;
+
+        allMetrics.push({ label, ...metric });
+      });
+    }
+
+    // Sort if requested
+    if (filter.sortBy === 'duration') {
+      allMetrics.sort((a, b) => b.duration - a.duration);
+    } else if (filter.sortBy === 'timestamp') {
+      allMetrics.sort((a, b) => b.timestamp - a.timestamp);
+    }
+
+    return allMetrics;
+  }
+
+  /**
+   * Get performance report as formatted text
+   * @param {string} format - 'text' | 'json' | 'table'
+   * @returns {string|Object} Formatted report
+   */
+  static getReport(format = 'text') {
+    const metrics = this.getMetrics({ sortBy: 'duration' });
+
+    if (format === 'json') {
+      return metrics;
+    }
+
+    if (format === 'table' && console.table) {
+      console.table(metrics.map(m => ({
+        label: m.label,
+        duration: `${m.duration.toFixed(2)}ms`,
+        status: m.duration > this.config.globalThreshold ? '⚠️ SLOW' : '✅ OK',
+        context: JSON.stringify(m.context)
+      })));
+      return 'Report printed to console';
+    }
+
+    // Text format
+    let report = '📊 Performance Report\n';
+    report += '═'.repeat(80) + '\n';
+
+    metrics.forEach(m => {
+      const status = m.duration > this.config.globalThreshold ? '⚠️' : '✅';
+      report += `${status} ${m.label}: ${m.duration.toFixed(2)}ms\n`;
+      if (Object.keys(m.context).length > 0) {
+        report += `   Context: ${JSON.stringify(m.context)}\n`;
+      }
+    });
+
+    return report;
+  }
+
+  /**
+   * Clear metrics (optionally by pattern)
+   * @param {string|RegExp} pattern - Label pattern to clear
+   */
+  static clearMetrics(pattern) {
+    if (!pattern) {
+      this.metrics.clear();
+      return;
+    }
+
+    const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
+
+    for (const label of this.metrics.keys()) {
+      if (regex.test(label)) {
+        this.metrics.delete(label);
+      }
+    }
+  }
+
+  /**
+   * Set global configuration
+   * @param {Object} config - Configuration object
+   */
+  static configure(config) {
+    this.config = { ...this.config, ...config };
+  }
+
+  // Internal: Store a metric
+  static _storeMetric(label, metric) {
+    if (!this.metrics.has(label)) {
+      this.metrics.set(label, []);
+    }
+
+    const measurements = this.metrics.get(label);
+    measurements.push(metric);
+
+    // Limit stored metrics
+    if (measurements.length > this.config.maxMetricsPerLabel) {
+      measurements.shift(); // Remove oldest
+    }
+  }
+
+  // Internal: Format context for display
+  static _formatContext(context) {
+    if (!context || Object.keys(context).length === 0) return '';
+
+    const filtered = { ...context };
+    delete filtered.startedAt; // Don't display internal fields
+
+    if (Object.keys(filtered).length === 0) return '';
+
+    const parts = Object.entries(filtered)
+      .map(([key, value]) => `${key}: ${value}`)
+      .slice(0, 3); // Limit to 3 context items in logs
+
+    return ` (${parts.join(', ')})`;
   }
 }
 

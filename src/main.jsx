@@ -7,6 +7,7 @@ import './index.css';
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LocaleProvider } from './contexts/LocaleContext';
@@ -50,7 +51,9 @@ const Root = () => {
             <LocaleProvider>
               <ThemeProvider>
                 <AuthProvider>
-                  <App />
+                  <SubscriptionProvider>
+                    <App />
+                  </SubscriptionProvider>
                 </AuthProvider>
               </ThemeProvider>
             </LocaleProvider>

@@ -4,7 +4,7 @@
  * billing, usage tracking, and feature access control
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import {
   SUBSCRIPTION_PLANS,
@@ -18,6 +18,39 @@ import {
   isWithinLimit,
   comparePlans
 } from '@/utils/subscriptionPlans';
+
+// Check if we should use mock data (DEV mode without Supabase)
+const USE_MOCK_DATA = import.meta.env.DEV && !isSupabaseConfigured;
+
+if (USE_MOCK_DATA) {
+  logger.info('[SubscriptionService] Using mock data - Supabase not configured');
+}
+
+// Mock subscription data for development
+const mockSubscription = {
+  id: 'mock-subscription-id',
+  user_id: 'dev-user-id',
+  plan_id: PLAN_IDS.PROFESSIONAL,
+  status: 'active',
+  current_period_start: new Date().toISOString(),
+  current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+  trial_end: null,
+  cancel_at_period_end: false,
+  created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+  plan: getPlanById(PLAN_IDS.PROFESSIONAL)
+};
+
+// Mock usage data for development
+const mockUsageLog = {
+  id: 'mock-usage-log-id',
+  user_id: 'dev-user-id',
+  feature_key: 'branches',
+  usage_count: 2,
+  is_over_limit: false,
+  period_start: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(),
+  period_end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString(),
+  last_checked_at: new Date().toISOString()
+};
 
 /**
  * API Error class (local definition to avoid circular dependency)
@@ -35,7 +68,13 @@ class APIError extends Error {
 /**
  * Generic API request wrapper
  */
-async function apiRequest(fn, errorMessage = 'API request failed') {
+async function apiRequest(fn, errorMessage = 'API request failed', mockData = null) {
+  // Return mock data in DEV mode without Supabase
+  if (USE_MOCK_DATA && mockData !== null) {
+    logger.debug('Using mock data for: ' + errorMessage);
+    return Promise.resolve(mockData);
+  }
+
   try {
     const { data, error } = await fn();
 
@@ -112,7 +151,8 @@ export const userSubscriptionsAPI = {
         .in('status', ['active', 'trial', 'past_due'])
         .order('created_at', { ascending: false })
         .limit(1),
-      'Failed to fetch current subscription'
+      'Failed to fetch current subscription',
+      [mockSubscription]
     );
 
     return subscriptions?.[0] || null;
@@ -386,7 +426,8 @@ export const featureUsageAPI = {
         .gte('period_start', periodStart.toISOString())
         .lte('period_end', periodEnd.toISOString())
         .single(),
-      `Failed to fetch usage for ${featureKey}`
+      `Failed to fetch usage for ${featureKey}`,
+      { ...mockUsageLog, feature_key: featureKey }
     );
 
     return logs || null;

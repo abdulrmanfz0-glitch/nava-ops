@@ -1,13 +1,19 @@
 /**
  * Subscription Plans Configuration
  * Defines all subscription tiers, features, and limits
+ *
+ * UPDATED: Now supports simplified brand + branch pricing model
+ * - $299 per brand (one brand per account)
+ * - $99 per additional branch
  */
 
 export const PLAN_IDS = {
   FREE: 'free',
   STARTER: 'starter',
   PRO: 'pro',
-  ENTERPRISE: 'enterprise'
+  ENTERPRISE: 'enterprise',
+  // New simplified model
+  BRAND_PLAN: 'brand_plan'
 };
 
 export const PLAN_STATUS = {
@@ -340,6 +346,78 @@ export const SUBSCRIPTION_PLANS = {
     popular: false,
     trialDays: 30,
     contactSales: true
+  },
+
+  [PLAN_IDS.BRAND_PLAN]: {
+    id: PLAN_IDS.BRAND_PLAN,
+    name: 'Brand Plan',
+    displayName: 'Brand + Branch Pricing',
+    description: 'Simple and transparent pricing: $299 per brand + $99 per additional branch',
+    isDynamic: true, // Price varies based on number of branches
+    priceModel: 'usage-based', // Usage-based pricing model
+    price: {
+      baseBrand: 299,
+      perBranch: 99,
+      currency: 'USD',
+      billingModel: 'monthly' // Can also be 'annual' for 17% discount
+    },
+    // Dynamic limits based on branches - these are examples
+    limits: {
+      branches: -1, // unlimited branches (each adds $99/month)
+      teamMembers: -1, // unlimited
+      dataPoints: -1, // unlimited
+      analyticsHistory: -1, // unlimited
+      reports: -1,
+      customDashboards: -1,
+      apiCalls: -1,
+      storage: -1,
+      exports: -1,
+    },
+    features: [
+      'Flexible branch scaling ($99 per additional branch)',
+      'Unlimited team members',
+      'Unlimited orders/data points',
+      'Unlimited analytics history',
+      'Unlimited custom reports and dashboards',
+      'Unlimited API access',
+      'Unlimited exports',
+      'Advanced AI insights',
+      'Predictive analytics',
+      'Real-time analytics',
+      'Competitor analysis',
+      'Priority support',
+      'Custom integrations',
+      'Webhooks integration',
+      'Advanced filters & bulk operations',
+      'Automated workflows',
+      'Full platform access'
+    ],
+    featureFlags: {
+      [FEATURE_FLAGS.MULTI_BRANCH]: true,
+      [FEATURE_FLAGS.TEAM_COLLABORATION]: true,
+      [FEATURE_FLAGS.ADVANCED_ANALYTICS]: true,
+      [FEATURE_FLAGS.CUSTOM_REPORTS]: true,
+      [FEATURE_FLAGS.AI_INSIGHTS]: true,
+      [FEATURE_FLAGS.EXPORT_DATA]: true,
+      [FEATURE_FLAGS.API_ACCESS]: true,
+      [FEATURE_FLAGS.WEBHOOKS]: true,
+      [FEATURE_FLAGS.WHITE_LABEL]: true,
+      [FEATURE_FLAGS.CUSTOM_INTEGRATIONS]: true,
+      [FEATURE_FLAGS.PRIORITY_SUPPORT]: true,
+      [FEATURE_FLAGS.DEDICATED_ACCOUNT_MANAGER]: true,
+      [FEATURE_FLAGS.REALTIME_ANALYTICS]: true,
+      [FEATURE_FLAGS.PREDICTIVE_ANALYTICS]: true,
+      [FEATURE_FLAGS.COMPETITOR_ANALYSIS]: true,
+      [FEATURE_FLAGS.CUSTOM_DASHBOARDS]: true,
+      [FEATURE_FLAGS.UNLIMITED_HISTORY]: true,
+      [FEATURE_FLAGS.ADVANCED_FILTERS]: true,
+      [FEATURE_FLAGS.BULK_OPERATIONS]: true,
+      [FEATURE_FLAGS.AUTOMATED_WORKFLOWS]: true,
+    },
+    badge: 'Best Value',
+    popular: true,
+    trialDays: 14,
+    contactSales: false
   }
 };
 
@@ -387,6 +465,45 @@ export const comparePlans = (currentPlanId, targetPlanId) => {
   if (targetIndex > currentIndex) return 'upgrade';
   if (targetIndex < currentIndex) return 'downgrade';
   return 'same';
+};
+
+// Helper function to check if a plan uses dynamic/usage-based pricing
+export const isDynamicPricingPlan = (planId) => {
+  const plan = getPlanById(planId);
+  return plan.isDynamic === true || plan.priceModel === 'usage-based';
+};
+
+// Helper function to calculate price for a dynamic pricing plan
+export const calculateDynamicPrice = (planId, numberOfBranches = 1, isAnnual = false) => {
+  const plan = getPlanById(planId);
+
+  if (!isDynamicPricingPlan(planId)) {
+    return null; // Not a dynamic pricing plan
+  }
+
+  const baseBrand = plan.price.baseBrand;
+  const perBranch = plan.price.perBranch;
+
+  // Calculate price
+  const additionalBranches = Math.max(0, numberOfBranches - 1);
+  const branchCost = additionalBranches * perBranch;
+  const subtotal = baseBrand + branchCost;
+
+  // Apply annual discount if applicable (17% off)
+  const discount = isAnnual ? subtotal * 0.17 : 0;
+  const totalPrice = subtotal - discount;
+
+  return {
+    numberOfBranches,
+    baseBrandPrice: baseBrand,
+    additionalBranches,
+    branchPrice: branchCost,
+    subtotal,
+    discount,
+    totalPrice,
+    isAnnual,
+    currency: plan.price.currency,
+  };
 };
 
 // Grace period configuration (days)

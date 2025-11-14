@@ -4,6 +4,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
+
+import PageHeader from '@/components/UI/PageHeader';
+import BrandedReportHeader from '@/components/Reports/BrandedReportHeader';
+ 
 import {
   BarChart3, Download, Calendar, TrendingUp, FileText, DollarSign,
   Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare,
@@ -14,9 +18,11 @@ import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
 import { exportReport } from '@/lib/exportEngine';
 import ReportFilters from '@/components/Reports/ReportFilters';
+import ProfessionalReport from '@/components/Reports/ProfessionalReport';
 import FinancialOverview from '@/components/Reports/FinancialOverview';
 import MenuEngineering from '@/components/Reports/MenuEngineering';
 import ChannelPerformanceReport from '@/components/Reports/ChannelPerformanceReport';
+import ProfessionalReport from '@/components/Reports/ProfessionalReport';
 
 export default function ReportsAnalyticsNew() {
   const { addNotification } = useNotification();
@@ -99,12 +105,13 @@ export default function ReportsAnalyticsNew() {
         type: 'info'
       });
 
-      const filename = `${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${format}`;
+      const fileExtension = format === 'json' ? 'json' : format === 'excel' ? 'xlsx' : format;
+      const filename = `Restalyze_${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${fileExtension}`;
       await exportReport(generatedReport, format, filename);
 
       addNotification({
         title: 'Success',
-        message: 'Report exported successfully',
+        message: `Report exported successfully as ${format.toUpperCase()}`,
         type: 'success'
       });
     } catch (error) {
@@ -114,6 +121,27 @@ export default function ReportsAnalyticsNew() {
         message: 'Failed to export report',
         type: 'error'
       });
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: generatedReport?.title || 'Restalyze Report',
+        text: generatedReport?.subtitle || 'Professional Analytics Report',
+        url: window.location.href
+      });
+    } else {
+      addNotification({
+        title: 'Info',
+        message: 'Copying report link to clipboard',
+        type: 'info'
+      });
+      navigator.clipboard.writeText(window.location.href);
     }
   };
 
@@ -161,6 +189,23 @@ export default function ReportsAnalyticsNew() {
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
           <nav className="flex -mb-px px-6">
+
+    <div className="space-y-6">
+      <PageHeader
+        title="Report Hub"
+        subtitle="Premium AI-powered reporting with professional insights, anomaly detection, and actionable recommendations"
+        icon={BarChart3}
+        badge={{
+          text: 'Premium Reports',
+          icon: Crown,
+          color: 'gold'
+        }}
+      />
+
+      {/* Navigation Tabs */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md">
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <nav className="flex -mb-px"> 
             <TabButton
               active={activeTab === 'builder'}
               onClick={() => setActiveTab('builder')}
@@ -361,7 +406,7 @@ export default function ReportsAnalyticsNew() {
             </div>
           )}
 
-          {/* View Report Tab */}
+          {/* View Report Tab - Professional Report */}
           {activeTab === 'view' && generatedReport && (
             <div className="space-y-8">
               {/* Report Header with Professional Branding */}
@@ -434,7 +479,25 @@ export default function ReportsAnalyticsNew() {
                 </div>
               </div>
 
+            <div className="space-y-6">
+              {/* Branded Report Header */}
+              <BrandedReportHeader
+                title={generatedReport.title}
+                subtitle={generatedReport.subtitle}
+                reportType={generatedReport.type}
+                generatedDate={generatedReport.generatedAt}
+                reportId={generatedReport.id}
+                confidence={generatedReport.metadata?.confidence || 'High'}
+                onExport={handleExport}
+                onPrint={handlePrint}
+                onShare={handleShare}
+              />
+ 
+
               {/* Report Content */}
+              {generatedReport.type === 'PROFESSIONAL_REPORT' && (
+                <ProfessionalReport reportData={generatedReport} />
+              )}
               {generatedReport.type === 'financial_overview' && (
                 <FinancialOverview reportData={generatedReport} />
               )}
@@ -444,9 +507,15 @@ export default function ReportsAnalyticsNew() {
               {generatedReport.type === 'channel_performance' && (
                 <ChannelPerformanceReport reportData={generatedReport} />
               )}
+              {generatedReport.type === 'professional_report' && (
+                <ProfessionalReport reportData={generatedReport} isLoading={false} />
+              )}
 
               {/* Default Report View for other types */}
-              {!['financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
+              {!['PROFESSIONAL_REPORT', 'financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
+
+              {!['financial_overview', 'menu_engineering', 'channel_performance', 'professional_report'].includes(generatedReport.type) && (
+ 
                 <div className="space-y-6">
                   {generatedReport.executiveSummary && (
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
@@ -480,6 +549,10 @@ export default function ReportsAnalyticsNew() {
                   )}
                 </div>
               )}
+
+            <div>
+              <ProfessionalReport report={generatedReport} />
+ 
             </div>
           )}
 
@@ -610,6 +683,9 @@ function ReportTypeCard({ report, selected, onClick }) {
   const iconMap = {
     DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText,
     PieChart, TrendingDown, Activity
+
+    BarChart3, DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText
+ 
   };
   const Icon = iconMap[report.icon] || FileText;
 
@@ -628,6 +704,23 @@ function ReportTypeCard({ report, selected, onClick }) {
     lime: 'bg-lime-600 dark:bg-lime-600 text-white',
     gold: 'bg-yellow-600 dark:bg-yellow-600 text-white',
     gray: 'bg-gray-600 dark:bg-gray-600 text-white'
+
+    green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-300',
+    emerald: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-300',
+    blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-300',
+    red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-300',
+    purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-300',
+    orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-orange-300',
+    cyan: 'bg-cyan-100 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400 border-cyan-300',
+    teal: 'bg-teal-100 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 border-teal-300',
+    pink: 'bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 border-pink-300',
+    yellow: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 border-yellow-300',
+    indigo: 'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-indigo-300',
+    violet: 'bg-violet-100 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 border-violet-300',
+    lime: 'bg-lime-100 dark:bg-lime-900/20 text-lime-600 dark:text-lime-400 border-lime-300',
+    gold: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 border-yellow-300',
+    gray: 'bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400 border-gray-300'
+ 
   };
 
   return (

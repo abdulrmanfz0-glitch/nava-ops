@@ -1,31 +1,42 @@
 // NAVA OPS - Menu Engineering Report Component
-// BCG Matrix analysis for menu items
+// BCG Matrix analysis for menu items with performance optimizations
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Star, AlertCircle, TrendingUp, ThumbsDown } from 'lucide-react';
 
-export default function MenuEngineering({ reportData }) {
-  // Sample menu items data with BCG classification
-  const menuItems = [
-    { id: 1, name: 'Grilled Chicken', sales: 450, profit: 18000, category: 'star', price: 45 },
-    { id: 2, name: 'Beef Burger', sales: 380, profit: 12000, category: 'plow_horse', price: 35 },
-    { id: 3, name: 'Caesar Salad', sales: 120, profit: 4800, category: 'puzzle', price: 25 },
-    { id: 4, name: 'Fish & Chips', sales: 85, profit: 2550, category: 'dog', price: 32 },
-    { id: 5, name: 'Margherita Pizza', sales: 520, profit: 20800, category: 'star', price: 42 },
-    { id: 6, name: 'Pasta Alfredo', sales: 290, profit: 8700, category: 'plow_horse', price: 38 },
-    { id: 7, name: 'Sushi Platter', sales: 95, profit: 5700, category: 'puzzle', price: 65 },
-    { id: 8, name: 'Veggie Wrap', sales: 65, profit: 1300, category: 'dog', price: 22 }
-  ];
+function MenuEngineering({ reportData }) {
+  // Use menu items from reportData if available, otherwise use default
+  const menuItems = reportData?.menuItems || [];
 
-  const avgSales = menuItems.reduce((sum, item) => sum + item.sales, 0) / menuItems.length;
-  const avgProfit = menuItems.reduce((sum, item) => sum + item.profit, 0) / menuItems.length;
+  // Handle empty data
+  if (!menuItems || menuItems.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
+        <p className="text-gray-500 dark:text-gray-400">No menu data available for this period</p>
+      </div>
+    );
+  }
 
-  const categoryCounts = {
-    star: menuItems.filter(i => i.category === 'star').length,
-    puzzle: menuItems.filter(i => i.category === 'puzzle').length,
-    plow_horse: menuItems.filter(i => i.category === 'plow_horse').length,
-    dog: menuItems.filter(i => i.category === 'dog').length
-  };
+  // Memoized calculations for performance
+  const { avgSales, avgProfit, categoryCounts, topStars, topPlowhorse, topPuzzle, topDogs } = useMemo(() => {
+    const avgSales = menuItems.reduce((sum, item) => sum + item.sales, 0) / menuItems.length;
+    const avgProfit = menuItems.reduce((sum, item) => sum + item.profit, 0) / menuItems.length;
+
+    const categoryCounts = {
+      star: menuItems.filter(i => i.category === 'star').length,
+      puzzle: menuItems.filter(i => i.category === 'puzzle').length,
+      plow_horse: menuItems.filter(i => i.category === 'plow_horse').length,
+      dog: menuItems.filter(i => i.category === 'dog').length
+    };
+
+    // Get top performers for recommendations
+    const topStars = menuItems.filter(i => i.category === 'star').slice(0, 2).map(i => i.name).join(' and ');
+    const topPlowhorse = menuItems.filter(i => i.category === 'plow_horse').slice(0, 2).map(i => i.name).join(' and ');
+    const topPuzzle = menuItems.filter(i => i.category === 'puzzle').slice(0, 2).map(i => i.name).join(' and ');
+    const topDogs = menuItems.filter(i => i.category === 'dog').slice(0, 2).map(i => i.name).join(' and ');
+
+    return { avgSales, avgProfit, categoryCounts, topStars, topPlowhorse, topPuzzle, topDogs };
+  }, [menuItems]);
 
   return (
     <div className="space-y-6">
@@ -195,33 +206,43 @@ export default function MenuEngineering({ reportData }) {
           Strategic Recommendations
         </h3>
         <div className="space-y-3">
-          <RecommendationItem
-            title="Promote Star Items"
-            description="Margherita Pizza and Grilled Chicken are your top performers. Feature them prominently in marketing."
-            priority="high"
-          />
-          <RecommendationItem
-            title="Optimize Plow Horses"
-            description="Increase prices or reduce costs for Beef Burger and Pasta Alfredo to improve profit margins."
-            priority="medium"
-          />
-          <RecommendationItem
-            title="Revive Puzzle Items"
-            description="Caesar Salad and Sushi Platter have high margins but low sales. Improve visibility and marketing."
-            priority="medium"
-          />
-          <RecommendationItem
-            title="Eliminate or Redesign Dogs"
-            description="Consider removing or completely redesigning Fish & Chips and Veggie Wrap."
-            priority="low"
-          />
+          {topStars && (
+            <RecommendationItem
+              title="Promote Star Items"
+              description={`${topStars} are your top performers. Feature them prominently in marketing and promotions.`}
+              priority="high"
+            />
+          )}
+          {topPlowhorse && (
+            <RecommendationItem
+              title="Optimize Plow Horses"
+              description={`Increase prices or reduce costs for ${topPlowhorse} to improve profit margins.`}
+              priority="medium"
+            />
+          )}
+          {topPuzzle && (
+            <RecommendationItem
+              title="Revive Puzzle Items"
+              description={`${topPuzzle} have high margins but low sales. Improve visibility and marketing.`}
+              priority="medium"
+            />
+          )}
+          {topDogs && (
+            <RecommendationItem
+              title="Eliminate or Redesign Dogs"
+              description={`Consider removing or completely redesigning ${topDogs}.`}
+              priority="low"
+            />
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function CategoryCard({ title, count, description, icon: Icon, color, recommendation }) {
+export default React.memo(MenuEngineering);
+
+const CategoryCard = React.memo(function CategoryCard({ title, count, description, icon: Icon, color, recommendation }) {
   const colorClasses = {
     yellow: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700',
     purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-300 dark:border-purple-700',
@@ -230,7 +251,7 @@ function CategoryCard({ title, count, description, icon: Icon, color, recommenda
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-transparent">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-transparent hover:shadow-lg transition-shadow">
       <div className={`inline-flex p-3 rounded-lg mb-4 ${colorClasses[color]}`}>
         <Icon className="w-6 h-6" />
       </div>
@@ -242,9 +263,9 @@ function CategoryCard({ title, count, description, icon: Icon, color, recommenda
       <p className="text-xs font-medium text-gray-700 dark:text-gray-300">→ {recommendation}</p>
     </div>
   );
-}
+});
 
-function MenuItemRow({ item, avgSales, avgProfit }) {
+const MenuItemRow = React.memo(function MenuItemRow({ item, avgSales, avgProfit }) {
   const getCategoryBadge = (category) => {
     const badges = {
       star: { label: 'Star', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400' },
@@ -271,7 +292,7 @@ function MenuItemRow({ item, avgSales, avgProfit }) {
   };
 
   return (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="font-medium text-gray-900 dark:text-white">{item.name}</div>
       </td>
@@ -298,9 +319,9 @@ function MenuItemRow({ item, avgSales, avgProfit }) {
       </td>
     </tr>
   );
-}
+});
 
-function RecommendationItem({ title, description, priority }) {
+const RecommendationItem = React.memo(function RecommendationItem({ title, description, priority }) {
   const priorityColors = {
     high: 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400',
     medium: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400',
@@ -308,7 +329,7 @@ function RecommendationItem({ title, description, priority }) {
   };
 
   return (
-    <div className="flex items-start gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg">
+    <div className="flex items-start gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition-shadow">
       <span className={`px-2 py-1 rounded text-xs font-semibold uppercase ${priorityColors[priority]}`}>
         {priority}
       </span>
@@ -318,4 +339,4 @@ function RecommendationItem({ title, description, priority }) {
       </div>
     </div>
   );
-}
+});

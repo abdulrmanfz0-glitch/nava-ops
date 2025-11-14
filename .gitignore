@@ -79,6 +79,7 @@ reports/
 # But allow specific documentation files
 !README.md
 !ARCHITECTURE.md
+!BRANDING_AUDIT_REPORT.md
 
 # Allow src directory files (override lib/ exclusion for src/lib)
 !src/

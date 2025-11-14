@@ -184,11 +184,6 @@ export default function App() {
                                 <DashboardV2 />
                               </Layout>
                             </DashboardProvider>
-
-                            <Layout>
-                              <DashboardV2 />
-                            </Layout>
- 
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

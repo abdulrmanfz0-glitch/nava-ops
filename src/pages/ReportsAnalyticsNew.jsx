@@ -1,14 +1,18 @@
-// NAVA OPS - Enterprise Reports & Analytics Hub
-// Comprehensive reporting platform with AI insights and advanced analytics
+// RESTALYZE - Professional Report Hub
+// Intelligent Command Center for Restaurant Financial Insights, Menu Performance & Channel Analytics
+// Full-page branded design with AI-powered reporting and advanced analytics
 
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
+
 import PageHeader from '@/components/UI/PageHeader';
 import BrandedReportHeader from '@/components/Reports/BrandedReportHeader';
+ 
 import {
   BarChart3, Download, Calendar, TrendingUp, FileText, DollarSign,
   Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare,
-  Clock, Settings, Play, Eye, ChevronRight, Sparkles
+  Clock, Settings, Play, Eye, ChevronRight, Sparkles, Zap, ArrowRight,
+  PieChart, TrendingDown, Activity
 } from 'lucide-react';
 import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
@@ -147,6 +151,45 @@ export default function ReportsAnalyticsNew() {
   };
 
   return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Professional Branded Header */}
+      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 dark:from-blue-900 dark:via-blue-800 dark:to-indigo-900 text-white pt-8 pb-12 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Restalyze Branding */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">
+                <BarChart3 className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-black tracking-tight">RESTALYZE</h1>
+                <p className="text-blue-100 text-sm font-medium">Intelligent Command Center</p>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20">
+              <Zap className="w-4 h-4 text-yellow-300" />
+              <span className="text-sm font-semibold text-white">AI-Powered</span>
+            </div>
+          </div>
+
+          {/* Professional Tagline */}
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Professional Report Hub</h2>
+            <p className="text-blue-100 max-w-2xl">
+              Combine financial insights, menu performance, and channel analytics into one branded, professional platform. Generate AI-powered reports to drive strategic decisions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+
+      {/* Navigation Tabs - Professional Styling */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+          <nav className="flex -mb-px px-6">
+
     <div className="space-y-6">
       <PageHeader
         title="Report Hub"
@@ -162,12 +205,12 @@ export default function ReportsAnalyticsNew() {
       {/* Navigation Tabs */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md">
         <div className="border-b border-gray-200 dark:border-gray-700">
-          <nav className="flex -mb-px">
+          <nav className="flex -mb-px"> 
             <TabButton
               active={activeTab === 'builder'}
               onClick={() => setActiveTab('builder')}
               icon={Settings}
-              label="Report Builder"
+              label="Report Generator"
             />
             <TabButton
               active={activeTab === 'view'}
@@ -179,37 +222,89 @@ export default function ReportsAnalyticsNew() {
             <TabButton
               active={activeTab === 'templates'}
               onClick={() => setActiveTab('templates')}
-              icon={FileText}
+              icon={Crown}
               label="Templates"
             />
             <TabButton
               active={activeTab === 'history'}
               onClick={() => setActiveTab('history')}
               icon={Clock}
-              label="History"
+              label="Report History"
             />
           </nav>
         </div>
 
-        <div className="p-6">
-          {/* Report Builder Tab */}
+        <div className="p-8">
+          {/* Report Generator Tab */}
           {activeTab === 'builder' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="space-y-8">
+              {/* Quick Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/40 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-600 rounded-lg">
+                      <BarChart3 className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Report Types</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">{Object.keys(REPORT_TYPES).length}+</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/40 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-600 rounded-lg">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">AI Powered</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">Insights</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/40 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-600 rounded-lg">
+                      <Download className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Export To</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">4 Formats</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/40 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-600 rounded-lg">
+                      <Clock className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Recent Reports</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">{recentReports.length}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Report Type Selection */}
                 <div className="lg:col-span-2 space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                      Select Report Type
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      Generate Your Report
                     </h3>
-                    <div className="space-y-4">
+                    <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+                      Choose from 25+ professionally designed reports tailored for restaurant analytics
+                    </p>
+                    <div className="space-y-5">
                       {Object.entries(REPORT_CATEGORIES).map(([key, category]) => {
                         const reports = getReportsByCategory(category);
                         if (reports.length === 0) return null;
 
                         return (
                           <div key={key}>
-                            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
+                            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3 uppercase tracking-wide flex items-center gap-2">
+                              <div className="w-1 h-4 bg-blue-600 rounded"></div>
                               {category.replace('_', ' ')} Reports
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -229,56 +324,71 @@ export default function ReportsAnalyticsNew() {
                   </div>
                 </div>
 
-                {/* Filters & Actions */}
+                {/* Configuration Panel */}
                 <div className="space-y-6">
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 sticky top-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                      Report Configuration
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 sticky top-6 border border-gray-200 dark:border-gray-600 shadow-lg">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-blue-600" />
+                      Configuration
                     </h3>
 
-                    {selectedReportType && (
-                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <div className="text-sm font-medium text-blue-900 dark:text-blue-200 mb-1">
+                    {selectedReportType ? (
+                      <div className="mb-6 p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg border-l-4 border-blue-600">
+                        <div className="text-xs font-bold text-blue-900 dark:text-blue-200 mb-2 uppercase tracking-wide">
                           Selected Report
                         </div>
-                        <div className="text-lg font-bold text-blue-900 dark:text-blue-100">
+                        <div className="text-base font-bold text-blue-900 dark:text-blue-100 mb-2">
                           {REPORT_TYPES[selectedReportType.toUpperCase()]?.name}
                         </div>
-                        <div className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                        <div className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
                           {REPORT_TYPES[selectedReportType.toUpperCase()]?.description}
                         </div>
+                      </div>
+                    ) : (
+                      <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-600/30 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-center">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                          Select a report type to begin
+                        </p>
                       </div>
                     )}
 
                     <button
                       onClick={handleGenerateReport}
                       disabled={!selectedReportType || isGenerating}
-                      className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400
-                               text-white rounded-lg transition-colors duration-200 flex items-center
-                               justify-center gap-2 font-medium disabled:cursor-not-allowed"
+                      className={`w-full px-6 py-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 font-bold text-white mb-4 ${
+                        !selectedReportType || isGenerating
+                          ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl'
+                      }`}
                     >
                       {isGenerating ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                          Generating...
+                          <span>Generating...</span>
                         </>
                       ) : (
                         <>
-                          <Play className="w-5 h-5" />
-                          Generate Report
+                          <Zap className="w-5 h-5" />
+                          <span>Generate Report</span>
                         </>
                       )}
                     </button>
 
                     {selectedReportType && REPORT_TYPES[selectedReportType.toUpperCase()]?.aiInsights && (
-                      <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                        <div className="flex items-center gap-2 text-sm text-purple-900 dark:text-purple-200">
-                          <Sparkles className="w-4 h-4" />
-                          <span className="font-medium">AI Insights Enabled</span>
+                      <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 bg-purple-600 rounded-lg flex-shrink-0">
+                            <Sparkles className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-purple-900 dark:text-purple-200 text-sm">
+                              AI Insights Included
+                            </p>
+                            <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
+                              Automated analysis, trends, and strategic recommendations
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
-                          This report includes automated insights and recommendations
-                        </p>
                       </div>
                     )}
                   </div>
@@ -286,16 +396,89 @@ export default function ReportsAnalyticsNew() {
               </div>
 
               {/* Filters */}
-              <ReportFilters
-                filters={filters}
-                onFilterChange={setFilters}
-                onApply={() => {}}
-              />
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700">
+                <ReportFilters
+                  filters={filters}
+                  onFilterChange={setFilters}
+                  onApply={() => {}}
+                />
+              </div>
             </div>
           )}
 
           {/* View Report Tab - Professional Report */}
           {activeTab === 'view' && generatedReport && (
+            <div className="space-y-8">
+              {/* Report Header with Professional Branding */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-8 border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <FileText className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-black text-gray-900 dark:text-white">
+                          {generatedReport.title}
+                        </h2>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          Generated from Restalyze Command Center
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-gray-700 dark:text-gray-300 mb-4 mt-4">{generatedReport.subtitle}</p>
+                    <div className="flex flex-wrap items-center gap-4 text-sm">
+                      <div className="flex items-center gap-2 px-3 py-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <Clock className="w-4 h-4 text-gray-500" />
+                        <span className="text-gray-700 dark:text-gray-300">{new Date(generatedReport.generatedAt).toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-2 px-3 py-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <span className="text-gray-500">ID:</span>
+                        <span className="font-mono text-gray-700 dark:text-gray-300">{generatedReport.id}</span>
+                      </div>
+                      <div className="flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-lg border border-green-300 dark:border-green-800">
+                        <Activity className="w-4 h-4 text-green-600" />
+                        <span className="text-green-800 dark:text-green-300 font-semibold">{generatedReport.metadata.confidence} Confidence</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Export Buttons - Professional Design */}
+                  <div className="flex flex-col gap-3">
+                    <p className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Export Report</p>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => handleExport('pdf')}
+                        className="px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg
+                                 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-md hover:shadow-lg"
+                        title="Export as PDF"
+                      >
+                        <Download className="w-4 h-4" />
+                        PDF
+                      </button>
+                      <button
+                        onClick={() => handleExport('excel')}
+                        className="px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg
+                                 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-md hover:shadow-lg"
+                        title="Export as Excel"
+                      >
+                        <Download className="w-4 h-4" />
+                        Excel
+                      </button>
+                      <button
+                        onClick={() => handleExport('csv')}
+                        className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
+                                 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-md hover:shadow-lg"
+                        title="Export as CSV"
+                      >
+                        <Download className="w-4 h-4" />
+                        CSV
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             <div className="space-y-6">
               {/* Branded Report Header */}
               <BrandedReportHeader
@@ -309,6 +492,7 @@ export default function ReportsAnalyticsNew() {
                 onPrint={handlePrint}
                 onShare={handleShare}
               />
+ 
 
               {/* Report Content */}
               {generatedReport.type === 'PROFESSIONAL_REPORT' && (
@@ -375,30 +559,40 @@ export default function ReportsAnalyticsNew() {
           {/* Templates Tab */}
           {activeTab === 'templates' && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Report Templates
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Professional Report Templates
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Choose from pre-designed templates optimized for restaurant management and strategic decision-making
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
-                  { name: 'Daily Flash Report', category: 'executive', icon: Crown },
-                  { name: 'Weekly Performance', category: 'performance', icon: TrendingUp },
-                  { name: 'Monthly Financial', category: 'financial', icon: DollarSign },
-                  { name: 'Branch Comparison', category: 'comparative', icon: GitCompare },
-                  { name: 'Customer Insights', category: 'customer', icon: Users },
-                  { name: 'Anomaly Detection', category: 'anomaly', icon: AlertTriangle }
+                  { name: 'Daily Flash Report', category: 'executive', icon: Crown, description: 'Quick daily overview for management' },
+                  { name: 'Weekly Performance', category: 'performance', icon: TrendingUp, description: 'Week-over-week performance analysis' },
+                  { name: 'Monthly Financial', category: 'financial', icon: DollarSign, description: 'Comprehensive financial summary' },
+                  { name: 'Branch Comparison', category: 'comparative', icon: GitCompare, description: 'Multi-location performance metrics' },
+                  { name: 'Customer Insights', category: 'customer', icon: Users, description: 'Customer behavior and trends' },
+                  { name: 'Anomaly Detection', category: 'anomaly', icon: AlertTriangle, description: 'Unusual patterns and alerts' }
                 ].map((template, index) => (
                   <button
                     key={index}
                     className="p-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl
-                             hover:border-blue-500 hover:shadow-lg transition-all duration-200 text-left"
+                             hover:border-blue-500 hover:shadow-xl hover:scale-105 transition-all duration-200 text-left bg-white dark:bg-gray-800"
                   >
-                    <template.icon className="w-8 h-8 text-blue-600 mb-3" />
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg w-fit mb-4">
+                      <template.icon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h4 className="font-bold text-gray-900 dark:text-white mb-1 text-lg">
                       {template.name}
                     </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
-                      {template.category} report template
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      {template.description}
                     </p>
+                    <div className="flex items-center text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                      Use Template <ArrowRight className="w-4 h-4 ml-2" />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -408,39 +602,53 @@ export default function ReportsAnalyticsNew() {
           {/* History Tab */}
           {activeTab === 'history' && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Recent Reports
-              </h3>
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Report History
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Access your previously generated reports
+                </p>
+              </div>
               {recentReports.length > 0 ? (
                 <div className="space-y-3">
                   {recentReports.map((report, index) => (
                     <div
                       key={index}
-                      className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg flex items-center justify-between
-                               hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                      className="p-5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-between
+                               hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 cursor-pointer group"
                       onClick={() => handleViewReport(report)}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-                          <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                          <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400 group-hover:text-white" />
                         </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <div className="flex-1">
+                          <h4 className="font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                             {report.title}
                           </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {new Date(report.timestamp).toLocaleString()}
-                          </p>
+                          <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400 mt-1">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {new Date(report.timestamp).toLocaleString()}
+                            </span>
+                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-medium">
+                              {report.type.replace('_', ' ').toUpperCase()}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400" />
+                      <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-white" />
+                      </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
+                <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
                   <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 dark:text-gray-400">No recent reports</p>
+                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No Reports Yet</p>
+                  <p className="text-gray-600 dark:text-gray-400">Generate your first report from the Report Generator tab to get started</p>
                 </div>
               )}
             </div>
@@ -457,10 +665,10 @@ function TabButton({ active, onClick, icon: Icon, label, disabled }) {
       onClick={onClick}
       disabled={disabled}
       className={`
-        flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
+        flex items-center gap-2 px-6 py-4 border-b-3 font-bold text-sm transition-all duration-200 uppercase tracking-wide
         ${active
-          ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-          : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+          ? 'border-blue-600 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+          : 'border-transparent text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700/50'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
       `}
@@ -473,11 +681,30 @@ function TabButton({ active, onClick, icon: Icon, label, disabled }) {
 
 function ReportTypeCard({ report, selected, onClick }) {
   const iconMap = {
+    DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText,
+    PieChart, TrendingDown, Activity
+
     BarChart3, DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText
+ 
   };
   const Icon = iconMap[report.icon] || FileText;
 
   const colorClasses = {
+    green: 'bg-green-600 dark:bg-green-600 text-white',
+    blue: 'bg-blue-600 dark:bg-blue-600 text-white',
+    red: 'bg-red-600 dark:bg-red-600 text-white',
+    purple: 'bg-purple-600 dark:bg-purple-600 text-white',
+    orange: 'bg-orange-600 dark:bg-orange-600 text-white',
+    cyan: 'bg-cyan-600 dark:bg-cyan-600 text-white',
+    teal: 'bg-teal-600 dark:bg-teal-600 text-white',
+    pink: 'bg-pink-600 dark:bg-pink-600 text-white',
+    yellow: 'bg-yellow-600 dark:bg-yellow-600 text-white',
+    indigo: 'bg-indigo-600 dark:bg-indigo-600 text-white',
+    violet: 'bg-violet-600 dark:bg-violet-600 text-white',
+    lime: 'bg-lime-600 dark:bg-lime-600 text-white',
+    gold: 'bg-yellow-600 dark:bg-yellow-600 text-white',
+    gray: 'bg-gray-600 dark:bg-gray-600 text-white'
+
     green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-300',
     emerald: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-300',
     blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-300',
@@ -493,30 +720,31 @@ function ReportTypeCard({ report, selected, onClick }) {
     lime: 'bg-lime-100 dark:bg-lime-900/20 text-lime-600 dark:text-lime-400 border-lime-300',
     gold: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 border-yellow-300',
     gray: 'bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400 border-gray-300'
+ 
   };
 
   return (
     <button
       onClick={onClick}
       className={`
-        p-4 rounded-lg border-2 transition-all duration-200 text-left
+        p-5 rounded-xl border-2 transition-all duration-300 text-left h-full
         ${selected
-          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
-          : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-md'
+          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 shadow-xl scale-105'
+          : 'border-gray-200 dark:border-gray-700 hover:border-blue-400 hover:shadow-lg hover:scale-102 bg-white dark:bg-gray-800'
         }
       `}
     >
-      <div className={`inline-flex p-2 rounded-lg mb-2 ${colorClasses[report.color]}`}>
-        <Icon className="w-5 h-5" />
+      <div className={`inline-flex p-3 rounded-lg mb-3 ${colorClasses[report.color]}`}>
+        <Icon className="w-6 h-6" />
       </div>
-      <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+      <h4 className="font-bold text-gray-900 dark:text-white text-base mb-2">
         {report.name}
       </h4>
-      <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
         {report.description}
       </p>
       {report.aiInsights && (
-        <div className="mt-2 flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-2 py-1 rounded w-fit">
           <Sparkles className="w-3 h-3" />
           AI Insights
         </div>

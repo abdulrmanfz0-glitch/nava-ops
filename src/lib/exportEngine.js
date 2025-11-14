@@ -27,32 +27,94 @@ export class PDFExporter {
   }
 
   /**
-   * Add header with logo and title
+   * Add header with logo and title (Restalyze branding)
    */
-  addHeader(title, subtitle = '') {
-    // Background banner
-    this.pdf.setFillColor(...this.primaryColor);
-    this.pdf.rect(0, 0, this.pageWidth, 40, 'F');
+  addHeader(title, subtitle = '', restaurantInfo = {}) {
+    // Background banner with gradient effect (using Restalyze blue)
+    this.pdf.setFillColor(0, 136, 255);
+    this.pdf.rect(0, 0, this.pageWidth, 50, 'F');
 
-    // Title
+    // Restalyze branding
     this.pdf.setTextColor(255, 255, 255);
-    this.pdf.setFontSize(24);
+    this.pdf.setFontSize(8);
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text(title, this.margins.left, 20);
+    this.pdf.text('RESTALYZE', this.margins.left, 8);
 
-    // Subtitle
-    if (subtitle) {
-      this.pdf.setFontSize(12);
-      this.pdf.setFont('helvetica', 'normal');
-      this.pdf.text(subtitle, this.margins.left, 30);
+    this.pdf.setFontSize(7);
+    this.pdf.setFont('helvetica', 'normal');
+    this.pdf.text('Premium Restaurant Analytics Platform', this.margins.left, 12);
+
+    // Restaurant info
+    if (restaurantInfo.name) {
+      this.pdf.setFontSize(9);
+      this.pdf.setFont('helvetica', 'bold');
+      this.pdf.text(restaurantInfo.name, this.margins.left, 20);
+
+      if (restaurantInfo.branch) {
+        this.pdf.setFontSize(8);
+        this.pdf.setFont('helvetica', 'normal');
+        this.pdf.text(`Branch: ${restaurantInfo.branch}`, this.margins.left, 25);
+      }
     }
 
-    // Company info
-    this.pdf.setFontSize(10);
-    this.pdf.text('NAVA OPS', this.pageWidth - this.margins.right - 30, 20);
-    this.pdf.text(new Date().toLocaleDateString(), this.pageWidth - this.margins.right - 30, 27);
+  addHeader(title, subtitle = '', reportId = '', confidence = 'High') {
+    // Premium gradient background
+    this.pdf.setFillColor(...this.primaryColor);
+    this.pdf.rect(0, 0, this.pageWidth, 50, 'F');
+ 
 
-    this.currentY = 50;
+    // Restalyze branding box
+    this.pdf.setFillColor(255, 255, 255);
+    this.pdf.rect(this.margins.left, 8, 35, 12, 'F');
+    this.pdf.setFontSize(14);
+    this.pdf.setFont('helvetica', 'bold');
+    this.pdf.setTextColor(0, 136, 255);
+    this.pdf.text('RESTALYZE', this.margins.left + 3, 15);
+
+    // Professional Analytics Platform label
+    this.pdf.setFontSize(7);
+    this.pdf.setFont('helvetica', 'normal');
+    this.pdf.setTextColor(100, 116, 139);
+    this.pdf.text('Professional Analytics Platform', this.margins.left + 3, 18);
+
+    // Report metadata (right side)
+    this.pdf.setFontSize(9);
+    this.pdf.setTextColor(255, 255, 255);
+    this.pdf.setFont('helvetica', 'normal');
+    this.pdf.text('Report ID: ' + reportId, this.pageWidth - this.margins.right - 50, 15);
+    this.pdf.text('Confidence: ' + confidence, this.pageWidth - this.margins.right - 50, 20);
+    this.pdf.text('Generated: ' + new Date().toLocaleDateString(), this.pageWidth - this.margins.right - 50, 25);
+
+    // Title and subtitle
+    this.pdf.setTextColor(255, 255, 255);
+    this.pdf.setFontSize(20);
+    this.pdf.setFont('helvetica', 'bold');
+    this.pdf.text(title, this.margins.left, 35);
+
+    this.pdf.text(title, this.margins.left, 38);
+ 
+
+    if (subtitle) {
+      this.pdf.setFontSize(10);
+      this.pdf.setFont('helvetica', 'normal');
+      this.pdf.text(subtitle, this.margins.left, 42);
+    }
+
+    // Right side - Date and Report ID
+    this.pdf.setFontSize(8);
+    this.pdf.setFont('helvetica', 'normal');
+    this.pdf.text(new Date().toLocaleDateString(), this.pageWidth - this.margins.right - 50, 8);
+    this.pdf.text(new Date().toLocaleTimeString(), this.pageWidth - this.margins.right - 50, 12);
+
+    this.currentY = 60;
+
+      this.pdf.setFontSize(11);
+      this.pdf.setFont('helvetica', 'normal');
+      this.pdf.text(subtitle, this.margins.left, 44);
+    }
+
+    this.currentY = 55;
+
     this.pdf.setTextColor(0, 0, 0);
   }
 
@@ -218,31 +280,67 @@ export class PDFExporter {
   }
 
   /**
-   * Add footer
+   * Add footer with Restalyze branding
    */
   addFooter() {
     const pageCount = this.pdf.internal.getNumberOfPages();
 
     for (let i = 1; i <= pageCount; i++) {
       this.pdf.setPage(i);
-      this.pdf.setFontSize(8);
+      this.pdf.setFontSize(7);
       this.pdf.setTextColor(150, 150, 150);
+
+      // Page number center
+
+
+      // Top separator line
+      this.pdf.setDrawColor(200, 200, 200);
+      this.pdf.line(this.margins.left, this.pageHeight - 15, this.pageWidth - this.margins.right, this.pageHeight - 15);
+
+      this.pdf.setFontSize(8);
+      this.pdf.setTextColor(120, 120, 120);
+      this.pdf.setFont('helvetica', 'normal');
+
+      // Left: Restalyze branding
+      this.pdf.text(
+        'Restalyze Professional Report',
+        this.margins.left,
+        this.pageHeight - 10
+      );
+
+      // Center: Page number
+ 
       this.pdf.text(
         `Page ${i} of ${pageCount}`,
         this.pageWidth / 2,
         this.pageHeight - 10,
         { align: 'center' }
       );
+
+      // Left: Restalyze branding
       this.pdf.text(
-        'Generated by NAVA OPS',
+        'Generated by Restalyze',
         this.margins.left,
         this.pageHeight - 10
       );
+
+
+ 
+      // Right: Timestamp
       this.pdf.text(
         new Date().toLocaleString(),
         this.pageWidth - this.margins.right,
         this.pageHeight - 10,
         { align: 'right' }
+      );
+
+      // Bottom: Copyright
+      this.pdf.setFontSize(6);
+      this.pdf.text(
+        '© Restalyze - Premium Restaurant Analytics Platform | All Rights Reserved',
+        this.pageWidth / 2,
+        this.pageHeight - 5,
+        { align: 'center' }
       );
     }
   }
@@ -827,18 +925,18 @@ export const printReport = (reportData) => {
 /**
  * Main Export Function - Auto-detects format
  */
-export const exportReport = async (reportData, format, filename) => {
+export const exportReport = async (reportData, format, filename, restaurantInfo = {}) => {
   try {
-    logger.info('Starting report export', { format, filename });
+    logger.info('Starting report export', { format, filename, restaurant: restaurantInfo.name });
 
     switch (format.toLowerCase()) {
       case 'pdf':
-        return await exportAsPDF(reportData, filename);
+        return await exportAsPDF(reportData, filename, restaurantInfo);
       case 'excel':
       case 'xlsx':
-        return await exportAsExcel(reportData, filename);
+        return await exportAsExcel(reportData, filename, restaurantInfo);
       case 'csv':
-        return await exportAsCSV(reportData, filename);
+        return await exportAsCSV(reportData, filename, restaurantInfo);
       case 'json':
         return JSONExporter.download(reportData, filename);
       case 'print':
@@ -855,10 +953,10 @@ export const exportReport = async (reportData, format, filename) => {
 /**
  * Export as PDF with full report formatting
  */
-const exportAsPDF = async (reportData, filename) => {
+const exportAsPDF = async (reportData, filename, restaurantInfo = {}) => {
   const pdf = new PDFExporter();
 
-  pdf.addHeader(reportData.title, reportData.subtitle);
+  pdf.addHeader(reportData.title, reportData.subtitle, restaurantInfo);
 
   if (reportData.executiveSummary) {
     pdf.addExecutiveSummary(reportData.executiveSummary);
@@ -890,9 +988,9 @@ const exportAsPDF = async (reportData, filename) => {
 };
 
 /**
- * Export as Excel
+ * Export as Excel with Restalyze branding
  */
-const exportAsExcel = async (reportData, filename) => {
+const exportAsExcel = async (reportData, filename, restaurantInfo = {}) => {
   const excel = new ExcelExporter();
 
   // Add summary sheet with metrics
@@ -901,6 +999,23 @@ const exportAsExcel = async (reportData, filename) => {
     reportData.metrics.forEach(metric => {
       metrics[metric.label] = metric.value;
     });
+
+  // Add cover sheet with metadata
+  if (restaurantInfo.name || reportData.title) {
+    const metadata = [
+      { key: 'Report', value: reportData.title },
+      { key: 'Restaurant', value: restaurantInfo.name || 'N/A' },
+      { key: 'Branch', value: restaurantInfo.branch || 'N/A' },
+      { key: 'Generated', value: new Date().toLocaleString() },
+      { key: 'Platform', value: 'Restalyze - Premium Restaurant Analytics' },
+    ];
+    excel.addSheet('Report Info', metadata, { headers: ['key', 'value'] });
+  }
+
+  // Add summary sheet
+  if (reportData.metrics) {
+    excel.addSheet('Summary', reportData.metrics);
+ 
   }
   excel.addSummarySheet(reportData.title || 'Report Summary', metrics);
 
@@ -926,9 +1041,9 @@ const exportAsExcel = async (reportData, filename) => {
 };
 
 /**
- * Export as CSV
+ * Export as CSV with Restalyze branding metadata
  */
-const exportAsCSV = async (reportData, filename) => {
+const exportAsCSV = async (reportData, filename, restaurantInfo = {}) => {
   let data = [];
 
   if (reportData.sections && reportData.sections[0]?.table) {
@@ -937,7 +1052,14 @@ const exportAsCSV = async (reportData, filename) => {
     data = reportData.data;
   }
 
-  CSVExporter.download(data, filename);
+  // Create CSV with metadata header comments
+  const csv = CSVExporter.toCSV(data);
+  const metadata = `# Report: ${reportData.title}\n# Restaurant: ${restaurantInfo.name || 'N/A'}\n# Branch: ${restaurantInfo.branch || 'N/A'}\n# Generated: ${new Date().toLocaleString()}\n# Platform: Restalyze - Premium Restaurant Analytics\n# ---\n`;
+
+  const blob = new Blob([metadata + csv], { type: 'text/csv;charset=utf-8;' });
+  const { saveAs } = await import('file-saver');
+  saveAs(blob, filename);
+  logger.info('CSV exported successfully with metadata', { filename, restaurant: restaurantInfo.name });
 };
 
 export default {

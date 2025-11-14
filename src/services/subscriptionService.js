@@ -16,8 +16,28 @@ import {
   getLimit,
   isUnlimited,
   isWithinLimit,
-  comparePlans
+  comparePlans,
+  isDynamicPricingPlan,
+  calculateDynamicPrice
 } from '@/utils/subscriptionPlans';
+import {
+  calculateMonthlyPrice,
+  calculateAnnualPrice,
+  comparePricingCycles,
+  getPricingBreakdown,
+  calculateProration,
+  formatPrice,
+  PRICING_CONFIG
+} from '@/utils/pricingCalculator';
+
+  multiLocationPricingAPI,
+  branchKPIsAPI,
+  calculateGrossProfitMargin,
+  calculateGrowthPercent,
+  calculateAOV,
+  calculateRetentionRate
+} from '@/services/multiLocationPricingService';
+ 
 
 // Check if we should use mock data (DEV mode without Supabase)
 const USE_MOCK_DATA = import.meta.env.DEV && !isSupabaseConfigured;
@@ -1018,6 +1038,171 @@ export const billingNotificationsAPI = {
 };
 
 // ============================================================================
+// DYNAMIC PRICING API (Brand + Branch Model)
+// ============================================================================
+// Simplified pricing: $299 per brand + $99 per additional branch
+
+export const dynamicPricingAPI = {
+  /**
+   * Calculate price based on number of branches
+   * @param {number} numberOfBranches - Total branches (including primary)
+   * @param {string} billingCycle - 'monthly' or 'annual'
+   * @returns {Object} Pricing breakdown
+   */
+  calculatePrice(numberOfBranches = 1, billingCycle = 'monthly') {
+    const isAnnual = billingCycle === 'annual';
+    if (isAnnual) {
+      return calculateAnnualPrice(numberOfBranches);
+    }
+    return calculateMonthlyPrice(numberOfBranches, false);
+  },
+
+  /**
+   * Get pricing comparison (monthly vs annual)
+   * @param {number} numberOfBranches - Total branches
+   * @returns {Object} Pricing comparison with savings
+   */
+  compareBillingCycles(numberOfBranches = 1) {
+    return comparePricingCycles(numberOfBranches);
+  },
+
+  /**
+   * Get user-friendly pricing breakdown for display
+   * @param {number} numberOfBranches - Total branches
+   * @param {string} billingCycle - 'monthly' or 'annual'
+   * @returns {Object} Formatted pricing breakdown
+   */
+  getPricingBreakdown(numberOfBranches = 1, billingCycle = 'monthly') {
+    return getPricingBreakdown(numberOfBranches, billingCycle);
+  },
+
+  /**
+   * Calculate proration for mid-cycle changes
+   * @param {number} currentBranches - Current branches
+   * @param {number} newBranches - New branches
+   * @param {Date} nextBillingDate - Next billing date
+   * @param {boolean} isAnnual - Is annual billing
+   * @returns {Object} Proration details
+   */
+  calculateProrationCharge(currentBranches, newBranches, nextBillingDate = null, isAnnual = false) {
+    return calculateProration(currentBranches, newBranches, nextBillingDate, isAnnual);
+  },
+
+  /**
+   * Check if adding a branch would exceed budget
+   * @param {number} currentBranches - Current branches
+   * @param {number} budget - Monthly budget
+   * @returns {Object} Affordability details
+   */
+  canAffordNewBranch(currentBranches = 1, budget = 0) {
+    const current = calculateMonthlyPrice(currentBranches, false);
+    const newBranchPrice = calculateMonthlyPrice(currentBranches + 1, false);
+
+    return {
+      canAfford: newBranchPrice.totalPrice <= budget,
+      currentPrice: current.totalPrice,
+      newPrice: newBranchPrice.totalPrice,
+      additionalCost: newBranchPrice.totalPrice - current.totalPrice,
+      budget,
+    };
+  },
+
+  /**
+   * Get pricing configuration constants
+   * @returns {Object} Pricing config
+   */
+  getConfig() {
+    return PRICING_CONFIG;
+  },
+
+  /**
+   * Format price for display
+   * @param {number} price - Price amount
+   * @param {boolean} showCurrency - Show $ symbol
+   * @returns {string} Formatted price
+   */
+  formatPrice(price, showCurrency = true) {
+    return formatPrice(price, showCurrency);
+  },
+
+  /**
+   * Calculate subscription amount for saving to database
+   * @param {number} numberOfBranches - Total branches
+   * @param {string} billingCycle - 'monthly' or 'annual'
+   * @returns {Object} Amount to store in subscription record
+   */
+  getSubscriptionAmount(numberOfBranches = 1, billingCycle = 'monthly') {
+    const pricing = this.calculatePrice(numberOfBranches, billingCycle);
+    return {
+      amount: pricing.totalPrice,
+      currency: pricing.currency,
+      baseBrandPrice: pricing.basePrice,
+      additionalBranchPrice: pricing.branchPrice,
+      discount: pricing.discount,
+      numberOfBranches,
+      billingCycle,
+    };
+  },
+
+  /**
+   * Update subscription amount when branches change
+   * @param {string} subscriptionId - Subscription ID
+   * @param {number} numberOfBranches - New number of branches
+   * @param {string} billingCycle - Current billing cycle
+   * @param {Date} nextBillingDate - Next billing date
+   */
+  async updateSubscriptionAmount(subscriptionId, numberOfBranches, billingCycle = 'monthly', nextBillingDate = null) {
+    try {
+      const proration = calculateProration(
+        0, // We don't know current branches, so pass 0 for simplicity
+        numberOfBranches,
+        nextBillingDate,
+        billingCycle === 'annual'
+      );
+
+      const amount = this.getSubscriptionAmount(numberOfBranches, billingCycle);
+
+      const updated = await apiRequest(
+        () => supabase
+          .from('user_subscriptions')
+          .update({
+            amount: amount.amount,
+            number_of_branches: numberOfBranches,
+            metadata: {
+              baseBrandPrice: amount.baseBrandPrice,
+              additionalBranchPrice: amount.additionalBranchPrice,
+              discount: amount.discount,
+            },
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', subscriptionId)
+          .select()
+          .single(),
+        'Failed to update subscription amount'
+      );
+
+      logger.info('[DynamicPricingAPI] Updated subscription amount', {
+        subscriptionId,
+        numberOfBranches,
+        amount: amount.amount,
+      });
+
+      return updated;
+    } catch (error) {
+      logger.error('[DynamicPricingAPI] Failed to update subscription amount', error);
+      throw error;
+    }
+  },
+};
+
+// MULTI-LOCATION PRICING RE-EXPORTS
+// ============================================================================
+// Re-export multi-location pricing and KPI APIs for convenience
+export const multiLocation = multiLocationPricingAPI;
+export const branchKPIs = branchKPIsAPI;
+ 
+
+// ============================================================================
 // EXPORT ALL
 // ============================================================================
 
@@ -1029,5 +1214,10 @@ export default {
   paymentMethods: paymentMethodsAPI,
   licenseKeys: licenseKeysAPI,
   events: subscriptionEventsAPI,
-  notifications: billingNotificationsAPI
+  notifications: billingNotificationsAPI,
+  dynamicPricing: dynamicPricingAPI
+
+  multiLocation: multiLocationPricingAPI,
+  branchKPIs: branchKPIsAPI
+ 
 };

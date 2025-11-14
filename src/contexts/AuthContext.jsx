@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase, checkSupabaseConnection, handleSupabaseError } from '../lib/supabase';
 import { useNotification } from './NotificationContext';
+ reporting-revolution
+
 import logger from '../lib/logger';
 
 /**
@@ -19,6 +21,7 @@ const DEV_BYPASS_AUTH = (
   import.meta.env.MODE !== 'production' && // Not production mode
   import.meta.env.VITE_DEV_BYPASS_AUTH === 'true' // Explicit opt-in required
 );
+ 
 
 const AuthContext = createContext();
 
@@ -36,6 +39,15 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('checking');
   const [sessionExpiry, setSessionExpiry] = useState(null);
+ reporting-revolution
+  const { showNotification } = useNotification();
+
+  // التحقق من انتهاء الجلسة
+  useEffect(() => {
+    const checkSessionExpiry = () => {
+      if (sessionExpiry && new Date() > new Date(sessionExpiry)) {
+        showNotification('Session expired. Please log in again.', 'warning');
+
   const { addNotification } = useNotification();
 
   // DEV MODE: Skip authentication checks
@@ -109,9 +121,95 @@ export function AuthProvider({ children }) {
           message: 'لقد انتهت جلستك، يرجى تسجيل الدخول مرة أخرى',
           duration: 5000
         });
+ 
         logout();
       }
     };
+
+ reporting-revolution
+    const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [sessionExpiry]);
+
+  // تهيئة المصادقة
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        setLoading(true);
+        const connection = await checkSupabaseConnection();
+        setConnectionStatus(connection.connected ? 'connected' : 'disconnected');
+
+        if (connection.connected) {
+          await setupAuthListener();
+        } else {
+          showNotification('Cannot connect to server', 'error');
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setConnectionStatus('error');
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  const setupAuthListener = async () => {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      console.error('Session error:', sessionError);
+      setLoading(false);
+      return;
+    }
+
+    if (session?.user) {
+      await handleUserSession(session.user, session.expires_at);
+    } else {
+      setLoading(false);
+      setConnectionStatus('unauthenticated');
+    }
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event);
+
+        switch (event) {
+          case 'SIGNED_IN':
+            if (session?.user) {
+              await handleUserSession(session.user, session.expires_at);
+              setConnectionStatus('authenticated');
+              showNotification('Successfully logged in!', 'success');
+            }
+            break;
+
+          case 'SIGNED_OUT':
+            setUser(null);
+            setUserProfile(null);
+            setSessionExpiry(null);
+            setConnectionStatus('unauthenticated');
+            showNotification('Logged out successfully', 'info');
+            break;
+
+          case 'TOKEN_REFRESHED':
+            if (session?.expires_at) {
+              setSessionExpiry(new Date(session.expires_at * 1000));
+            }
+            break;
+
+          case 'USER_UPDATED':
+            if (session?.user) {
+              setUser(session.user);
+            }
+            break;
+        }
+
+        setLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
 
     const interval = setInterval(checkSessionExpiry, 60000);
     return () => clearInterval(interval);
@@ -209,14 +307,39 @@ export function AuthProvider({ children }) {
       logger.error('Error setting up auth listener', { error: error.message });
       setLoading(false);
     }
+ 
   };
 
   const handleUserSession = async (user, expiresAt = null) => {
     setUser(user);
+ reporting-revolution
+    setConnectionStatus('authenticated');
+
+ 
 
     if (expiresAt) {
       setSessionExpiry(new Date(expiresAt * 1000));
     }
+
+ reporting-revolution
+    // Fetch user profile
+    try {
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // Profile doesn't exist, create default
+        await createDefaultUserProfile(user);
+      } else if (error) {
+        console.error('Error fetching user profile:', error);
+      } else {
+        setUserProfile(profile);
+      }
+    } catch (error) {
+      console.error('Error handling user session:', error);
 
     try {
       const { data: profile, error } = await supabase
@@ -243,6 +366,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       logger.error('Error handling user session', { error: error.message });
       await createDefaultUserProfile(user);
+ 
     }
   };
 
@@ -253,6 +377,13 @@ export function AuthProvider({ children }) {
         email: user.email,
         role: 'viewer',
         full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+ reporting-revolution
+        is_active: true,
+        created_at: new Date().toISOString(),
+      };
+
+      const { data, error } = await supabase
+
         phone: user.user_metadata?.phone || null,
         avatar_url: user.user_metadata?.avatar_url || null,
         is_active: true,
@@ -261,6 +392,7 @@ export function AuthProvider({ children }) {
       };
 
       const { error } = await supabase
+ 
         .from('user_profiles')
         .insert([defaultProfile])
         .select()
@@ -268,10 +400,17 @@ export function AuthProvider({ children }) {
 
       if (error) throw error;
 
+ reporting-revolution
+      setUserProfile(data);
+      return data;
+    } catch (error) {
+      console.error('Error creating default profile:', error);
+
       setUserProfile(defaultProfile);
       return defaultProfile;
     } catch (error) {
       logger.error('Error creating default profile', { error: error.message });
+ 
       const fallbackProfile = {
         id: user.id,
         email: user.email,
@@ -283,6 +422,9 @@ export function AuthProvider({ children }) {
       return fallbackProfile;
     }
   };
+
+ reporting-revolution
+  const login = async (email, password) => {
 
   const logUserActivity = async (userId, activityType, metadata = {}) => {
     try {
@@ -308,6 +450,7 @@ export function AuthProvider({ children }) {
       return { success: true, error: null, user: user };
     }
 
+ 
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -317,17 +460,23 @@ export function AuthProvider({ children }) {
 
       if (error) throw error;
 
+ reporting-revolution
+
       await logUserActivity(data.user.id, 'login', {
         ipAddress: await getClientIP(),
         rememberMe
       });
 
+ 
       return {
         success: true,
         error: null,
         user: data.user
       };
     } catch (error) {
+ reporting-revolution
+      console.error('Login error:', error);
+
       logger.error('Login error', { error: error.message });
       const handledError = handleSupabaseError(error);
 
@@ -380,6 +529,7 @@ export function AuthProvider({ children }) {
       };
     } catch (error) {
       logger.error('Signup error', { error: error.message });
+ 
       const handledError = handleSupabaseError(error);
 
       return {
@@ -392,6 +542,9 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
+ reporting-revolution
+    try {
+
     if (DEV_BYPASS_AUTH) {
       logger.debug('DEV MODE: Logout skipped');
       return;
@@ -404,18 +557,29 @@ export function AuthProvider({ children }) {
         });
       }
 
+ 
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
       setUser(null);
       setUserProfile(null);
       setSessionExpiry(null);
+ reporting-revolution
+      setConnectionStatus('unauthenticated');
+
+    } catch (error) {
+      console.error('Logout error:', error);
+
 
     } catch (error) {
       logger.error('Logout error', { error: error.message });
+ 
       throw error;
     }
   };
+
+ reporting-revolution
+  // نظام الصلاحيات
 
   const resetPassword = async (email) => {
     try {
@@ -491,6 +655,7 @@ export function AuthProvider({ children }) {
     }
   };
 
+ 
   const hasPermission = useCallback((permissions) => {
     if (!userProfile) return false;
 
@@ -505,7 +670,15 @@ export function AuthProvider({ children }) {
     const rolePermissions = {
       viewer: ['dashboard:view', 'reports:view'],
       ops: ['dashboard:view', 'reports:view', 'restaurants:view', 'restaurants:edit', 'team:view'],
+ reporting-revolution
+      admin: [
+        'dashboard:view', 'reports:view', 'restaurants:view', 'restaurants:edit',
+        'restaurants:delete', 'team:view', 'team:manage', 'financial:view',
+        'settings:manage', 'users:manage'
+      ]
+
       admin: ['dashboard:view', 'reports:view', 'restaurants:view', 'restaurants:edit', 'restaurants:delete', 'team:view', 'team:manage', 'financial:view', 'settings:manage', 'users:manage']
+ 
     };
 
     const userPermissions = rolePermissions[userProfile?.role] || [];
@@ -518,6 +691,16 @@ export function AuthProvider({ children }) {
     loading,
     connectionStatus,
     sessionExpiry,
+ reporting-revolution
+    isAuthenticated: !!user,
+    isAdmin: userProfile?.role === 'admin',
+    isOps: userProfile?.role === 'ops' || userProfile?.role === 'admin',
+    isViewer: userProfile?.role === 'viewer',
+    login,
+    logout,
+    hasPermission,
+    checkPermission,
+
 
     isAuthenticated: DEV_BYPASS_AUTH ? true : !!user,
     isAdmin: userProfile?.role === 'admin',
@@ -537,6 +720,7 @@ export function AuthProvider({ children }) {
       if (!sessionExpiry) return null;
       return Math.max(0, sessionExpiry - new Date());
     }
+ 
   };
 
   return (

@@ -13,6 +13,7 @@ import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
 import { exportReport } from '@/lib/exportEngine';
 import ReportFilters from '@/components/Reports/ReportFilters';
+import ProfessionalReport from '@/components/Reports/ProfessionalReport';
 import FinancialOverview from '@/components/Reports/FinancialOverview';
 import MenuEngineering from '@/components/Reports/MenuEngineering';
 import ChannelPerformanceReport from '@/components/Reports/ChannelPerformanceReport';
@@ -125,13 +126,13 @@ export default function ReportsAnalyticsNew() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Enterprise Reports & Analytics"
-        subtitle="AI-powered reporting with advanced insights and analytics"
+        title="Report Hub"
+        subtitle="Premium AI-powered reporting with professional insights, anomaly detection, and actionable recommendations"
         icon={BarChart3}
         badge={{
-          text: 'AI-Powered',
-          icon: Sparkles,
-          color: 'purple'
+          text: 'Premium Reports',
+          icon: Crown,
+          color: 'gold'
         }}
       />
 
@@ -270,7 +271,7 @@ export default function ReportsAnalyticsNew() {
             </div>
           )}
 
-          {/* View Report Tab */}
+          {/* View Report Tab - Professional Report */}
           {activeTab === 'view' && generatedReport && (
             <div className="space-y-6">
               {/* Report Header */}
@@ -369,6 +370,10 @@ export default function ReportsAnalyticsNew() {
                   )}
                 </div>
               )}
+
+            <div>
+              <ProfessionalReport report={generatedReport} />
+ 
             </div>
           )}
 

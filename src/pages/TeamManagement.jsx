@@ -1,10 +1,10 @@
 // src/components/team/TeamManagement.jsx
 import React, { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@lib/supabase';
-import { useAuth } from '@contexts/AuthContext';
-import { useNotification } from '@contexts/NotificationContext';
-import { exportUtils } from '@utils/exportUtils';
-import logger from '@lib/logger';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotification } from '@/contexts/NotificationContext';
+import { exportUtils } from '@/utils/exportUtils';
+import logger from '@/lib/logger';
 import { 
   Plus, Edit2, Trash2, Mail, Phone, Calendar, UserPlus, Search, Filter, 
   Download, FileText, Eye, MoreVertical, UserCheck, UserX, Shield,

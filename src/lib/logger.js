@@ -176,15 +176,6 @@ export class ErrorBoundaryLogger {
   }
 }
 
- claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
- 
-
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
- main
-// Performance Logger
-
-
- main
 // Performance Logger for tracking app performance
 export class PerformanceLogger {
   static timers = new Map();
@@ -193,10 +184,6 @@ export class PerformanceLogger {
     this.timers.set(label, performance.now());
   }
 
- claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
- 
-
- main
   static end(label, warnThreshold = 1000) {
     const startTime = this.timers.get(label);
     if (!startTime) {
@@ -229,19 +216,6 @@ export class PerformanceLogger {
   }
 
   static async measureAsync(label, fn) {
- claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
-
- claude/resolve-merge-conflicts-011CV69Tea4HNJei17hQh6hz
-    const start = performance.now();
-    const result = await fn();
-    const duration = performance.now() - start;
-
-    logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
-
-
-
- main
- main
     this.start(label);
     const result = await fn();
     this.end(label);

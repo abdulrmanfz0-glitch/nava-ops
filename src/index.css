@@ -1,19 +1,9 @@
- claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
-/* src/styles/globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+ /* NAVA OPS - Modern Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-
-/* NAVA OPS - Modern Design System */
- main
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
- claude/nava-ops-saas-transformation-011CV5qmj3b6xxsJb7W3zTa6
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
- main
 :root {
   /* Modern Color Palette */
   --nava-primary: 0 136 255;
@@ -42,10 +32,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   html {
     @apply antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

@@ -23,7 +23,8 @@ import {
   ShoppingCart,
   Calendar,
   BarChart3,
-  Eye
+  Eye,
+  Activity
 } from 'lucide-react';
 
 export default function BranchesManagement() {

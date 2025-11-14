@@ -8,6 +8,9 @@ import PageHeader from '@/components/UI/PageHeader';
 import StatCard from '@/components/UI/StatCard';
 import DateRangePicker from '@/components/UI/DateRangePicker';
 import EmptyState from '@/components/UI/EmptyState';
+import BCGMatrixChart from '@/components/MenuIntelligence/BCGMatrixChart';
+import ProfitabilityAnalysisChart from '@/components/MenuIntelligence/ProfitabilityAnalysisChart';
+import AIRecommendationsPanel from '@/components/MenuIntelligence/AIRecommendationsPanel';
 import {
   UtensilsCrossed,
   TrendingUp,
@@ -298,6 +301,15 @@ export default function MenuIntelligence() {
           <div className="text-sm opacity-90">Low profit & popularity</div>
         </div>
       </div>
+
+      {/* AI Recommendations Panel */}
+      <AIRecommendationsPanel menuItems={menuData.items} />
+
+      {/* BCG Matrix Visualization */}
+      <BCGMatrixChart menuItems={menuData.items} />
+
+      {/* Profitability Analysis Chart */}
+      <ProfitabilityAnalysisChart menuItems={menuData.items} />
 
       {/* Menu Performance Matrix Table */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">

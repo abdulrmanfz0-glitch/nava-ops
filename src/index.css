@@ -1,29 +1,30 @@
-/* src/styles/globals.css */
+/* src/index.css - Classic BI Dashboard Styling */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Georgia:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 :root {
-  /* الألوان المخصصة لـ NAVA */
-  --nava-primary: 0 136 255;
-  --nava-secondary: 139 92 246;
-  --nava-success: 16 185 129;
-  --nava-warning: 245 158 11;
-  --nava-error: 239 68 68;
-  --nava-dark: 17 24 39;
-  --nava-light: 249 250 251;
-  
-  /* التدرجات */
-  --gradient-primary: linear-gradient(135deg, rgb(0 136 255) 0%, rgb(139 92 246) 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  --gradient-dark: linear-gradient(135deg, rgb(17 24 39) 0%, rgb(31 41 55) 100%);
-  
-  /* الظلال */
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-glow: 0 0 20px -10px rgba(59, 130, 246, 0.5);
+  /* Classic BI Dashboard Colors */
+  --bi-blue: 37 99 235;              /* Blue-600 - Primary BI blue */
+  --bi-blue-light: 59 130 246;       /* Blue-500 */
+  --bi-blue-dark: 29 78 216;         /* Blue-700 */
+  --bi-green: 34 197 94;             /* Emerald-500 - Success/positive */
+  --bi-red: 239 68 68;               /* Red-500 - Error/negative */
+  --bi-purple: 168 85 247;           /* Purple-500 - Accent */
+  --bi-slate: 100 116 139;           /* Slate-500 - Text secondary */
+  --bi-gray-light: 248 250 252;      /* Gray-50 - Background */
+  --bi-gray: 241 245 249;            /* Slate-100 - Card background */
+
+  /* Classic Gradients */
+  --gradient-bi-header: linear-gradient(135deg, rgb(37 99 235) 0%, rgb(29 78 216) 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+
+  /* Professional Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 @layer base {
@@ -34,26 +35,29 @@
   }
 
   html {
-    font-family: 'Inter', 'Tahoma', 'Arial', system-ui, sans-serif;
-    direction: rtl;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    direction: ltr;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   body {
-    background: linear-gradient(135deg, #1e3a8a 0%, #7e22ce 50%, #1e40af 100%);
+    background: rgb(249 250 251);
     min-height: 100vh;
-    background-attachment: fixed;
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
     line-height: 1.6;
-    color: #1f2937;
+    color: rgb(17 24 39);
   }
 
-  /* تحسين النصوص للغة العربية */
+  body.dark {
+    background: rgb(17 24 39);
+    color: rgb(243 244 246);
+  }
+
+  /* Classic BI Typography with Georgia serif for headers */
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    line-height: 1.3;
+    font-family: 'Georgia', serif;
+    font-weight: 700;
+    line-height: 1.2;
     letter-spacing: -0.025em;
   }
 
@@ -62,15 +66,16 @@
   }
 
   h2 {
-    @apply text-2xl md:text-3xl font-semibold;
+    @apply text-2xl md:text-3xl font-bold;
   }
 
   h3 {
-    @apply text-xl md:text-2xl font-semibold;
+    @apply text-xl md:text-2xl font-bold;
   }
 
   p {
-    @apply text-gray-600 leading-relaxed;
+    @apply text-gray-600 dark:text-gray-400 leading-relaxed;
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
   /* تحسينات للأداء والحركات */
@@ -82,6 +87,7 @@
   /* تحسينات النماذج */
   input, select, textarea {
     @apply transition-all duration-200;
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
   /* تحسينات الروابط */
@@ -557,6 +563,10 @@
     animation: fadeIn 0.5s ease-in-out;
   }
 
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
   .fade-in-up {
     animation: fadeInUp 0.6s ease-out;
   }
@@ -652,6 +662,36 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Custom scrollbar for sidebar and panels */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(209 213 219) rgb(243 244 246);
+  }
+
+  .dark .custom-scrollbar {
+    scrollbar-color: rgb(75 85 99) rgb(31 41 55);
   }
 
   .backdrop-safari {

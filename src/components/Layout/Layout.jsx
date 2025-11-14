@@ -1,56 +1,103 @@
 // src/components/Layout/Layout.jsx
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSidebar } from '../../contexts/SidebarContext';
+import {
+  Bell, Menu, X, ChevronRight
+} from 'lucide-react';
+import SmartSidebar from './SmartSidebar';
+import { getBreadcrumbs } from '../../utils/navigationConfig';
+
+// Feature flag for Smart Sidebar (set to true to enable new sidebar)
+const USE_SMART_SIDEBAR = true;
 
 export default function Layout({ children }) {
-  const { user, userProfile, logout, isAdmin } = useAuth();
+  const { user, userProfile, logout } = useAuth();
+  const location = useLocation();
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // Get sidebar state from context
+  const { isOpen, isMiniMode, toggleSidebar } = useSidebar();
+
+  // Calculate left padding based on sidebar state
+  const getMainPadding = () => {
+    if (!USE_SMART_SIDEBAR) return 'lg:pl-64';
+    if (!isOpen) return 'lg:pl-0';
+    if (isMiniMode) return 'lg:pl-20';
+    return 'lg:pl-72';
+  };
+
+  // Get breadcrumbs for current path
+  const breadcrumbs = getBreadcrumbs(location.pathname);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                NAVA Ops
-              </h1>
+      {/* Smart Sidebar */}
+      {USE_SMART_SIDEBAR && <SmartSidebar />}
+
+      {/* Main content */}
+      <div className={`transition-all duration-300 ${getMainPadding()}`}>
+        {/* Top header */}
+        <header className="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+            {/* Left section - Menu toggle and Breadcrumbs */}
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              {USE_SMART_SIDEBAR && (
+                <button
+                  onClick={toggleSidebar}
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  title="Toggle sidebar"
+                >
+                  <Menu size={20} className="text-gray-600 dark:text-gray-400" />
+                </button>
+              )}
+
+              {/* Breadcrumbs */}
+              {USE_SMART_SIDEBAR && breadcrumbs.length > 1 && (
+                <nav className="hidden md:flex items-center space-x-2 text-sm">
+                  {breadcrumbs.map((crumb, index) => (
+                    <React.Fragment key={index}>
+                      {index > 0 && (
+                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                      )}
+                      {crumb.path ? (
+                        <Link
+                          to={crumb.path}
+                          className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
+                        >
+                          {crumb.title}
+                        </Link>
+                      ) : (
+                        <span className="text-gray-900 dark:text-white font-semibold">
+                          {crumb.title}
+                        </span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </nav>
+              )}
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  {userProfile?.full_name || user?.email}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {userProfile?.role || 'User'}
-                </p>
-              </div>
-
-              <button
-                onClick={logout}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            {/* Right section - Notifications */}
+            <div className="flex items-center gap-2">
+              <Link
+                to="/notifications"
+                className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="Notifications"
               >
-                Logout
-              </button>
+                <Bell size={20} className="text-gray-600 dark:text-gray-400" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-gray-800"></span>
+              </Link>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            © 2025 NAVA Ops. All rights reserved.
-          </p>
-        </div>
-      </footer>
+        {/* Page content */}
+        <main className="p-4 sm:p-6 lg:p-8">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

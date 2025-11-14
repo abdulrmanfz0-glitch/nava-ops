@@ -4,12 +4,16 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
+import './styles/animations.css';
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LocaleProvider } from './contexts/LocaleContext';
+import { MenuProvider } from './contexts/MenuContext';
+import { SidebarProvider } from './contexts/SidebarContext';
+import { DataProvider } from './contexts/DataContext';
 
 // Error Boundary
 import ErrorBoundary from './components/ErrorBoundary';
@@ -45,7 +49,13 @@ const Root = () => {
             <LocaleProvider>
               <ThemeProvider>
                 <AuthProvider>
-                  <App />
+                  <SidebarProvider>
+                    <MenuProvider>
+                      <DataProvider>
+                        <App />
+                      </DataProvider>
+                    </MenuProvider>
+                  </SidebarProvider>
                 </AuthProvider>
               </ThemeProvider>
             </LocaleProvider>

@@ -3,6 +3,7 @@
 
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import subscriptionService from './subscriptionService';
 
 /**
  * API Error class for better error handling
@@ -861,8 +862,6 @@ export const activitiesAPI = {
 // ============================================================================
 // SUBSCRIPTIONS API
 // ============================================================================
-
-import subscriptionService from './subscriptionService';
 
 export const subscriptionsAPI = subscriptionService;
 

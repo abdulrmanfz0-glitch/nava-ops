@@ -34,6 +34,7 @@ const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
 const Intelligence = lazy(() => import('./pages/Intelligence'));
 const ExecutiveHQ = lazy(() => import('./pages/ExecutiveHQ'));
+const ClaudeNexusDemo = lazy(() => import('./pages/ClaudeNexusDemo'));
 const GitOperations = lazy(() => import('./GitOperations'));
 const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
@@ -273,6 +274,15 @@ export default function App() {
                             <Layout>
                               <ExecutiveHQ />
                             </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Claude Nexus Demo - POC */}
+                      <Route path="/claude-nexus" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <ClaudeNexusDemo />
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

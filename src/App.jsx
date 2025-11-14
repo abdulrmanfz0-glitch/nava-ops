@@ -24,7 +24,7 @@ const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const DashboardV2 = lazy(() => import('./pages/DashboardV2Enhanced'));
 const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
-const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew'));
+const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew')); // Unified Professional Report
 const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));

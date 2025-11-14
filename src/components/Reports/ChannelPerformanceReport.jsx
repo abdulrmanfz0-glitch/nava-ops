@@ -1,62 +1,123 @@
 // NAVA OPS - Channel Performance Report
 // Analysis across dine-in, takeout, delivery channels
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Store, Package, Truck, TrendingUp, Users, Clock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-export default function ChannelPerformanceReport({ reportData }) {
-  // Sample channel data
-  const channelData = [
-    {
-      channel: 'Dine-In',
-      icon: Store,
-      revenue: 125000,
-      orders: 2450,
-      avgOrderValue: 51.02,
-      growth: 12.5,
-      customerSatisfaction: 4.6,
-      peakHours: '7PM - 9PM',
-      color: '#0088FF'
-    },
-    {
-      channel: 'Takeout',
-      icon: Package,
-      revenue: 89000,
-      orders: 1820,
-      avgOrderValue: 48.90,
-      growth: 8.3,
-      customerSatisfaction: 4.4,
-      peakHours: '6PM - 8PM',
-      color: '#10B981'
-    },
-    {
-      channel: 'Delivery',
-      icon: Truck,
-      revenue: 156000,
-      orders: 3120,
-      avgOrderValue: 50.00,
-      growth: 22.7,
-      customerSatisfaction: 4.2,
-      peakHours: '12PM - 2PM, 7PM - 9PM',
-      color: '#F59E0B'
-    }
-  ];
+// Channel icon mappings
+const CHANNEL_ICONS = {
+  'Dine-In': Store,
+  'Dine in': Store,
+  'Takeout': Package,
+  'Take out': Package,
+  'Delivery': Truck,
+  'Pickup': Package,
+  'Online': Truck
+};
 
-  const totalRevenue = channelData.reduce((sum, ch) => sum + ch.revenue, 0);
-  const totalOrders = channelData.reduce((sum, ch) => sum + ch.orders, 0);
+const CHANNEL_COLORS = {
+  'Dine-In': '#0088FF',
+  'Dine in': '#0088FF',
+  'Takeout': '#10B981',
+  'Take out': '#10B981',
+  'Delivery': '#F59E0B',
+  'Pickup': '#F59E0B',
+  'Online': '#EC4899'
+};
 
-  // Chart data
-  const revenueChartData = channelData.map(ch => ({
-    name: ch.channel,
-    revenue: ch.revenue,
-    orders: ch.orders
+// Generate dynamic insights based on channel data
+function generateChannelInsights(channelData) {
+  const insights = [];
+
+  // Find top performing channel by growth
+  const topGrowthChannel = channelData.reduce((max, ch) =>
+    (ch.growth > max.growth) ? ch : max, channelData[0]);
+
+  // Find channel with highest satisfaction
+  const highestSatisfaction = channelData.reduce((max, ch) =>
+    (ch.customerSatisfaction > max.customerSatisfaction) ? ch : max, channelData[0]);
+
+  // Find lowest growth channel
+  const lowestGrowthChannel = channelData.reduce((min, ch) =>
+    (ch.growth < min.growth) ? ch : min, channelData[0]);
+
+  if (topGrowthChannel) {
+    const revenuePercentage = ((topGrowthChannel.revenue / channelData.reduce((sum, ch) => sum + ch.revenue, 0)) * 100).toFixed(0);
+    insights.push({
+      title: `${topGrowthChannel.channel} is Your Growth Engine`,
+      description: `${topGrowthChannel.channel} shows ${topGrowthChannel.growth}% growth and generates ${revenuePercentage}% of total revenue. Continue investing in this channel's optimization.`,
+      severity: 'success'
+    });
+  }
+
+  if (highestSatisfaction && highestSatisfaction.channel !== topGrowthChannel.channel) {
+    insights.push({
+      title: `Optimize ${highestSatisfaction.channel} Experience`,
+      description: `${highestSatisfaction.channel} has the highest customer satisfaction (${highestSatisfaction.customerSatisfaction}/5) but moderate growth. Focus on increasing throughput during peak hours (${highestSatisfaction.peakHours}).`,
+      severity: 'info'
+    });
+  }
+
+  if (lowestGrowthChannel && lowestGrowthChannel.channel !== topGrowthChannel.channel) {
+    insights.push({
+      title: `Boost ${lowestGrowthChannel.channel} Performance`,
+      description: `${lowestGrowthChannel.channel} has the lowest growth rate (${lowestGrowthChannel.growth}%). Consider targeted promotions, loyalty programs, and operational improvements to increase orders.`,
+      severity: 'warning'
+    });
+  }
+
+  // Add staffing insight if we have peak hours data
+  if (topGrowthChannel && topGrowthChannel.peakHours) {
+    insights.push({
+      title: 'Optimize Staffing During Peak Hours',
+      description: `Ensure adequate staff during ${topGrowthChannel.channel}'s peak hours (${topGrowthChannel.peakHours}) to handle order volume effectively and maintain service quality.`,
+      severity: 'info'
+    });
+  }
+
+  return insights;
+}
+
+function ChannelPerformanceReport({ reportData }) {
+  // Use channel data from reportData if available
+  let channelData = reportData?.channelData || [];
+
+  // Enrich channel data with icons and colors if not present
+  channelData = channelData.map(ch => ({
+    ...ch,
+    icon: CHANNEL_ICONS[ch.channel] || Store,
+    color: CHANNEL_COLORS[ch.channel] || '#0088FF'
   }));
 
-  const pieChartData = channelData.map(ch => ({
-    name: ch.channel,
-    value: ch.revenue
-  }));
+  // Handle empty data
+  if (!channelData || channelData.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
+        <p className="text-gray-500 dark:text-gray-400">No channel data available for this period</p>
+      </div>
+    );
+  }
+
+  // Memoize chart data calculations for performance
+  const { totalRevenue, totalOrders, revenueChartData, pieChartData } = useMemo(() => {
+    const totalRevenue = channelData.reduce((sum, ch) => sum + ch.revenue, 0);
+    const totalOrders = channelData.reduce((sum, ch) => sum + ch.orders, 0);
+
+    // Chart data
+    const revenueChartData = channelData.map(ch => ({
+      name: ch.channel,
+      revenue: ch.revenue,
+      orders: ch.orders
+    }));
+
+    const pieChartData = channelData.map(ch => ({
+      name: ch.channel,
+      value: ch.revenue
+    }));
+
+    return { totalRevenue, totalOrders, revenueChartData, pieChartData };
+  }, [channelData]);
 
   const COLORS = ['#0088FF', '#10B981', '#F59E0B'];
 
@@ -213,33 +274,23 @@ export default function ChannelPerformanceReport({ reportData }) {
           Channel Insights & Recommendations
         </h3>
         <div className="space-y-3">
-          <InsightCard
-            title="Delivery is Your Growth Engine"
-            description="Delivery channel shows 22.7% growth and generates 42% of total revenue. Continue investing in delivery partnerships and optimization."
-            severity="success"
-          />
-          <InsightCard
-            title="Optimize Dine-In Experience"
-            description="Dine-in has the highest customer satisfaction (4.6/5) but slower growth. Focus on increasing table turnover during peak hours (7-9 PM)."
-            severity="info"
-          />
-          <InsightCard
-            title="Boost Takeout Marketing"
-            description="Takeout has the lowest growth rate (8.3%). Consider promotions, loyalty programs, and faster pickup options to increase orders."
-            severity="warning"
-          />
-          <InsightCard
-            title="Balance Peak Hours Staffing"
-            description="Delivery has two peak periods daily. Ensure adequate staff during 12-2 PM lunch rush and 7-9 PM dinner rush."
-            severity="info"
-          />
+          {generateChannelInsights(channelData).map((insight, index) => (
+            <InsightCard
+              key={index}
+              title={insight.title}
+              description={insight.description}
+              severity={insight.severity}
+            />
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-function ChannelCard({ channel, totalRevenue }) {
+export default React.memo(ChannelPerformanceReport);
+
+const ChannelCard = React.memo(function ChannelCard({ channel, totalRevenue }) {
   const Icon = channel.icon;
   const percentage = ((channel.revenue / totalRevenue) * 100).toFixed(1);
 
@@ -283,9 +334,9 @@ function ChannelCard({ channel, totalRevenue }) {
       </div>
     </div>
   );
-}
+});
 
-function ChannelRow({ channel }) {
+const ChannelRow = React.memo(function ChannelRow({ channel }) {
   const Icon = channel.icon;
 
   return (
@@ -320,9 +371,9 @@ function ChannelRow({ channel }) {
       </td>
     </tr>
   );
-}
+});
 
-function KPIRow({ label, value, icon: Icon, color }) {
+const KPIRow = React.memo(function KPIRow({ label, value, icon: Icon, color }) {
   const colorClasses = {
     green: 'text-green-600 dark:text-green-400',
     blue: 'text-blue-600 dark:text-blue-400',
@@ -339,9 +390,9 @@ function KPIRow({ label, value, icon: Icon, color }) {
       <span className="text-sm font-bold text-gray-900 dark:text-white">{value}</span>
     </div>
   );
-}
+});
 
-function InsightCard({ title, description, severity }) {
+const InsightCard = React.memo(function InsightCard({ title, description, severity }) {
   const severityColors = {
     success: 'border-green-500 bg-green-50 dark:bg-green-900/10',
     info: 'border-blue-500 bg-blue-50 dark:bg-blue-900/10',
@@ -349,9 +400,9 @@ function InsightCard({ title, description, severity }) {
   };
 
   return (
-    <div className={`p-4 rounded-lg border-l-4 ${severityColors[severity]}`}>
+    <div className={`p-4 rounded-lg border-l-4 hover:shadow-md transition-shadow ${severityColors[severity]}`}>
       <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{title}</h4>
       <p className="text-sm text-gray-700 dark:text-gray-300">{description}</p>
     </div>
   );
-}
+});

@@ -13,16 +13,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react({
         // تحسينات إضافية لـ React
-        jsxRuntime: 'automatic',
-        babel: {
-          plugins: [
-            ['babel-plugin-styled-components', {
-              ssr: false,
-              displayName: true,
-              preprocess: false
-            }]
-          ]
-        }
+        jsxRuntime: 'automatic'
       }),
 
       // PWA - تطبيق ويب تقدمي
@@ -112,9 +103,10 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             // فصل المكتبات الكبيرة إلى chunks منفصلة
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-ui': ['@headlessui/react', '@heroicons/react'],
-            'vendor-utils': ['date-fns', 'lodash', 'axios'],
-            'vendor-charts': ['recharts', 'chart.js']
+            'vendor-ui': ['lucide-react'],
+            'vendor-supabase': ['@supabase/supabase-js'],
+            'vendor-export': ['jspdf', 'jspdf-autotable', 'xlsx', 'file-saver'],
+            'vendor-charts': ['recharts']
           },
           chunkFileNames: 'assets/js/[name]-[hash].js',
           entryFileNames: 'assets/js/[name]-[hash].js',

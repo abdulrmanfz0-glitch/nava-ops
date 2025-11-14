@@ -12,7 +12,7 @@ import OfflineIndicator from './components/UI/OfflineIndicator';
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const RestaurantsManagement = lazy(() => import('./pages/RestaurantsManagement'));
-const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics'));
+const ReportHub = lazy(() => import('./pages/ReportHub'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const Settings = lazy(() => import('./pages/Settings'));
@@ -138,14 +138,17 @@ export default function App() {
                     </RequireAuth>
                   } />
 
-                  {/* التقارير والتحليلات */}
-                  <Route path="/reports" element={
+                  {/* Report Hub - Unified Reporting Center */}
+                  <Route path="/report-hub" element={
                     <RequireAuth requiredPermissions={['reports:view']}>
                       <Layout>
-                        <ReportsAnalytics />
+                        <ReportHub />
                       </Layout>
                     </RequireAuth>
                   } />
+
+                  {/* Legacy redirect from old reports route */}
+                  <Route path="/reports" element={<Navigate to="/report-hub" replace />} />
 
                   {/* إدارة الفريق */}
                   <Route path="/team" element={

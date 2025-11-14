@@ -90,15 +90,21 @@ export default {
           900: '#171717',
           950: '#0a0a0a',
         },
-        // NAVA Brand Colors
+        // NAVA Brand Colors (mapped from :root CSS variables)
         nava: {
+          // Using RGB format for alpha transparency support
+          primary: 'rgb(var(--nava-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--nava-secondary) / <alpha-value>)',
+          success: 'rgb(var(--nava-success) / <alpha-value>)',
+          warning: 'rgb(var(--nava-warning) / <alpha-value>)',
+          error: 'rgb(var(--nava-error) / <alpha-value>)',
+          dark: 'rgb(var(--nava-dark) / <alpha-value>)',
+          light: 'rgb(var(--nava-light) / <alpha-value>)',
+          muted: 'rgb(var(--nava-muted) / <alpha-value>)',
+
+          // Legacy hex values for backward compatibility
           premium: '#0088FF',
-          success: '#10b981',
-          warning: '#f59e0b',
           danger: '#ef4444',
-          dark: '#171717',
-          light: '#fafafa',
-          muted: '#737373',
         }
       },
       fontFamily: {
@@ -128,15 +134,19 @@ export default {
         '4xl': '1920px',
       },
       boxShadow: {
+        // Standard Tailwind shadows
         'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'sm': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
         'DEFAULT': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        'md': '0 6px 12px -2px rgba(0, 0, 0, 0.08), 0 3px 6px -2px rgba(0, 0, 0, 0.05)',
-        'lg': '0 10px 20px -3px rgba(0, 0, 0, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.05)',
-        'xl': '0 20px 30px -5px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.05)',
         '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
         'none': 'none',
+
+        // Mapped from :root CSS variables
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'xl': 'var(--shadow-xl)',
+
         // Modern Shadows
         'soft': '0 2px 8px -2px rgba(0, 0, 0, 0.08), 0 6px 20px -3px rgba(0, 0, 0, 0.06)',
         'glow': '0 0 20px -5px rgba(0, 136, 255, 0.3)',
@@ -214,15 +224,17 @@ export default {
         },
       },
       backgroundImage: {
-        // Modern gradients
-        'gradient-primary': 'linear-gradient(135deg, #0088FF 0%, #0070e0 100%)',
+        // Mapped from :root CSS variables
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-subtle': 'var(--gradient-subtle)',
+        'gradient-mesh': 'var(--gradient-mesh)',
+
+        // Additional modern gradients
         'gradient-secondary': 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
         'gradient-success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
         'gradient-warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
         'gradient-error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-        'gradient-subtle': 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)',
         'gradient-dark': 'linear-gradient(135deg, #171717 0%, #262626 100%)',
-        'gradient-mesh': 'radial-gradient(at 40% 20%, #0088FF 0px, transparent 50%), radial-gradient(at 80% 0%, #8b5cf6 0px, transparent 50%), radial-gradient(at 0% 50%, #10b981 0px, transparent 50%)',
       },
       spacing: {
         '18': '4.5rem',

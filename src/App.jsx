@@ -4,6 +4,8 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { DashboardProvider } from './contexts/DashboardContext';
+
+ 
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
@@ -20,6 +22,7 @@ logger.info('Application started', {
 // Lazy load page components for performance
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const DashboardV2 = lazy(() => import('./pages/DashboardV2Enhanced'));
 const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew'));
 const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
@@ -154,11 +157,10 @@ export default function App() {
         logger.fatal('Critical Application Error', { errorInfo }, error)
       }}
     >
-      <SubscriptionProvider>
-        <div className="App">
-          <OfflineIndicator />
-          <Suspense fallback={<GlobalLoading />}>
-            <Routes>
+      <div className="App">
+        <OfflineIndicator />
+        <Suspense fallback={<GlobalLoading />}>
+          <Routes>
                       {/* Public Routes */}
                       <Route path="/login" element={<Login />} />
 
@@ -181,6 +183,11 @@ export default function App() {
                                 <DashboardV2 />
                               </Layout>
                             </DashboardProvider>
+
+                            <Layout>
+                              <DashboardV2 />
+                            </Layout>
+ 
                           </ErrorBoundary>
                         </RequireAuth>
                       } />
@@ -348,7 +355,6 @@ export default function App() {
             </Routes>
           </Suspense>
         </div>
-      </SubscriptionProvider>
     </ErrorBoundary>
   );
 }

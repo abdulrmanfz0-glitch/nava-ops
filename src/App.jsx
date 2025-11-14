@@ -2,6 +2,10 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import { DashboardProvider } from './contexts/DashboardContext';
+
+ 
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
@@ -174,9 +178,16 @@ export default function App() {
                       <Route path="/dashboard-v2" element={
                         <RequireAuth>
                           <ErrorBoundary>
+                            <DashboardProvider>
+                              <Layout>
+                                <DashboardV2 />
+                              </Layout>
+                            </DashboardProvider>
+
                             <Layout>
                               <DashboardV2 />
                             </Layout>
+ 
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

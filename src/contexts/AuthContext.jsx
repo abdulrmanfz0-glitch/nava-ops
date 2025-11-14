@@ -129,13 +129,10 @@ export function AuthProvider({ children }) {
       if (connection.connected) {
         await setupAuthListener();
       } else {
-        logger.warn('Supabase not connected');
-        addNotification({
-          type: 'warning',
-          title: 'Connection Warning',
-          message: 'Cannot connect to authentication server. Running in offline mode.',
-          duration: 5000
-        });
+        // Supabase not configured - this is expected in DEV mode without credentials
+        if (import.meta.env.DEV) {
+          logger.debug('Supabase not configured - running in DEV_BYPASS_AUTH mode');
+        }
         setLoading(false);
       }
     } catch (error) {

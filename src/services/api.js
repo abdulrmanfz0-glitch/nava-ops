@@ -1,8 +1,17 @@
 // NAVA OPS - Comprehensive API Service Layer
 // Centralized API client with error handling, caching, and retry logic
 
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import subscriptionService from './subscriptionService';
+import * as mockData from './mockData';
+
+// Check if we should use mock data (DEV mode without Supabase)
+const USE_MOCK_DATA = import.meta.env.DEV && !isSupabaseConfigured;
+
+if (USE_MOCK_DATA) {
+  logger.info('[API] Using mock data - Supabase not configured');
+}
 
 /**
  * API Error class for better error handling
@@ -20,7 +29,13 @@ export class APIError extends Error {
 /**
  * Generic API request wrapper with error handling
  */
-async function apiRequest(fn, errorMessage = 'API request failed') {
+async function apiRequest(fn, errorMessage = 'API request failed', mockData = null) {
+  // Return mock data in DEV mode without Supabase
+  if (USE_MOCK_DATA && mockData !== null) {
+    logger.debug('Using mock data for: ' + errorMessage);
+    return Promise.resolve(mockData);
+  }
+
   try {
     const { data, error } = await fn();
 
@@ -53,7 +68,8 @@ export const branchesAPI = {
         .from('branches')
         .select('*')
         .order('created_at', { ascending: false }),
-      'Failed to fetch branches'
+      'Failed to fetch branches',
+      mockData.mockBranches
     );
   },
 
@@ -164,7 +180,7 @@ export const ordersAPI = {
     if (filters.status) query = query.eq('status', filters.status);
     if (filters.limit) query = query.limit(filters.limit);
 
-    return apiRequest(() => query, 'Failed to fetch orders');
+    return apiRequest(() => query, 'Failed to fetch orders', mockData.mockOrders);
   },
 
   /**
@@ -255,7 +271,7 @@ export const ordersAPI = {
     if (filters.startDate) query = query.gte('order_date', filters.startDate);
     if (filters.endDate) query = query.lte('order_date', filters.endDate);
 
-    const orders = await apiRequest(() => query, 'Failed to fetch order statistics');
+    const orders = await apiRequest(() => query, 'Failed to fetch order statistics', mockData.mockOrders);
 
     // Calculate statistics
     const stats = {
@@ -363,7 +379,7 @@ export const insightsAPI = {
     if (filters.severity) query = query.eq('severity', filters.severity);
     if (filters.limit) query = query.limit(filters.limit);
 
-    return apiRequest(() => query, 'Failed to fetch insights');
+    return apiRequest(() => query, 'Failed to fetch insights', mockData.mockInsights);
   },
 
   /**
@@ -453,7 +469,7 @@ export const reportsAPI = {
     if (filters.status) query = query.eq('status', filters.status);
     if (filters.limit) query = query.limit(filters.limit);
 
-    return apiRequest(() => query, 'Failed to fetch reports');
+    return apiRequest(() => query, 'Failed to fetch reports', mockData.mockReports);
   },
 
   /**
@@ -539,13 +555,16 @@ export const notificationsAPI = {
     if (filters.type) query = query.eq('type', filters.type);
     if (filters.limit) query = query.limit(filters.limit);
 
-    return apiRequest(() => query, 'Failed to fetch notifications');
+    return apiRequest(() => query, 'Failed to fetch notifications', mockData.mockNotifications);
   },
 
   /**
    * Get unread count
    */
   async getUnreadCount() {
+    if (USE_MOCK_DATA) {
+      return mockData.mockNotificationsUnreadCount;
+    }
     const { count } = await apiRequest(
       () => supabase
         .from('notifications')
@@ -671,7 +690,7 @@ export const analyticsAPI = {
 
     if (branchId) query = query.eq('branch_id', branchId);
 
-    const orders = await apiRequest(() => query, 'Failed to fetch revenue trends');
+    const orders = await apiRequest(() => query, 'Failed to fetch revenue trends', mockData.mockOrders);
 
     // Group by date
     const trendsByDate = {};
@@ -770,7 +789,8 @@ export const teamAPI = {
         .from('team_members')
         .select('*, member:member_id(email, full_name, role, avatar_url)')
         .order('created_at', { ascending: false }),
-      'Failed to fetch team members'
+      'Failed to fetch team members',
+      mockData.mockTeamMembers
     );
   },
 
@@ -861,8 +881,6 @@ export const activitiesAPI = {
 // ============================================================================
 // SUBSCRIPTIONS API
 // ============================================================================
-
-import subscriptionService from './subscriptionService';
 
 export const subscriptionsAPI = subscriptionService;
 

@@ -14,7 +14,7 @@ import {
   BranchComparisonChart,
   TrendAreaChart,
   MultiLineChart,
-  PieChartComponent
+  CategoryPieChart
 } from '@/components/UI/Charts';
 import DateRangePicker from '@/components/UI/DateRangePicker';
 import {
@@ -417,7 +417,7 @@ export default function ExecutiveHQ() {
                 <PieChart className="w-5 h-5 text-green-500" />
                 Cost vs Revenue Analysis
               </h3>
-              <PieChartComponent
+              <CategoryPieChart
                 data={costVsRevenue}
                 loading={loading}
               />

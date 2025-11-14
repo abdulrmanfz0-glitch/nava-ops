@@ -436,6 +436,29 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Custom scrollbar for widgets */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(209 213 219) rgb(243 244 246);
+  }
+
+  .dark .custom-scrollbar {
+    scrollbar-color: rgb(55 65 81) rgb(17 24 39);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-900 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+    @apply hover:bg-gray-400 dark:hover:bg-gray-600;
+  }
 }
 
 /* ========== Modern Scrollbar ========== */

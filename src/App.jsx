@@ -19,6 +19,7 @@ logger.info('Application started', {
 // Lazy load page components for performance
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const DashboardV2 = lazy(() => import('./pages/DashboardV2'));
 const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew'));
 const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
@@ -167,6 +168,16 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <Dashboard />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      <Route path="/dashboard-v2" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <DashboardV2 />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

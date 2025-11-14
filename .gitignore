@@ -79,6 +79,7 @@ reports/
 # But allow specific documentation files
 !README.md
 !ARCHITECTURE.md
+!BRANDING_AUDIT_REPORT.md
 
 # Node.js (for any Node-based tools)
 node_modules/

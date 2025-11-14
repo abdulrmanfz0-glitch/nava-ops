@@ -164,3 +164,48 @@ export const mockReports = [
     branches: { name: 'فرع الدمام' }
   }
 ];
+
+export const mockTeamMembers = [
+  {
+    id: 1,
+    member_id: 'member-1',
+    role: 'manager',
+    permissions: ['all'],
+    branch_ids: [1],
+    created_at: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(),
+    member: {
+      email: 'ahmed.manager@nava-ops.com',
+      full_name: 'أحمد المدير',
+      role: 'manager',
+      avatar_url: null
+    }
+  },
+  {
+    id: 2,
+    member_id: 'member-2',
+    role: 'staff',
+    permissions: ['view', 'edit'],
+    branch_ids: [1, 2],
+    created_at: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(),
+    member: {
+      email: 'sara.staff@nava-ops.com',
+      full_name: 'سارة الموظفة',
+      role: 'staff',
+      avatar_url: null
+    }
+  },
+  {
+    id: 3,
+    member_id: 'member-3',
+    role: 'staff',
+    permissions: ['view'],
+    branch_ids: [3],
+    created_at: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+    member: {
+      email: 'mohammed.staff@nava-ops.com',
+      full_name: 'محمد الموظف',
+      role: 'staff',
+      avatar_url: null
+    }
+  }
+];

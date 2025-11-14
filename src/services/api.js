@@ -789,7 +789,8 @@ export const teamAPI = {
         .from('team_members')
         .select('*, member:member_id(email, full_name, role, avatar_url)')
         .order('created_at', { ascending: false }),
-      'Failed to fetch team members'
+      'Failed to fetch team members',
+      mockData.mockTeamMembers
     );
   },
 

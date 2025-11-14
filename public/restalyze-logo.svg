@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#0088FF" opacity="0.1" stroke="#0088FF" stroke-width="2"/>
+
+  <!-- Main icon: stylized utensils forming a design -->
+  <g transform="translate(100, 100)">
+    <!-- Fork (left) -->
+    <path d="M -35,-20 L -35,35 M -40,-20 L -40,-30 M -35,-20 L -35,-30 M -30,-20 L -30,-30" stroke="#0088FF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Knife (center-right) -->
+    <path d="M -5,-35 L 10,35 M -2,-32 L 12,32" stroke="#0088FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+    <!-- Spoon (right) -->
+    <path d="M 30,-25 Q 30,-40 45,-40 Q 45,-25 45,-10 L 45,35" stroke="#0088FF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Accent circle -->
+    <circle cx="0" cy="0" r="55" fill="none" stroke="#0088FF" stroke-width="1.5" opacity="0.3"/>
+  </g>
+
+  <!-- Text: Restalyze -->
+  <text x="100" y="165" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#0088FF">RESTALYZE</text>
+</svg>

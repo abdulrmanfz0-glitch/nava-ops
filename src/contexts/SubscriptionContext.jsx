@@ -6,7 +6,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import subscriptionService from '@/services/subscriptionService';
-import { getPlanById, hasFeature as checkFeature, getLimit as getPlanLimit } from '@/utils/subscriptionPlans';
+import { getPlanById, hasFeature as checkFeature, getLimit as getPlanLimit, calculateMultiLocationPrice } from '@/utils/subscriptionPlans';
 import { logger } from '@/lib/logger';
 
 const SubscriptionContext = createContext(null);
@@ -26,6 +26,11 @@ export const SubscriptionProvider = ({ children }) => {
   const [usage, setUsage] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Multi-location pricing state
+  const [multiLocationPricing, setMultiLocationPricing] = useState(null);
+  const [branchCount, setBranchCount] = useState(1);
+  const [branchKPIs, setBranchKPIs] = useState({});
 
   /**
    * Load subscription data
@@ -312,6 +317,109 @@ export const SubscriptionProvider = ({ children }) => {
     return subscription.plan_id !== 'enterprise';
   }, [subscription]);
 
+  /**
+   * Calculate multi-location pricing based on branch count
+   */
+  const calculateMultiLocationPricing = useCallback(async (branches = branchCount) => {
+    try {
+      const pricing = calculateMultiLocationPrice(branches, 'monthly');
+      setMultiLocationPricing(pricing);
+      return pricing;
+    } catch (err) {
+      logger.error('Failed to calculate multi-location pricing', err);
+      throw err;
+    }
+  }, [branchCount]);
+
+  /**
+   * Get current multi-location pricing
+   */
+  const getMultiLocationPricing = useCallback(() => {
+    if (!multiLocationPricing) {
+      return calculateMultiLocationPrice(branchCount, 'monthly');
+    }
+    return multiLocationPricing;
+  }, [multiLocationPricing, branchCount]);
+
+  /**
+   * Update branch count and recalculate pricing
+   */
+  const updateBranchCount = useCallback(async (newCount) => {
+    setBranchCount(newCount);
+    await calculateMultiLocationPricing(newCount);
+  }, [calculateMultiLocationPricing]);
+
+  /**
+   * Get KPI for a branch
+   */
+  const getBranchKPI = useCallback((branchId) => {
+    return branchKPIs[branchId] || null;
+  }, [branchKPIs]);
+
+  /**
+   * Record KPI data for a branch
+   */
+  const recordBranchKPI = useCallback(async (branchId, kpiData) => {
+    if (!user?.id) return;
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const kpi = await subscriptionService.branchKPIs.recordBranchKPI(
+        branchId,
+        user.id,
+        kpiData,
+        today,
+        'daily'
+      );
+
+      setBranchKPIs(prev => ({
+        ...prev,
+        [branchId]: kpi
+      }));
+
+      return kpi;
+    } catch (err) {
+      logger.error(`Failed to record KPI for branch ${branchId}`, err);
+      throw err;
+    }
+  }, [user]);
+
+  /**
+   * Load branch KPIs
+   */
+  const loadBranchKPIs = useCallback(async (branchIds) => {
+    if (!branchIds || branchIds.length === 0) return;
+
+    try {
+      const kpis = {};
+      for (const branchId of branchIds) {
+        const kpiSummary = await subscriptionService.branchKPIs.getBranchKPISummary(branchId, 'monthly', 1);
+        if (kpiSummary && kpiSummary.length > 0) {
+          kpis[branchId] = kpiSummary[0];
+        }
+      }
+      setBranchKPIs(kpis);
+    } catch (err) {
+      logger.error('Failed to load branch KPIs', err);
+    }
+  }, []);
+
+  /**
+   * Compare KPIs across branches
+   */
+  const compareMultipleBranchKPIs = useCallback(async (branchIds, periodDate = null) => {
+    if (!branchIds || branchIds.length === 0) return null;
+
+    try {
+      const date = periodDate || new Date().toISOString().split('T')[0];
+      const comparison = await subscriptionService.branchKPIs.compareBranchKPIs(branchIds, date, 'monthly');
+      return comparison;
+    } catch (err) {
+      logger.error('Failed to compare branch KPIs', err);
+      throw err;
+    }
+  }, []);
+
   // Load subscription on mount and when user changes
   useEffect(() => {
     loadSubscription();
@@ -341,12 +449,25 @@ export const SubscriptionProvider = ({ children }) => {
     loading,
     error,
 
+    // Multi-location pricing state
+    multiLocationPricing,
+    branchCount,
+    branchKPIs,
+
     // Actions
     refresh,
     upgradePlan,
     cancelSubscription,
     reactivateSubscription,
     trackUsage,
+
+    // Multi-location pricing actions
+    calculateMultiLocationPricing,
+    getMultiLocationPricing,
+    updateBranchCount,
+    recordBranchKPI,
+    loadBranchKPIs,
+    compareMultipleBranchKPIs,
 
     // Checks
     hasFeature,
@@ -362,6 +483,9 @@ export const SubscriptionProvider = ({ children }) => {
     isPastDue,
     isFreePlan,
     canUpgrade,
+
+    // KPI checks
+    getBranchKPI,
 
     // Utilities
     getTrialDaysRemaining,

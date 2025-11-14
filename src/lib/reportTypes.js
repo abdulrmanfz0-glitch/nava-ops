@@ -202,6 +202,19 @@ export const REPORT_TYPES = {
   },
 
   // Executive Reports
+  PROFESSIONAL_REPORT: {
+    id: 'PROFESSIONAL_REPORT',
+    category: REPORT_CATEGORIES.EXECUTIVE,
+    name: 'Professional Report',
+    description: 'AI-powered strategic recommendations for revenue growth, cost optimization, and branch performance',
+    icon: 'Briefcase',
+    color: 'indigo',
+    metrics: ['revenue_growth', 'cost_optimization', 'branch_performance', 'strategic_insights'],
+    charts: ['revenue_trends', 'impact_analysis', 'recommendations_summary'],
+    aiInsights: true,
+    aiRecommendations: true,
+    exportFormats: ['pdf', 'excel']
+  },
   EXECUTIVE_SUMMARY: {
     id: 'executive_summary',
     category: REPORT_CATEGORIES.EXECUTIVE,
@@ -225,6 +238,18 @@ export const REPORT_TYPES = {
     charts: ['strategic_dashboard', 'growth_chart'],
     aiInsights: true,
     exportFormats: ['pdf']
+  },
+  PROFESSIONAL_REPORT: {
+    id: 'professional_report',
+    category: REPORT_CATEGORIES.EXECUTIVE,
+    name: 'Professional Report',
+    description: 'AI-powered insights on revenue growth, cost optimization, and commission impact',
+    icon: 'BarChart3',
+    color: 'emerald',
+    metrics: ['revenue_growth', 'cost_savings', 'commission_impact', 'profitability'],
+    charts: ['growth_forecast', 'cost_breakdown', 'commission_analysis', 'profitability_trend'],
+    aiInsights: true,
+    exportFormats: ['pdf', 'excel']
   }
 };
 

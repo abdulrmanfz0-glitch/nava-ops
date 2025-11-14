@@ -31,16 +31,31 @@ export const mockBranches = [
   }
 ];
 
-export const mockOrders = Array.from({ length: 30 }, (_, i) => {
+export const mockOrders = Array.from({ length: 150 }, (_, i) => {
   const date = new Date();
-  date.setDate(date.getDate() - (29 - i));
+  date.setDate(date.getDate() - Math.floor(i / 5));
+
+  const channels = ['dine_in', 'takeout', 'delivery'];
+  const channel = channels[Math.floor(Math.random() * 3)];
+
+  // Channel-specific pricing adjustments
+  let baseTotal = 150;
+  if (channel === 'dine_in') baseTotal = 180 + Math.floor(Math.random() * 200);
+  if (channel === 'takeout') baseTotal = 120 + Math.floor(Math.random() * 180);
+  if (channel === 'delivery') baseTotal = 140 + Math.floor(Math.random() * 160);
+
+  const hour = 10 + Math.floor(Math.random() * 12);
+  const minute = Math.floor(Math.random() * 60);
 
   return {
     id: i + 1,
     order_date: date.toISOString().split('T')[0],
-    total: Math.floor(Math.random() * 500) + 100,
+    order_time: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+    total: baseTotal,
     status: 'completed',
     branch_id: Math.floor(Math.random() * 3) + 1,
+    channel: channel,
+    satisfaction_score: 4.0 + Math.random() * 1.0,
     items_count: Math.floor(Math.random() * 10) + 1
   };
 });

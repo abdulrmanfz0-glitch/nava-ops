@@ -97,12 +97,12 @@ export const navigationConfig = [
       },
       {
         id: 'reports-analytics',
-        title: 'Reports & Analytics',
+        title: 'Report Hub',
         path: '/reports',
-        icon: 'FileText',
-        description: 'Comprehensive reporting tools',
-        keywords: ['reports', 'analytics', 'export', 'pdf', 'insights'],
-        badge: null
+        icon: 'Crown',
+        description: 'Premium professional reports with AI insights, anomaly detection, and actionable recommendations',
+        keywords: ['report', 'hub', 'premium', 'professional', 'analytics', 'export', 'pdf', 'insights', 'ai', 'recommendations'],
+        badge: { type: 'badge', value: 'Premium' }
       }
     ]
   },

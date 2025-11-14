@@ -3,8 +3,16 @@
 
 import api from '@/services/api';
 import aiEngine from './aiEngine';
+import professionalRecommendations from './professionalRecommendations';
 import { REPORT_TYPES, calculateDateRange } from './reportTypes';
 import { logger } from './logger';
+import {
+  analyzeRevenueGrowth,
+  analyzeCostOptimization,
+  analyzeCommissionImpact,
+  generateProfitabilityRecommendations,
+  generateExecutiveSummary as generateProfessionalReportSummary
+} from './aiIntelligence/professionalInsights';
 
 /**
  * Main Report Engine Class
@@ -49,6 +57,27 @@ export class ReportEngine {
       // Detect anomalies
       const anomalies = await this.detectAnomalies(reportData);
 
+      // Generate professional recommendations for professional report
+      let revenueRecommendations = [];
+      let costRecommendations = [];
+      let branchRecommendations = [];
+      let totalImpact = {};
+
+      if (reportConfig.id === 'PROFESSIONAL_REPORT') {
+        revenueRecommendations = professionalRecommendations.generateRevenueGrowthRecommendations(
+          reportData,
+          reportData.trends || []
+        );
+        costRecommendations = professionalRecommendations.generateCostOptimizationRecommendations(reportData);
+        branchRecommendations = professionalRecommendations.generateBranchPerformanceRecommendations(
+          [reportData.selectedBranch || {}],
+          reportData.branches || []
+        );
+
+        const allRecs = [...revenueRecommendations, ...costRecommendations, ...branchRecommendations];
+        totalImpact = professionalRecommendations.calculateTotalImpact(allRecs);
+      }
+
       // Build final report structure
       const report = {
         id: this.generateReportId(),
@@ -65,6 +94,11 @@ export class ReportEngine {
         insights,
         anomalies,
         recommendations: this.generateRecommendations(reportData, insights, anomalies),
+        // Professional recommendations (for professional report)
+        revenueRecommendations,
+        costRecommendations,
+        branchRecommendations,
+        totalImpact,
         metadata: {
           dataPoints: this.countDataPoints(reportData),
           confidence: this.calculateConfidence(reportData),
@@ -155,6 +189,10 @@ export class ReportEngine {
     const insights = [];
 
     try {
+      // Special handling for Professional Report
+      if (reportConfig.id === 'professional_report') {
+        return this.generateProfessionalReportInsights(reportData);
+      }
       // Revenue insights
       if (reportData.trends && reportData.trends.length > 7) {
         const forecast = aiEngine.forecastRevenue(reportData.trends, 7);
@@ -538,6 +576,33 @@ export class ReportEngine {
     });
 
     return Math.round((score / total) * 100);
+  }
+
+  /**
+   * Generate Professional Report insights combining revenue, cost, and commission analysis
+   */
+  generateProfessionalReportInsights(reportData) {
+    const insights = [];
+
+    try {
+      // Revenue Growth Insights
+      const revenueInsights = analyzeRevenueGrowth(reportData);
+      insights.push(...revenueInsights);
+
+      // Cost Optimization Insights
+      const costInsights = analyzeCostOptimization(reportData);
+      insights.push(...costInsights);
+
+      // Commission Impact Analysis
+      const commissionInsights = analyzeCommissionImpact(reportData);
+      insights.push(...commissionInsights);
+
+      logger.info('Generated professional report insights', { count: insights.length });
+      return insights;
+    } catch (error) {
+      logger.error('Failed to generate professional report insights', { error: error.message });
+      return insights;
+    }
   }
 }
 

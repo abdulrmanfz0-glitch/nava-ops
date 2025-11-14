@@ -519,4 +519,252 @@ export const USAGE_TRACKING = {
   HARD_LIMIT_THRESHOLD: 100 // Block when usage reaches 100%
 };
 
+// ============================================================================
+// MULTI-LOCATION PRICING CONFIGURATION
+// ============================================================================
+/**
+ * Multi-location pricing model:
+ * - Base brand price: $299/month (or $3,468/year with 8% discount)
+ * - Per additional branch: $99/month (or $1,188/year with 8% discount)
+ *
+ * Pricing calculation:
+ * Total monthly = $299 + (additional_branches × $99)
+ * where additional_branches = branch_count - 1
+ *
+ * Examples:
+ * - 1 branch: $299/month
+ * - 2 branches: $398/month ($299 + $99)
+ * - 3 branches: $497/month ($299 + $198)
+ * - 5 branches: $695/month ($299 + $396)
+ */
+
+export const MULTI_LOCATION_PRICING = {
+  baseBrandPrice: 299.00, // $299 per brand
+  perBranchPrice: 99.00, // $99 per additional branch
+  currency: 'USD',
+  yearlyDiscount: 0.08, // 8% discount for annual billing
+  minBranches: 1,
+  features: [
+    'Unified brand dashboard',
+    'Per-branch KPIs and analytics',
+    'Cross-branch comparisons',
+    'Branch-level access control',
+    'Consolidated invoicing',
+    'Branch performance tracking',
+    'Scalable team management'
+  ]
+};
+
+/**
+ * Calculate multi-location pricing based on branch count
+ * @param {number} branchCount - Number of active branches
+ * @param {string} billingCycle - 'monthly' or 'yearly'
+ * @returns {Object} Pricing breakdown
+ */
+export const calculateMultiLocationPrice = (branchCount, billingCycle = 'monthly') => {
+  const baseBrandPrice = MULTI_LOCATION_PRICING.baseBrandPrice;
+  const perBranchPrice = MULTI_LOCATION_PRICING.perBranchPrice;
+  const yearlyDiscount = MULTI_LOCATION_PRICING.yearlyDiscount;
+
+  // Calculate additional branches (first branch is included in base price)
+  const additionalBranches = Math.max(branchCount - 1, 0);
+
+  // Calculate monthly price
+  const monthlyPrice = baseBrandPrice + (additionalBranches * perBranchPrice);
+
+  // Calculate yearly price with discount
+  const yearlyPrice = Math.round(monthlyPrice * 12 * (1 - yearlyDiscount) * 100) / 100;
+
+  return {
+    branchCount,
+    billingCycle,
+    breakdown: {
+      baseBrandPrice,
+      additionalBranches,
+      additionalBranchCost: Math.round(additionalBranches * perBranchPrice * 100) / 100,
+      totalMonthly: Math.round(monthlyPrice * 100) / 100,
+      totalYearly: yearlyPrice,
+      discountPercentage: yearlyDiscount * 100
+    },
+    pricing: {
+      monthly: Math.round(monthlyPrice * 100) / 100,
+      yearly: yearlyPrice,
+      currency: MULTI_LOCATION_PRICING.currency
+    },
+    savings: {
+      monthly: 0,
+      yearly: Math.round((monthlyPrice * 12 - yearlyPrice) * 100) / 100,
+      percentage: yearlyDiscount * 100
+    }
+  };
+};
+
+/**
+ * Get pricing for a range of branches for display/comparison
+ * @param {number} maxBranches - Maximum branches to calculate up to
+ * @returns {Array} Array of pricing objects
+ */
+export const getPricingTierComparison = (maxBranches = 10) => {
+  return Array.from({ length: maxBranches }, (_, i) => {
+    const branchCount = i + 1;
+    return {
+      branches: branchCount,
+      ...calculateMultiLocationPrice(branchCount, 'monthly')
+    };
+  });
+};
+
+/**
+ * KPI Categories for multi-location tracking
+ */
+export const BRANCH_KPI_CATEGORIES = {
+  SALES: 'sales',
+  CUSTOMER: 'customer',
+  PROFITABILITY: 'profitability',
+  OPERATIONAL: 'operational',
+  GROWTH: 'growth'
+};
+
+export const BRANCH_KPI_DEFINITIONS = {
+  [BRANCH_KPI_CATEGORIES.SALES]: {
+    category: BRANCH_KPI_CATEGORIES.SALES,
+    kpis: [
+      {
+        id: 'total_revenue',
+        name: 'Total Revenue',
+        unit: 'USD',
+        description: 'Total sales revenue for the period'
+      },
+      {
+        id: 'total_orders',
+        name: 'Total Orders',
+        unit: 'count',
+        description: 'Number of orders processed'
+      },
+      {
+        id: 'average_order_value',
+        name: 'Average Order Value',
+        unit: 'USD',
+        description: 'Average value per order'
+      },
+      {
+        id: 'items_sold',
+        name: 'Items Sold',
+        unit: 'count',
+        description: 'Total items/units sold'
+      }
+    ]
+  },
+  [BRANCH_KPI_CATEGORIES.CUSTOMER]: {
+    category: BRANCH_KPI_CATEGORIES.CUSTOMER,
+    kpis: [
+      {
+        id: 'unique_customers',
+        name: 'Unique Customers',
+        unit: 'count',
+        description: 'Number of unique customers'
+      },
+      {
+        id: 'returning_customers',
+        name: 'Returning Customers',
+        unit: 'count',
+        description: 'Customers who made repeat purchases'
+      },
+      {
+        id: 'customer_retention_rate',
+        name: 'Customer Retention Rate',
+        unit: '%',
+        description: 'Percentage of repeat customers'
+      },
+      {
+        id: 'customer_growth_percent',
+        name: 'Customer Growth',
+        unit: '%',
+        description: 'Period-over-period customer growth'
+      }
+    ]
+  },
+  [BRANCH_KPI_CATEGORIES.PROFITABILITY]: {
+    category: BRANCH_KPI_CATEGORIES.PROFITABILITY,
+    kpis: [
+      {
+        id: 'total_cost',
+        name: 'Total Cost',
+        unit: 'USD',
+        description: 'Total cost of goods/services sold'
+      },
+      {
+        id: 'gross_profit',
+        name: 'Gross Profit',
+        unit: 'USD',
+        description: 'Revenue minus cost of goods sold'
+      },
+      {
+        id: 'gross_profit_margin',
+        name: 'Gross Profit Margin',
+        unit: '%',
+        description: 'Gross profit as percentage of revenue'
+      }
+    ]
+  },
+  [BRANCH_KPI_CATEGORIES.OPERATIONAL]: {
+    category: BRANCH_KPI_CATEGORIES.OPERATIONAL,
+    kpis: [
+      {
+        id: 'peak_hour',
+        name: 'Peak Hour',
+        unit: 'hour',
+        description: 'Busiest hour of the day'
+      },
+      {
+        id: 'peak_hour_revenue',
+        name: 'Peak Hour Revenue',
+        unit: 'USD',
+        description: 'Revenue during peak hour'
+      },
+      {
+        id: 'avg_transaction_time',
+        name: 'Avg Transaction Time',
+        unit: 'minutes',
+        description: 'Average time per transaction'
+      },
+      {
+        id: 'inventory_turnover',
+        name: 'Inventory Turnover',
+        unit: 'ratio',
+        description: 'How many times inventory is sold and replaced'
+      },
+      {
+        id: 'stock_out_incidents',
+        name: 'Stock-out Incidents',
+        unit: 'count',
+        description: 'Number of items out of stock'
+      }
+    ]
+  },
+  [BRANCH_KPI_CATEGORIES.GROWTH]: {
+    category: BRANCH_KPI_CATEGORIES.GROWTH,
+    kpis: [
+      {
+        id: 'revenue_growth_percent',
+        name: 'Revenue Growth',
+        unit: '%',
+        description: 'Period-over-period revenue growth'
+      },
+      {
+        id: 'order_growth_percent',
+        name: 'Order Growth',
+        unit: '%',
+        description: 'Period-over-period order count growth'
+      },
+      {
+        id: 'product_variety_sold',
+        name: 'Product Variety',
+        unit: 'count',
+        description: 'Number of different products sold'
+      }
+    ]
+  }
+};
+
 export default SUBSCRIPTION_PLANS;

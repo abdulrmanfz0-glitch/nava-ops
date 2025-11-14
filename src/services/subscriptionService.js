@@ -30,6 +30,15 @@ import {
   PRICING_CONFIG
 } from '@/utils/pricingCalculator';
 
+  multiLocationPricingAPI,
+  branchKPIsAPI,
+  calculateGrossProfitMargin,
+  calculateGrowthPercent,
+  calculateAOV,
+  calculateRetentionRate
+} from '@/services/multiLocationPricingService';
+ 
+
 // Check if we should use mock data (DEV mode without Supabase)
 const USE_MOCK_DATA = import.meta.env.DEV && !isSupabaseConfigured;
 
@@ -1186,6 +1195,13 @@ export const dynamicPricingAPI = {
   },
 };
 
+// MULTI-LOCATION PRICING RE-EXPORTS
+// ============================================================================
+// Re-export multi-location pricing and KPI APIs for convenience
+export const multiLocation = multiLocationPricingAPI;
+export const branchKPIs = branchKPIsAPI;
+ 
+
 // ============================================================================
 // EXPORT ALL
 // ============================================================================
@@ -1200,4 +1216,8 @@ export default {
   events: subscriptionEventsAPI,
   notifications: billingNotificationsAPI,
   dynamicPricing: dynamicPricingAPI
+
+  multiLocation: multiLocationPricingAPI,
+  branchKPIs: branchKPIsAPI
+ 
 };

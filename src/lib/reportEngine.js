@@ -5,6 +5,13 @@ import api from '@/services/api';
 import aiEngine from './aiEngine';
 import { REPORT_TYPES, calculateDateRange } from './reportTypes';
 import { logger } from './logger';
+import {
+  analyzeRevenueGrowth,
+  analyzeCostOptimization,
+  analyzeCommissionImpact,
+  generateProfitabilityRecommendations,
+  generateExecutiveSummary as generateProfessionalReportSummary
+} from './aiIntelligence/professionalInsights';
 
 /**
  * Main Report Engine Class
@@ -155,6 +162,10 @@ export class ReportEngine {
     const insights = [];
 
     try {
+      // Special handling for Professional Report
+      if (reportConfig.id === 'professional_report') {
+        return this.generateProfessionalReportInsights(reportData);
+      }
       // Revenue insights
       if (reportData.trends && reportData.trends.length > 7) {
         const forecast = aiEngine.forecastRevenue(reportData.trends, 7);
@@ -538,6 +549,33 @@ export class ReportEngine {
     });
 
     return Math.round((score / total) * 100);
+  }
+
+  /**
+   * Generate Professional Report insights combining revenue, cost, and commission analysis
+   */
+  generateProfessionalReportInsights(reportData) {
+    const insights = [];
+
+    try {
+      // Revenue Growth Insights
+      const revenueInsights = analyzeRevenueGrowth(reportData);
+      insights.push(...revenueInsights);
+
+      // Cost Optimization Insights
+      const costInsights = analyzeCostOptimization(reportData);
+      insights.push(...costInsights);
+
+      // Commission Impact Analysis
+      const commissionInsights = analyzeCommissionImpact(reportData);
+      insights.push(...commissionInsights);
+
+      logger.info('Generated professional report insights', { count: insights.length });
+      return insights;
+    } catch (error) {
+      logger.error('Failed to generate professional report insights', { error: error.message });
+      return insights;
+    }
   }
 }
 

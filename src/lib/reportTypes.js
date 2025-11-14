@@ -225,6 +225,18 @@ export const REPORT_TYPES = {
     charts: ['strategic_dashboard', 'growth_chart'],
     aiInsights: true,
     exportFormats: ['pdf']
+  },
+  PROFESSIONAL_REPORT: {
+    id: 'professional_report',
+    category: REPORT_CATEGORIES.EXECUTIVE,
+    name: 'Professional Report',
+    description: 'AI-powered insights on revenue growth, cost optimization, and commission impact',
+    icon: 'BarChart3',
+    color: 'emerald',
+    metrics: ['revenue_growth', 'cost_savings', 'commission_impact', 'profitability'],
+    charts: ['growth_forecast', 'cost_breakdown', 'commission_analysis', 'profitability_trend'],
+    aiInsights: true,
+    exportFormats: ['pdf', 'excel']
   }
 };
 

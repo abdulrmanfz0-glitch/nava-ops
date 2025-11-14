@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
 import PageHeader from '@/components/UI/PageHeader';
+import BrandedReportHeader from '@/components/Reports/BrandedReportHeader';
 import {
   BarChart3, Download, Calendar, TrendingUp, FileText, DollarSign,
   Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare,
@@ -98,12 +99,13 @@ export default function ReportsAnalyticsNew() {
         type: 'info'
       });
 
-      const filename = `${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${format}`;
+      const fileExtension = format === 'json' ? 'json' : format === 'excel' ? 'xlsx' : format;
+      const filename = `Restalyze_${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${fileExtension}`;
       await exportReport(generatedReport, format, filename);
 
       addNotification({
         title: 'Success',
-        message: 'Report exported successfully',
+        message: `Report exported successfully as ${format.toUpperCase()}`,
         type: 'success'
       });
     } catch (error) {
@@ -113,6 +115,27 @@ export default function ReportsAnalyticsNew() {
         message: 'Failed to export report',
         type: 'error'
       });
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: generatedReport?.title || 'Restalyze Report',
+        text: generatedReport?.subtitle || 'Professional Analytics Report',
+        url: window.location.href
+      });
+    } else {
+      addNotification({
+        title: 'Info',
+        message: 'Copying report link to clipboard',
+        type: 'info'
+      });
+      navigator.clipboard.writeText(window.location.href);
     }
   };
 
@@ -272,52 +295,18 @@ export default function ReportsAnalyticsNew() {
           {/* View Report Tab */}
           {activeTab === 'view' && generatedReport && (
             <div className="space-y-6">
-              {/* Report Header */}
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {generatedReport.title}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400">{generatedReport.subtitle}</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    <span>Generated: {new Date(generatedReport.generatedAt).toLocaleString()}</span>
-                    <span>•</span>
-                    <span>Report ID: {generatedReport.id}</span>
-                    <span>•</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 rounded">
-                      {generatedReport.metadata.confidence} confidence
-                    </span>
-                  </div>
-                </div>
-
-                {/* Export Buttons */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleExport('pdf')}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    PDF
-                  </button>
-                  <button
-                    onClick={() => handleExport('excel')}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Excel
-                  </button>
-                  <button
-                    onClick={() => handleExport('csv')}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    CSV
-                  </button>
-                </div>
-              </div>
+              {/* Branded Report Header */}
+              <BrandedReportHeader
+                title={generatedReport.title}
+                subtitle={generatedReport.subtitle}
+                reportType={generatedReport.type}
+                generatedDate={generatedReport.generatedAt}
+                reportId={generatedReport.id}
+                confidence={generatedReport.metadata?.confidence || 'High'}
+                onExport={handleExport}
+                onPrint={handlePrint}
+                onShare={handleShare}
+              />
 
               {/* Report Content */}
               {generatedReport.type === 'financial_overview' && (

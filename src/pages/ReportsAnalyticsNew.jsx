@@ -322,6 +322,9 @@ export default function ReportsAnalyticsNew() {
               </div>
 
               {/* Report Content */}
+              {generatedReport.type === 'PROFESSIONAL_REPORT' && (
+                <ProfessionalReport reportData={generatedReport} />
+              )}
               {generatedReport.type === 'financial_overview' && (
                 <FinancialOverview reportData={generatedReport} />
               )}
@@ -336,7 +339,10 @@ export default function ReportsAnalyticsNew() {
               )}
 
               {/* Default Report View for other types */}
+              {!['PROFESSIONAL_REPORT', 'financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
+
               {!['financial_overview', 'menu_engineering', 'channel_performance', 'professional_report'].includes(generatedReport.type) && (
+ 
                 <div className="space-y-6">
                   {generatedReport.executiveSummary && (
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">

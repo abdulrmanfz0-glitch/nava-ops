@@ -202,6 +202,19 @@ export const REPORT_TYPES = {
   },
 
   // Executive Reports
+  PROFESSIONAL_REPORT: {
+    id: 'PROFESSIONAL_REPORT',
+    category: REPORT_CATEGORIES.EXECUTIVE,
+    name: 'Professional Report',
+    description: 'AI-powered strategic recommendations for revenue growth, cost optimization, and branch performance',
+    icon: 'Briefcase',
+    color: 'indigo',
+    metrics: ['revenue_growth', 'cost_optimization', 'branch_performance', 'strategic_insights'],
+    charts: ['revenue_trends', 'impact_analysis', 'recommendations_summary'],
+    aiInsights: true,
+    aiRecommendations: true,
+    exportFormats: ['pdf', 'excel']
+  },
   EXECUTIVE_SUMMARY: {
     id: 'executive_summary',
     category: REPORT_CATEGORIES.EXECUTIVE,

@@ -1,0 +1,103 @@
+name: 🛡️ Restalyze Build Verification
+
+on:
+  push:
+    branches: [ main, reporting-revolution ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-restalyze-architecture:
+    name: Verify Restalyze Architecture
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: ✅ Verify index.html is minimal
+      run: |
+        LINE_COUNT=$(wc -l < index.html)
+        if [ $LINE_COUNT -gt 100 ]; then
+          echo "❌ ERROR: index.html has $LINE_COUNT lines (should be < 100)"
+          echo "❌ Possible rollback to legacy architecture detected!"
+          exit 1
+        fi
+        echo "✅ index.html is minimal ($LINE_COUNT lines)"
+
+    - name: ✅ Verify Restalyze branding
+      run: |
+        if ! grep -q "Restalyze" index.html; then
+          echo "❌ ERROR: Restalyze branding not found in index.html"
+          exit 1
+        fi
+        echo "✅ Restalyze branding verified"
+
+    - name: ✅ Verify main.jsx is proper React bootstrap
+      run: |
+        LINE_COUNT=$(wc -l < src/main.jsx)
+        if [ $LINE_COUNT -gt 50 ]; then
+          echo "❌ ERROR: src/main.jsx has $LINE_COUNT lines (should be < 50)"
+          echo "❌ Possible corruption detected!"
+          exit 1
+        fi
+        echo "✅ src/main.jsx is proper React bootstrap ($LINE_COUNT lines)"
+
+    - name: ✅ Verify Report Hub exists
+      run: |
+        if [ ! -f "src/pages/ReportHub.jsx" ]; then
+          echo "❌ ERROR: ReportHub.jsx not found!"
+          echo "❌ Core feature missing!"
+          exit 1
+        fi
+        echo "✅ Report Hub exists"
+
+    - name: ✅ Verify all contexts exist
+      run: |
+        REQUIRED_CONTEXTS=(
+          "src/contexts/AuthContext.jsx"
+          "src/contexts/ThemeContext.jsx"
+          "src/contexts/NotificationContext.jsx"
+          "src/contexts/DataContext.jsx"
+        )
+
+        for context in "${REQUIRED_CONTEXTS[@]}"; do
+          if [ ! -f "$context" ]; then
+            echo "❌ ERROR: $context not found!"
+            exit 1
+          fi
+        done
+        echo "✅ All required contexts exist"
+
+    - name: 🏗️ Build verification
+      run: npm run build
+
+    - name: ✅ Verify build output
+      run: |
+        if [ ! -d "dist" ]; then
+          echo "❌ ERROR: Build did not create dist folder!"
+          exit 1
+        fi
+        if [ ! -f "dist/index.html" ]; then
+          echo "❌ ERROR: dist/index.html not found!"
+          exit 1
+        fi
+        echo "✅ Build output verified"
+
+    - name: 📊 Build summary
+      run: |
+        echo "🎉 All Restalyze architecture checks passed!"
+        echo "✅ Clean index.html"
+        echo "✅ Proper main.jsx"
+        echo "✅ Report Hub present"
+        echo "✅ All contexts verified"
+        echo "✅ Build successful"

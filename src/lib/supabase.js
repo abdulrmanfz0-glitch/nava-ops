@@ -7,12 +7,13 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 // التحقق من وجود متغيرات البيئة مع معالجة أكثر مرونة
 const hasValidCredentials = !!(supabaseUrl && supabaseAnonKey)
 
-if (!hasValidCredentials) {
-  console.warn('[SUPABASE] ⚠️ Missing Supabase environment variables!')
-  console.warn('[SUPABASE] Please check your .env.local file and ensure:')
-  console.warn('[SUPABASE] - VITE_SUPABASE_URL is set')
-  console.warn('[SUPABASE] - VITE_SUPABASE_ANON_KEY is set')
-  console.warn('[SUPABASE] Running with limited functionality (DEV_BYPASS_AUTH mode recommended)')
+if (!hasValidCredentials && import.meta.env.DEV) {
+  // Show a single consolidated warning in development mode only
+  console.log(
+    '%c[SUPABASE]%c Supabase not configured - running in DEV_BYPASS_AUTH mode',
+    'color: #f59e0b; font-weight: bold',
+    'color: inherit'
+  )
 }
 
 // إعدادات متقدمة لـ Supabase

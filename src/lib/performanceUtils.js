@@ -370,15 +370,19 @@ export class CleanupManager {
  */
 export const reportWebVitals = (onPerfEntry) => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
-    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-      getCLS(onPerfEntry);
-      getFID(onPerfEntry);
-      getFCP(onPerfEntry);
-      getLCP(onPerfEntry);
-      getTTFB(onPerfEntry);
-    }).catch(error => {
-      logger.warn('Web Vitals loading failed', { error: error.message });
-    });
+    import('web-vitals')
+      .then((webVitals) => {
+        // Check if functions exist before calling them
+        if (webVitals.getCLS) webVitals.getCLS(onPerfEntry);
+        if (webVitals.getFID) webVitals.getFID(onPerfEntry);
+        if (webVitals.getFCP) webVitals.getFCP(onPerfEntry);
+        if (webVitals.getLCP) webVitals.getLCP(onPerfEntry);
+        if (webVitals.getTTFB) webVitals.getTTFB(onPerfEntry);
+      })
+      .catch(() => {
+        // Silently fail if web-vitals is not installed
+        // This is not critical for app functionality
+      });
   }
 };
 

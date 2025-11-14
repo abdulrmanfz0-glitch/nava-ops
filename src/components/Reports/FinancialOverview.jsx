@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PieChart } from 'lucide-react';
-import { RevenueTrendChart, BarChart as SimpleBarChart } from '@/components/UI/Charts';
+import { RevenueTrendChart, SimpleBarChart } from '@/components/UI/Charts';
 
 export default function FinancialOverview({ reportData }) {
   const { metrics, sections, insights, executiveSummary } = reportData;

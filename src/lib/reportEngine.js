@@ -3,6 +3,7 @@
 
 import api from '@/services/api';
 import aiEngine from './aiEngine';
+import professionalRecommendations from './professionalRecommendations';
 import { REPORT_TYPES, calculateDateRange } from './reportTypes';
 import { logger } from './logger';
 
@@ -49,6 +50,27 @@ export class ReportEngine {
       // Detect anomalies
       const anomalies = await this.detectAnomalies(reportData);
 
+      // Generate professional recommendations for professional report
+      let revenueRecommendations = [];
+      let costRecommendations = [];
+      let branchRecommendations = [];
+      let totalImpact = {};
+
+      if (reportConfig.id === 'PROFESSIONAL_REPORT') {
+        revenueRecommendations = professionalRecommendations.generateRevenueGrowthRecommendations(
+          reportData,
+          reportData.trends || []
+        );
+        costRecommendations = professionalRecommendations.generateCostOptimizationRecommendations(reportData);
+        branchRecommendations = professionalRecommendations.generateBranchPerformanceRecommendations(
+          [reportData.selectedBranch || {}],
+          reportData.branches || []
+        );
+
+        const allRecs = [...revenueRecommendations, ...costRecommendations, ...branchRecommendations];
+        totalImpact = professionalRecommendations.calculateTotalImpact(allRecs);
+      }
+
       // Build final report structure
       const report = {
         id: this.generateReportId(),
@@ -65,6 +87,11 @@ export class ReportEngine {
         insights,
         anomalies,
         recommendations: this.generateRecommendations(reportData, insights, anomalies),
+        // Professional recommendations (for professional report)
+        revenueRecommendations,
+        costRecommendations,
+        branchRecommendations,
+        totalImpact,
         metadata: {
           dataPoints: this.countDataPoints(reportData),
           confidence: this.calculateConfidence(reportData),

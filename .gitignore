@@ -80,6 +80,11 @@ reports/
 !README.md
 !ARCHITECTURE.md
 
+# Allow src directory files (override lib/ exclusion for src/lib)
+!src/
+!src/**
+!src/lib/**
+
 # Node.js (for any Node-based tools)
 node_modules/
 dist/

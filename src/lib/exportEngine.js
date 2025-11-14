@@ -3,6 +3,7 @@
 
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { logger } from './logger';
 
@@ -386,47 +387,173 @@ export class PDFExporter {
 }
 
 /**
- * Excel Export Utility
+ * Excel Export Utility with Professional Formatting
  */
 export class ExcelExporter {
-  constructor() {
-    this.workbook = {
-      sheets: [],
-      creator: 'NAVA OPS',
-      created: new Date()
-    };
+  constructor(options = {}) {
+    this.workbook = new ExcelJS.Workbook();
+    this.workbook.creator = 'NAVA OPS';
+    this.workbook.created = new Date();
+    this.workbook.modified = new Date();
+    this.sheets = [];
+    this.primaryColor = options.primaryColor || '0088FF';
+    this.accentColor = options.accentColor || '10B981';
   }
 
   /**
-   * Add worksheet with data
+   * Add worksheet with data and styling
    */
   addSheet(name, data, options = {}) {
-    const sheet = {
-      name,
-      data,
-      headers: options.headers || Object.keys(data[0] || {}),
-      styling: options.styling || {}
+    const worksheet = this.workbook.addWorksheet(name);
+
+    if (!data || data.length === 0) return;
+
+    const headers = options.headers || Object.keys(data[0] || {});
+
+    // Add header row
+    const headerRow = worksheet.addRow(headers);
+
+    // Style header row
+    headerRow.font = {
+      bold: true,
+      color: { argb: 'FFFFFFFF' },
+      size: 12
     };
-    this.workbook.sheets.push(sheet);
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: this.primaryColor }
+    };
+    headerRow.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    headerRow.height = 25;
+
+    // Add data rows
+    data.forEach((row, rowIndex) => {
+      const dataRow = worksheet.addRow(headers.map(header => row[header]));
+
+      // Alternate row colors
+      if (rowIndex % 2 === 0) {
+        dataRow.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFF9FAFB' }
+        };
+      }
+
+      // Set font and alignment
+      dataRow.font = { size: 10 };
+      dataRow.alignment = { vertical: 'middle', wrapText: true };
+
+      // Style numeric columns
+      dataRow.eachCell((cell, colNumber) => {
+        const value = cell.value;
+        if (typeof value === 'number') {
+          cell.numFmt = options.numFmt || '#,##0.00';
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        } else if (typeof value === 'string' && value.startsWith('$')) {
+          cell.numFmt = '$#,##0.00';
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        }
+      });
+    });
+
+    // Auto-fit column widths
+    worksheet.columns.forEach((column, index) => {
+      let maxLength = headers[index]?.length || 10;
+      data.forEach(row => {
+        const cellValue = String(row[headers[index]] || '');
+        maxLength = Math.max(maxLength, cellValue.length);
+      });
+      column.width = Math.min(maxLength + 2, 50);
+    });
+
+    // Freeze header row
+    worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+    this.sheets.push({ name, worksheet });
   }
 
   /**
-   * Convert to CSV (simplified Excel export)
+   * Add summary sheet with metrics
+   */
+  addSummarySheet(title, metrics = {}) {
+    const worksheet = this.workbook.addWorksheet('Summary');
+
+    // Title
+    const titleRow = worksheet.addRow([title]);
+    titleRow.font = { bold: true, size: 16, color: { argb: 'FFFFFFFF' } };
+    titleRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: this.primaryColor }
+    };
+    titleRow.height = 30;
+    worksheet.mergeCells('A1:D1');
+
+    // Add generation date
+    const dateRow = worksheet.addRow(['Generated:', new Date().toLocaleDateString()]);
+    dateRow.font = { size: 10, italic: true };
+
+    // Empty row for spacing
+    worksheet.addRow([]);
+
+    // Add metrics
+    if (Object.keys(metrics).length > 0) {
+      const metricsHeader = worksheet.addRow(['Metric', 'Value']);
+      metricsHeader.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+      metricsHeader.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: this.accentColor }
+      };
+
+      Object.entries(metrics).forEach(([key, value]) => {
+        const row = worksheet.addRow([key, value]);
+        row.font = { size: 10 };
+        if (typeof value === 'number') {
+          row.getCell(2).numFmt = '#,##0.00';
+        }
+      });
+    }
+
+    // Auto-fit columns
+    worksheet.columns = [
+      { width: 25 },
+      { width: 20 }
+    ];
+  }
+
+  /**
+   * Save as Excel XLSX file
+   */
+  async saveAsExcel(filename) {
+    try {
+      const buffer = await this.workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      saveAs(blob, filename);
+      logger.info('Excel file exported successfully', { filename });
+    } catch (error) {
+      logger.error('Failed to export Excel file', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Convert to CSV (fallback)
    */
   toCSV(sheetIndex = 0) {
-    const sheet = this.workbook.sheets[sheetIndex];
-    if (!sheet) return '';
+    const worksheet = this.workbook.worksheets[sheetIndex];
+    if (!worksheet) return '';
 
-    let csv = sheet.headers.join(',') + '\n';
-
-    sheet.data.forEach(row => {
-      const values = sheet.headers.map(header => {
-        const value = row[header];
-        // Escape values containing commas or quotes
+    let csv = '';
+    worksheet.eachRow((row) => {
+      const values = row.values.slice(1).map(value => {
         if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
           return `"${value.replace(/"/g, '""')}"`;
         }
-        return value;
+        return value || '';
       });
       csv += values.join(',') + '\n';
     });
@@ -435,22 +562,13 @@ export class ExcelExporter {
   }
 
   /**
-   * Save as CSV
+   * Save as CSV (fallback)
    */
   saveAsCSV(filename, sheetIndex = 0) {
     const csv = this.toCSV(sheetIndex);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, filename);
     logger.info('CSV exported successfully', { filename });
-  }
-
-  /**
-   * Save as Excel (using simple XML format)
-   */
-  saveAsExcel(filename) {
-    // For now, we'll export the first sheet as CSV
-    // In a real implementation, you'd use a library like xlsx
-    this.saveAsCSV(filename.replace('.xlsx', '.csv'));
   }
 }
 
@@ -528,6 +646,283 @@ export class JSONExporter {
 }
 
 /**
+ * Print Report
+ */
+export const printReport = (reportData) => {
+  const printWindow = window.open('', '', 'width=900,height=800');
+
+  // Build HTML content
+  let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>${reportData.title || 'Report'}</title>
+      <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          background: white;
+        }
+        .page-break {
+          page-break-after: always;
+          padding: 20px;
+        }
+        .header {
+          background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+          color: white;
+          padding: 40px 20px;
+          margin-bottom: 30px;
+          text-align: center;
+          page-break-after: avoid;
+        }
+        .header h1 {
+          font-size: 28px;
+          margin-bottom: 10px;
+        }
+        .header p {
+          font-size: 14px;
+          opacity: 0.9;
+        }
+        .meta {
+          background: #f5f5f5;
+          padding: 15px 20px;
+          font-size: 12px;
+          color: #666;
+          margin-bottom: 30px;
+          page-break-after: avoid;
+          border-bottom: 1px solid #ddd;
+        }
+        .section {
+          margin-bottom: 40px;
+          page-break-inside: avoid;
+        }
+        .section-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #0088FF;
+          padding: 10px 0;
+          border-bottom: 2px solid #0088FF;
+          margin-bottom: 20px;
+          page-break-after: avoid;
+        }
+        .metrics {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+          margin-bottom: 30px;
+          page-break-inside: avoid;
+        }
+        .metric-card {
+          background: #f9fafb;
+          border: 1px solid #e5e7eb;
+          padding: 20px;
+          border-radius: 8px;
+          text-align: center;
+        }
+        .metric-label {
+          font-size: 12px;
+          color: #6b7280;
+          text-transform: uppercase;
+          margin-bottom: 8px;
+        }
+        .metric-value {
+          font-size: 24px;
+          font-weight: bold;
+          color: #1f2937;
+          margin-bottom: 8px;
+        }
+        .metric-trend {
+          font-size: 11px;
+          color: #10b981;
+        }
+        .metric-trend.down {
+          color: #ef4444;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 30px;
+          page-break-inside: avoid;
+        }
+        table thead {
+          background: #0088FF;
+          color: white;
+        }
+        table th {
+          padding: 12px;
+          text-align: left;
+          font-weight: 600;
+          border: 1px solid #0088FF;
+        }
+        table td {
+          padding: 12px;
+          border: 1px solid #e5e7eb;
+        }
+        table tbody tr:nth-child(even) {
+          background: #f9fafb;
+        }
+        table tbody tr:hover {
+          background: #f3f4f6;
+        }
+        .insights {
+          background: #eff6ff;
+          border-left: 4px solid #0088FF;
+          padding: 15px;
+          margin-bottom: 20px;
+          border-radius: 4px;
+          page-break-inside: avoid;
+        }
+        .insights-title {
+          font-weight: bold;
+          color: #1e40af;
+          margin-bottom: 8px;
+        }
+        .insights-text {
+          font-size: 13px;
+          color: #1f2937;
+          line-height: 1.5;
+        }
+        .footer {
+          background: #f5f5f5;
+          padding: 20px;
+          text-align: center;
+          font-size: 11px;
+          color: #999;
+          margin-top: 50px;
+          border-top: 1px solid #ddd;
+          page-break-before: avoid;
+        }
+        @media print {
+          body {
+            margin: 0;
+            padding: 0;
+          }
+          .page-break {
+            padding: 0;
+          }
+          a {
+            text-decoration: none;
+          }
+        }
+      </style>
+    </head>
+    <body>
+  `;
+
+  // Add header
+  html += `
+    <div class="header">
+      <h1>${reportData.title || 'Report'}</h1>
+      ${reportData.subtitle ? `<p>${reportData.subtitle}</p>` : ''}
+    </div>
+    <div class="meta">
+      <strong>Generated:</strong> ${new Date().toLocaleString()} |
+      <strong>System:</strong> NAVA OPS
+    </div>
+  `;
+
+  // Add executive summary
+  if (reportData.executiveSummary) {
+    html += `
+      <div class="section">
+        <div class="section-title">Executive Summary</div>
+        <p style="line-height: 1.8; color: #555;">${reportData.executiveSummary}</p>
+      </div>
+    `;
+  }
+
+  // Add metrics
+  if (reportData.metrics && Array.isArray(reportData.metrics) && reportData.metrics.length > 0) {
+    html += '<div class="section"><div class="section-title">Key Metrics</div><div class="metrics">';
+    reportData.metrics.forEach(metric => {
+      const trendClass = metric.trend?.direction === 'down' ? 'down' : '';
+      const trendHtml = metric.trend ?
+        `<div class="metric-trend ${trendClass}">${metric.trend.direction === 'up' ? '↑' : '↓'} ${metric.trend.value}</div>` : '';
+      html += `
+        <div class="metric-card">
+          <div class="metric-label">${metric.label}</div>
+          <div class="metric-value">${metric.value}</div>
+          ${trendHtml}
+        </div>
+      `;
+    });
+    html += '</div></div>';
+  }
+
+  // Add sections with tables
+  if (reportData.sections && Array.isArray(reportData.sections)) {
+    reportData.sections.forEach(section => {
+      html += `<div class="section"><div class="section-title">${section.title}</div>`;
+
+      if (section.table && section.table.data && section.table.data.length > 0) {
+        html += '<table><thead><tr>';
+        section.table.headers.forEach(header => {
+          html += `<th>${header}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        section.table.data.forEach(row => {
+          html += '<tr>';
+          section.table.headers.forEach(header => {
+            html += `<td>${row[header] || ''}</td>`;
+          });
+          html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+      }
+
+      html += '</div>';
+    });
+  }
+
+  // Add insights
+  if (reportData.insights && Array.isArray(reportData.insights)) {
+    html += '<div class="section"><div class="section-title">AI-Generated Insights</div>';
+    reportData.insights.forEach(insight => {
+      html += `
+        <div class="insights">
+          <div class="insights-title">${insight.title}</div>
+          <div class="insights-text">${insight.description}</div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+
+  // Add footer
+  html += `
+    <div class="footer">
+      <p>This report was generated by NAVA OPS on ${new Date().toLocaleDateString()}. For internal use only.</p>
+    </div>
+  `;
+
+  html += '</body></html>';
+
+  // Write to print window
+  printWindow.document.write(html);
+  printWindow.document.close();
+
+  // Trigger print dialog
+  setTimeout(() => {
+    printWindow.print();
+    // Close window after printing
+    setTimeout(() => {
+      printWindow.close();
+    }, 100);
+  }, 250);
+
+  logger.info('Report sent to printer');
+};
+
+/**
  * Main Export Function - Auto-detects format
  */
 export const exportReport = async (reportData, format, filename, restaurantInfo = {}) => {
@@ -544,6 +939,8 @@ export const exportReport = async (reportData, format, filename, restaurantInfo 
         return await exportAsCSV(reportData, filename, restaurantInfo);
       case 'json':
         return JSONExporter.download(reportData, filename);
+      case 'print':
+        return printReport(reportData);
       default:
         throw new Error(`Unsupported export format: ${format}`);
     }
@@ -596,6 +993,13 @@ const exportAsPDF = async (reportData, filename, restaurantInfo = {}) => {
 const exportAsExcel = async (reportData, filename, restaurantInfo = {}) => {
   const excel = new ExcelExporter();
 
+  // Add summary sheet with metrics
+  const metrics = {};
+  if (reportData.metrics && Array.isArray(reportData.metrics)) {
+    reportData.metrics.forEach(metric => {
+      metrics[metric.label] = metric.value;
+    });
+
   // Add cover sheet with metadata
   if (restaurantInfo.name || reportData.title) {
     const metadata = [
@@ -611,12 +1015,14 @@ const exportAsExcel = async (reportData, filename, restaurantInfo = {}) => {
   // Add summary sheet
   if (reportData.metrics) {
     excel.addSheet('Summary', reportData.metrics);
+ 
   }
+  excel.addSummarySheet(reportData.title || 'Report Summary', metrics);
 
   // Add data sheets
-  if (reportData.sections) {
+  if (reportData.sections && Array.isArray(reportData.sections)) {
     reportData.sections.forEach(section => {
-      if (section.table) {
+      if (section.table && section.table.data) {
         excel.addSheet(section.title, section.table.data, {
           headers: section.table.headers
         });
@@ -624,7 +1030,14 @@ const exportAsExcel = async (reportData, filename, restaurantInfo = {}) => {
     });
   }
 
-  excel.saveAsExcel(filename);
+  // If no sections, add metrics as a sheet
+  if (!reportData.sections || reportData.sections.length === 0) {
+    if (reportData.metrics && Array.isArray(reportData.metrics)) {
+      excel.addSheet('Metrics', reportData.metrics);
+    }
+  }
+
+  await excel.saveAsExcel(filename);
 };
 
 /**

@@ -11,17 +11,23 @@ import BrandedReportHeader from '@/components/Reports/BrandedReportHeader';
 import {
   BarChart3, Download, Calendar, TrendingUp, FileText, DollarSign,
   Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare,
+  Clock, Settings, Play, Eye, ChevronRight, Sparkles, Share2
+
   Clock, Settings, Play, Eye, ChevronRight, Sparkles, Printer, Share2
 
   Clock, Settings, Play, Eye, ChevronRight, Sparkles, Zap, ArrowRight,
   PieChart, TrendingDown, Activity
+ 
  
 } from 'lucide-react';
 import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
 import { exportReport } from '@/lib/exportEngine';
 import ReportFilters from '@/components/Reports/ReportFilters';
+import ExportDialog from '@/components/Reports/ExportDialog';
+
 import ProfessionalReport from '@/components/Reports/ProfessionalReport';
+ 
 import FinancialOverview from '@/components/Reports/FinancialOverview';
 import MenuEngineering from '@/components/Reports/MenuEngineering';
 import ChannelPerformanceReport from '@/components/Reports/ChannelPerformanceReport';
@@ -40,11 +46,14 @@ export default function ReportsAnalyticsNew() {
   const [generatedReport, setGeneratedReport] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [recentReports, setRecentReports] = useState([]);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+
   const [restaurantInfo] = useState({
     name: 'Restaurant Name',
     logo: null,
     branch: 'Main Branch'
   });
+ 
 
   useEffect(() => {
     // Load recent reports from localStorage
@@ -104,6 +113,7 @@ export default function ReportsAnalyticsNew() {
     }
   };
 
+
   const handleExport = async (format) => {
     if (!generatedReport) return;
 
@@ -136,6 +146,7 @@ export default function ReportsAnalyticsNew() {
       });
     }
   };
+ 
 
   const handlePrintReport = () => {
     if (!reportRef.current) return;
@@ -586,6 +597,15 @@ export default function ReportsAnalyticsNew() {
                 </div>
               </div>
 
+                {/* Export & Share Button */}
+                <button
+                  onClick={() => setIsExportDialogOpen(true)}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
+                           transition-colors duration-200 flex items-center gap-2 font-medium"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Export & Share
+
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 mr-4">
@@ -705,6 +725,7 @@ export default function ReportsAnalyticsNew() {
                 >
                   <Share2 className="w-4 h-4" />
                   Share
+ 
                 </button>
               </div>
 
@@ -933,6 +954,13 @@ export default function ReportsAnalyticsNew() {
           )}
         </div>
       </div>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        report={generatedReport}
+        isOpen={isExportDialogOpen}
+        onClose={() => setIsExportDialogOpen(false)}
+      />
     </div>
   );
 }

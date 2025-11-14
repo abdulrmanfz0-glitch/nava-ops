@@ -1,0 +1,18 @@
+# Restalyze Code Owners - Protection Against Unauthorized Changes
+# Any changes to these critical files require review
+
+# Core branding and architecture - NO ROLLBACKS ALLOWED
+/index.html @abdulrmanfz0-glitch
+/src/main.jsx @abdulrmanfz0-glitch
+/vite.config.js @abdulrmanfz0-glitch
+
+# Restalyze branded pages
+/src/pages/ReportHub.jsx @abdulrmanfz0-glitch
+/src/pages/Login.jsx @abdulrmanfz0-glitch
+/src/pages/Dashboard.jsx @abdulrmanfz0-glitch
+
+# Context system
+/src/contexts/ @abdulrmanfz0-glitch
+
+# Export functionality
+/src/utils/exportUtils.js @abdulrmanfz0-glitch

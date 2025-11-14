@@ -99,6 +99,15 @@ export {
   getIndustryBenchmarks
 } from './benchmarking.js';
 
+// Professional Report Insights
+export {
+  analyzeRevenueGrowth,
+  analyzeCostOptimization,
+  analyzeCommissionImpact,
+  generateProfitabilityRecommendations,
+  generateExecutiveSummary as generateProfessionalReportSummary
+} from './professionalInsights.js';
+
 /**
  * Comprehensive AI Intelligence Analysis
  * Run all analyses and return complete insights

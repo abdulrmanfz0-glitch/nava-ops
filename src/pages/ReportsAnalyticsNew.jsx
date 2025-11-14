@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
 import PageHeader from '@/components/UI/PageHeader';
+import BrandedReportHeader from '@/components/Reports/BrandedReportHeader';
 import {
   BarChart3, Download, Calendar, TrendingUp, FileText, DollarSign,
   Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare,
@@ -13,9 +14,11 @@ import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
 import { exportReport } from '@/lib/exportEngine';
 import ReportFilters from '@/components/Reports/ReportFilters';
+import ProfessionalReport from '@/components/Reports/ProfessionalReport';
 import FinancialOverview from '@/components/Reports/FinancialOverview';
 import MenuEngineering from '@/components/Reports/MenuEngineering';
 import ChannelPerformanceReport from '@/components/Reports/ChannelPerformanceReport';
+import ProfessionalReport from '@/components/Reports/ProfessionalReport';
 
 export default function ReportsAnalyticsNew() {
   const { addNotification } = useNotification();
@@ -98,12 +101,13 @@ export default function ReportsAnalyticsNew() {
         type: 'info'
       });
 
-      const filename = `${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${format}`;
+      const fileExtension = format === 'json' ? 'json' : format === 'excel' ? 'xlsx' : format;
+      const filename = `Restalyze_${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${fileExtension}`;
       await exportReport(generatedReport, format, filename);
 
       addNotification({
         title: 'Success',
-        message: 'Report exported successfully',
+        message: `Report exported successfully as ${format.toUpperCase()}`,
         type: 'success'
       });
     } catch (error) {
@@ -116,6 +120,27 @@ export default function ReportsAnalyticsNew() {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: generatedReport?.title || 'Restalyze Report',
+        text: generatedReport?.subtitle || 'Professional Analytics Report',
+        url: window.location.href
+      });
+    } else {
+      addNotification({
+        title: 'Info',
+        message: 'Copying report link to clipboard',
+        type: 'info'
+      });
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
   const handleViewReport = (report) => {
     setGeneratedReport(report);
     setActiveTab('view');
@@ -124,13 +149,13 @@ export default function ReportsAnalyticsNew() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Enterprise Reports & Analytics"
-        subtitle="AI-powered reporting with advanced insights and analytics"
+        title="Report Hub"
+        subtitle="Premium AI-powered reporting with professional insights, anomaly detection, and actionable recommendations"
         icon={BarChart3}
         badge={{
-          text: 'AI-Powered',
-          icon: Sparkles,
-          color: 'purple'
+          text: 'Premium Reports',
+          icon: Crown,
+          color: 'gold'
         }}
       />
 
@@ -269,57 +294,26 @@ export default function ReportsAnalyticsNew() {
             </div>
           )}
 
-          {/* View Report Tab */}
+          {/* View Report Tab - Professional Report */}
           {activeTab === 'view' && generatedReport && (
             <div className="space-y-6">
-              {/* Report Header */}
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {generatedReport.title}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400">{generatedReport.subtitle}</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    <span>Generated: {new Date(generatedReport.generatedAt).toLocaleString()}</span>
-                    <span>•</span>
-                    <span>Report ID: {generatedReport.id}</span>
-                    <span>•</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 rounded">
-                      {generatedReport.metadata.confidence} confidence
-                    </span>
-                  </div>
-                </div>
-
-                {/* Export Buttons */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleExport('pdf')}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    PDF
-                  </button>
-                  <button
-                    onClick={() => handleExport('excel')}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Excel
-                  </button>
-                  <button
-                    onClick={() => handleExport('csv')}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    CSV
-                  </button>
-                </div>
-              </div>
+              {/* Branded Report Header */}
+              <BrandedReportHeader
+                title={generatedReport.title}
+                subtitle={generatedReport.subtitle}
+                reportType={generatedReport.type}
+                generatedDate={generatedReport.generatedAt}
+                reportId={generatedReport.id}
+                confidence={generatedReport.metadata?.confidence || 'High'}
+                onExport={handleExport}
+                onPrint={handlePrint}
+                onShare={handleShare}
+              />
 
               {/* Report Content */}
+              {generatedReport.type === 'PROFESSIONAL_REPORT' && (
+                <ProfessionalReport reportData={generatedReport} />
+              )}
               {generatedReport.type === 'financial_overview' && (
                 <FinancialOverview reportData={generatedReport} />
               )}
@@ -329,9 +323,15 @@ export default function ReportsAnalyticsNew() {
               {generatedReport.type === 'channel_performance' && (
                 <ChannelPerformanceReport reportData={generatedReport} />
               )}
+              {generatedReport.type === 'professional_report' && (
+                <ProfessionalReport reportData={generatedReport} isLoading={false} />
+              )}
 
               {/* Default Report View for other types */}
-              {!['financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
+              {!['PROFESSIONAL_REPORT', 'financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
+
+              {!['financial_overview', 'menu_engineering', 'channel_performance', 'professional_report'].includes(generatedReport.type) && (
+ 
                 <div className="space-y-6">
                   {generatedReport.executiveSummary && (
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
@@ -365,6 +365,10 @@ export default function ReportsAnalyticsNew() {
                   )}
                 </div>
               )}
+
+            <div>
+              <ProfessionalReport report={generatedReport} />
+ 
             </div>
           )}
 
@@ -469,12 +473,13 @@ function TabButton({ active, onClick, icon: Icon, label, disabled }) {
 
 function ReportTypeCard({ report, selected, onClick }) {
   const iconMap = {
-    DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText
+    BarChart3, DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText
   };
   const Icon = iconMap[report.icon] || FileText;
 
   const colorClasses = {
     green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-300',
+    emerald: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-300',
     blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-300',
     red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-300',
     purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-300',

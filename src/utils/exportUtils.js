@@ -111,6 +111,64 @@ export const csvUtils = {
   }
 };
 
+// أدوات التصدير إلى Excel (باستخدام xlsx)
+export const excelUtils = {
+  async exportToExcel(data, filename = 'data', options = {}) {
+    try {
+      const {
+        sheetName = 'Sheet1',
+        headers = null,
+        includeHeaders = true
+      } = options;
+
+      // تحميل مكتبة xlsx ديناميكياً
+      const XLSX = await import('xlsx');
+
+      // تحديد الهيدرات
+      const actualHeaders = headers || Object.keys(data[0] || {});
+
+      // إنشاء ورقة العمل
+      const worksheet = XLSX.utils.json_to_sheet(data, {
+        header: actualHeaders,
+        skipHeader: !includeHeaders
+      });
+
+      // إنشاء دفتر العمل
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+      // كتابة الملف
+      XLSX.writeFile(workbook, `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+      return { success: true, filename: `${filename}.xlsx` };
+    } catch (error) {
+      console.error('Excel export error:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // تصدير بيانات متعددة الأوراق
+  async exportMultiSheetExcel(sheets, filename = 'workbook') {
+    try {
+      const XLSX = await import('xlsx');
+      const workbook = XLSX.utils.book_new();
+
+      sheets.forEach(({ name, data, headers }) => {
+        const worksheet = XLSX.utils.json_to_sheet(data, {
+          header: headers || Object.keys(data[0] || {})
+        });
+        XLSX.utils.book_append_sheet(workbook, worksheet, name);
+      });
+
+      XLSX.writeFile(workbook, `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`);
+      return { success: true, filename: `${filename}.xlsx` };
+    } catch (error) {
+      console.error('Multi-sheet Excel export error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+};
+
 // أدوات التصدير إلى PDF (باستخدام jsPDF)
 export const pdfUtils = {
   async exportToPDF(elementId, filename = 'document', options = {}) {
@@ -249,18 +307,22 @@ export const generalUtils = {
 export const exportUtils = {
   ...formatters,
   ...csvUtils,
+  ...excelUtils,
   ...pdfUtils,
   ...generalUtils,
 
   // تصدير شامل لجميع الصيغ
   exportMultipleFormats(data, baseFilename, options = {}) {
-    const formats = options.formats || ['csv', 'pdf', 'json'];
+    const formats = options.formats || ['csv', 'pdf', 'json', 'excel'];
     const results = [];
 
     formats.forEach(format => {
       switch (format) {
         case 'csv':
           results.push(this.exportToCSV(data, baseFilename));
+          break;
+        case 'excel':
+          results.push(this.exportToExcel(data, baseFilename));
           break;
         case 'pdf':
           results.push(this.exportToPDF(null, baseFilename));
@@ -275,5 +337,17 @@ export const exportUtils = {
   }
 };
 
-// 🔥 أضف هذا في النهاية للتوافق مع TasksManagement.jsx:
+// 🔥 Named exports for individual functions
+export const formatMoney = formatters.formatMoney;
+export const formatNumber = formatters.formatNumber;
+export const formatPercent = formatters.formatPercent;
+export const formatDate = formatters.formatDate;
+export const formatDateTime = formatters.formatDateTime;
+
+export const exportToCSV = csvUtils.exportToCSV;
+export const exportToExcel = excelUtils.exportToExcel;
+export const exportToPDF = pdfUtils.exportTableToPDF;
+export const exportToJSON = generalUtils.exportToJSON;
+
+// Default export
 export default exportUtils;

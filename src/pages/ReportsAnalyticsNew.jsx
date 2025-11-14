@@ -13,6 +13,7 @@ import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
 import { exportReport } from '@/lib/exportEngine';
 import ReportFilters from '@/components/Reports/ReportFilters';
+import ProfessionalReport from '@/components/Reports/ProfessionalReport';
 import FinancialOverview from '@/components/Reports/FinancialOverview';
 import MenuEngineering from '@/components/Reports/MenuEngineering';
 import ChannelPerformanceReport from '@/components/Reports/ChannelPerformanceReport';
@@ -124,13 +125,13 @@ export default function ReportsAnalyticsNew() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Enterprise Reports & Analytics"
-        subtitle="AI-powered reporting with advanced insights and analytics"
+        title="Report Hub"
+        subtitle="Premium AI-powered reporting with professional insights, anomaly detection, and actionable recommendations"
         icon={BarChart3}
         badge={{
-          text: 'AI-Powered',
-          icon: Sparkles,
-          color: 'purple'
+          text: 'Premium Reports',
+          icon: Crown,
+          color: 'gold'
         }}
       />
 
@@ -269,102 +270,10 @@ export default function ReportsAnalyticsNew() {
             </div>
           )}
 
-          {/* View Report Tab */}
+          {/* View Report Tab - Professional Report */}
           {activeTab === 'view' && generatedReport && (
-            <div className="space-y-6">
-              {/* Report Header */}
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {generatedReport.title}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400">{generatedReport.subtitle}</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    <span>Generated: {new Date(generatedReport.generatedAt).toLocaleString()}</span>
-                    <span>•</span>
-                    <span>Report ID: {generatedReport.id}</span>
-                    <span>•</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 rounded">
-                      {generatedReport.metadata.confidence} confidence
-                    </span>
-                  </div>
-                </div>
-
-                {/* Export Buttons */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleExport('pdf')}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    PDF
-                  </button>
-                  <button
-                    onClick={() => handleExport('excel')}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Excel
-                  </button>
-                  <button
-                    onClick={() => handleExport('csv')}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    CSV
-                  </button>
-                </div>
-              </div>
-
-              {/* Report Content */}
-              {generatedReport.type === 'financial_overview' && (
-                <FinancialOverview reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'menu_engineering' && (
-                <MenuEngineering reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'channel_performance' && (
-                <ChannelPerformanceReport reportData={generatedReport} />
-              )}
-
-              {/* Default Report View for other types */}
-              {!['financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
-                <div className="space-y-6">
-                  {generatedReport.executiveSummary && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                        Executive Summary
-                      </h3>
-                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {generatedReport.executiveSummary}
-                      </p>
-                    </div>
-                  )}
-
-                  {generatedReport.insights && generatedReport.insights.length > 0 && (
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        AI-Generated Insights
-                      </h3>
-                      <div className="space-y-3">
-                        {generatedReport.insights.map((insight, index) => (
-                          <div key={index} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                              {insight.title}
-                            </h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                              {insight.description}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+            <div>
+              <ProfessionalReport report={generatedReport} />
             </div>
           )}
 

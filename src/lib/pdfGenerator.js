@@ -475,12 +475,308 @@ export const getPDFBlob = (pdf) => {
   }
 };
 
+// ==================== PROFESSIONAL REPORT GENERATOR ====================
+
+/**
+ * Generate professional branded report PDF
+ * Premium quality with full NAVA OPS branding
+ */
+export const generateProfessionalPDF = (reportData, options = {}) => {
+  try {
+    const {
+      branding = {},
+      sections = {},
+      quality = 'premium'
+    } = options;
+
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margins = { top: 25, right: 15, bottom: 20, left: 15 };
+    const contentWidth = pageWidth - margins.left - margins.right;
+
+    let yPos = margins.top;
+
+    // ========== PROFESSIONAL HEADER WITH BRANDING ==========
+    const primaryColor = branding.colors?.primary || [0, 136, 255];
+    const hexToRgb = (hex) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : primaryColor;
+    };
+
+    const rgbColor = typeof primaryColor === 'string' ? hexToRgb(primaryColor) : primaryColor;
+
+    // Background banner
+    doc.setFillColor(...rgbColor);
+    doc.rect(0, 0, pageWidth, 50, 'F');
+
+    // Logo/Company Name
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text(branding.logo || 'NAVA OPS', margins.left, 20);
+
+    // Tagline
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(branding.tagline || 'Smart Decisions, Smarter Results', margins.left, 28);
+
+    // Premium badge
+    doc.setFillColor(255, 215, 0);
+    doc.rect(pageWidth - 50, 15, 35, 8, 'F');
+    doc.setTextColor(100, 80, 0);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PREMIUM REPORT', pageWidth - 48, 20);
+
+    // Report metadata
+    doc.setTextColor(200, 200, 200);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    const reportDate = new Date();
+    doc.text(`Generated: ${reportDate.toLocaleString()}`, pageWidth - margins.right - 50, 38);
+    doc.text(`Report ID: ${reportData.id}`, pageWidth - margins.right - 50, 44);
+
+    yPos = 60;
+    doc.setTextColor(0, 0, 0);
+
+    // ========== REPORT TITLE SECTION ==========
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    const titleLines = doc.splitTextToSize(reportData.title, contentWidth);
+    doc.text(titleLines, margins.left, yPos);
+    yPos += titleLines.length * 8 + 5;
+
+    // Report period and metadata
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Period: ${reportData.subtitle}`, margins.left, yPos);
+    yPos += 7;
+    doc.text(`Category: ${reportData.category} | Confidence: ${reportData.metadata.confidence}`, margins.left, yPos);
+    yPos += 12;
+
+    // ========== EXECUTIVE SUMMARY ==========
+    if (sections.executiveSummary !== false && reportData.executiveSummary) {
+      addProfessionalSection(doc, 'Executive Summary', rgbColor, margins, yPos, contentWidth);
+      yPos = doc.lastAutoTable ? doc.lastAutoTable.finalY + 5 : yPos + 20;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(40, 40, 40);
+      const summaryLines = doc.splitTextToSize(reportData.executiveSummary, contentWidth);
+      doc.text(summaryLines, margins.left, yPos);
+      yPos += summaryLines.length * 6 + 15;
+
+      checkProfessionalPageBreak(doc, yPos, 40, margins.top, pageHeight);
+    }
+
+    // ========== KEY METRICS ==========
+    if (sections.metrics !== false && reportData.metrics && Object.keys(reportData.metrics).length > 0) {
+      addProfessionalSection(doc, 'Key Performance Metrics', rgbColor, margins, yPos, contentWidth);
+      yPos += 15;
+
+      const metricsData = Object.entries(reportData.metrics).map(([key, value]) => [
+        key.replace(/_/g, ' ').toUpperCase(),
+        typeof value === 'number' ? value.toLocaleString() : value
+      ]);
+
+      doc.autoTable({
+        startY: yPos,
+        head: [['Metric', 'Value']],
+        body: metricsData,
+        margin: { left: margins.left, right: margins.right },
+        theme: 'grid',
+        headStyles: {
+          fillColor: rgbColor,
+          textColor: [255, 255, 255],
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        bodyStyles: {
+          fontSize: 9,
+          textColor: [40, 40, 40]
+        },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245]
+        },
+        columnStyles: {
+          1: { halign: 'right' }
+        }
+      });
+
+      yPos = doc.lastAutoTable.finalY + 15;
+      checkProfessionalPageBreak(doc, yPos, 40, margins.top, pageHeight);
+    }
+
+    // ========== AI INSIGHTS ==========
+    if (sections.insights !== false && reportData.insights && reportData.insights.length > 0) {
+      addProfessionalSection(doc, 'AI-Generated Insights', rgbColor, margins, yPos, contentWidth);
+      yPos += 15;
+
+      reportData.insights.forEach((insight, index) => {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(40, 40, 40);
+        doc.text(`${index + 1}. ${insight.title}`, margins.left, yPos);
+        yPos += 6;
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        const insightLines = doc.splitTextToSize(insight.description, contentWidth - 5);
+        doc.text(insightLines, margins.left + 5, yPos);
+        yPos += insightLines.length * 5 + 6;
+
+        if (yPos > pageHeight - 40) {
+          doc.addPage();
+          yPos = margins.top;
+        }
+      });
+
+      yPos += 10;
+      checkProfessionalPageBreak(doc, yPos, 40, margins.top, pageHeight);
+    }
+
+    // ========== ANOMALIES ==========
+    if (sections.anomalies !== false && reportData.anomalies && reportData.anomalies.length > 0) {
+      addProfessionalSection(doc, 'Detected Anomalies', rgbColor, margins, yPos, contentWidth);
+      yPos += 15;
+
+      reportData.anomalies.forEach((anomaly, index) => {
+        // Anomaly box
+        const boxColor = anomaly.severity === 'critical' || anomaly.severity === 'high' ? [239, 68, 68] : [245, 158, 11];
+        doc.setFillColor(...boxColor);
+        doc.rect(margins.left, yPos - 2, contentWidth, 1, 'F');
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...boxColor);
+        doc.text(`${index + 1}. ${anomaly.title}`, margins.left, yPos);
+        yPos += 6;
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(40, 40, 40);
+        const anomalyLines = doc.splitTextToSize(anomaly.description, contentWidth - 5);
+        doc.text(anomalyLines, margins.left + 5, yPos);
+        yPos += anomalyLines.length * 5 + 8;
+
+        if (yPos > pageHeight - 40) {
+          doc.addPage();
+          yPos = margins.top;
+        }
+      });
+
+      checkProfessionalPageBreak(doc, yPos, 40, margins.top, pageHeight);
+    }
+
+    // ========== RECOMMENDATIONS ==========
+    if (sections.recommendations !== false && reportData.recommendations && reportData.recommendations.length > 0) {
+      addProfessionalSection(doc, 'Actionable Recommendations', rgbColor, margins, yPos, contentWidth);
+      yPos += 15;
+
+      reportData.recommendations.forEach((rec, index) => {
+        // Checkmark icon
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(16, 185, 129);
+        doc.text('✓', margins.left, yPos);
+        doc.setTextColor(40, 40, 40);
+        doc.text(`${index + 1}. ${rec.title}`, margins.left + 8, yPos);
+        yPos += 6;
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        const recLines = doc.splitTextToSize(rec.description || rec.action, contentWidth - 5);
+        doc.text(recLines, margins.left + 8, yPos);
+        yPos += recLines.length * 5 + 8;
+
+        if (yPos > pageHeight - 40) {
+          doc.addPage();
+          yPos = margins.top;
+        }
+      });
+
+      checkProfessionalPageBreak(doc, yPos, 40, margins.top, pageHeight);
+    }
+
+    // ========== PROFESSIONAL FOOTER ==========
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+
+      // Footer divider
+      doc.setDrawColor(...rgbColor);
+      doc.line(margins.left, pageHeight - 18, pageWidth - margins.right, pageHeight - 18);
+
+      // Footer text
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text(
+        `${branding.logo || 'NAVA OPS'} - ${branding.tagline || 'Smart Decisions, Smarter Results'}`,
+        pageWidth / 2,
+        pageHeight - 12,
+        { align: 'center' }
+      );
+      doc.text(
+        `Page ${i} of ${pageCount} | ${reportDate.toLocaleDateString()} | Confidential`,
+        pageWidth / 2,
+        pageHeight - 8,
+        { align: 'center' }
+      );
+    }
+
+    logger.info('Professional report PDF generated', { title: reportData.title, pages: pageCount });
+
+    return {
+      success: true,
+      pdf: doc,
+      filename: `${reportData.title.replace(/\s+/g, '_')}_Professional_Report_${reportDate.toISOString().split('T')[0]}.pdf`
+    };
+  } catch (error) {
+    logger.error('Professional report generation failed', { error: error.message });
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Helper: Add professional section header
+ */
+const addProfessionalSection = (doc, title, color, margins, yPos, contentWidth) => {
+  doc.setFillColor(...color);
+  doc.rect(margins.left, yPos - 6, contentWidth, 8, 'F');
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text(title, margins.left + 5, yPos);
+  doc.setTextColor(0, 0, 0);
+};
+
+/**
+ * Helper: Check and handle page breaks
+ */
+const checkProfessionalPageBreak = (doc, yPos, spaceNeeded, topMargin, pageHeight) => {
+  if (yPos + spaceNeeded > pageHeight - 20) {
+    doc.addPage();
+    return topMargin;
+  }
+  return yPos;
+};
+
 // ==================== EXPORT ====================
 
 export default {
   generateZATCAInvoice,
   generateFinancialReport,
   generateAnalyticsReport,
+  generateProfessionalPDF,
   downloadPDF,
   getPDFBlob,
 };

@@ -6,7 +6,6 @@
 
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
-import { APIError } from './api';
 import {
   SUBSCRIPTION_PLANS,
   PLAN_IDS,
@@ -19,6 +18,19 @@ import {
   isWithinLimit,
   comparePlans
 } from '@/utils/subscriptionPlans';
+
+/**
+ * API Error class (local definition to avoid circular dependency)
+ */
+class APIError extends Error {
+  constructor(message, code, details = {}) {
+    super(message);
+    this.name = 'APIError';
+    this.code = code;
+    this.details = details;
+    this.timestamp = new Date().toISOString();
+  }
+}
 
 /**
  * Generic API request wrapper

@@ -1,0 +1,28 @@
+{
+  "repositories": [
+    {
+      "path": "/home/user/nava-ops",
+      "name": "nava-ops",
+      "default_remote": "origin",
+      "branches": [
+        {
+          "name": "claude/nava-ops-error-fixes-011CV3jfj8vfaz6BPZzj5VTf",
+          "remote": "origin",
+          "auto_fetch": false,
+          "merge_strategy": "merge"
+        }
+      ]
+    }
+  ],
+  "reporting": {
+    "output_format": "html",
+    "output_dir": "./test_reports",
+    "include_commits": true,
+    "include_diff_stats": true,
+    "max_commits": 20
+  },
+  "parallel_operations": false,
+  "max_workers": 2,
+  "retry_attempts": 1,
+  "retry_delay": 1.0
+}

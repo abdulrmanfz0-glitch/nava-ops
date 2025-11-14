@@ -68,6 +68,10 @@ class Report:
     errors: List[str]
     timestamp: datetime
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert report to dictionary, properly handling nested dataclasses"""
+        return asdict(self)
+
 
 class ReportGenerator:
     """
@@ -230,8 +234,23 @@ class ReportGenerator:
             "",
         ]
 
-        # Add branch reports
-        lines.append("## Branch Operations")
+        # Add branch operations summary table
+        lines.append("## Branch Operations Summary")
+        lines.append("")
+        lines.append("| Repository | Branch | Operations | Status | Success Rate |")
+        lines.append("|------------|--------|------------|--------|--------------|")
+
+        for br in report.branch_reports:
+            status_icon = "✅" if br.success else "❌"
+            op_count = len(br.operations)
+            success_count = sum(1 for op in br.operations if op.success)
+            success_rate = (success_count / op_count * 100) if op_count > 0 else 0
+            lines.append(f"| {br.repository} | `{br.branch_name}` | {op_count} | {status_icon} | {success_rate:.1f}% |")
+
+        lines.append("")
+
+        # Add detailed branch reports
+        lines.append("## Detailed Branch Operations")
         lines.append("")
 
         # Group by repository
@@ -249,14 +268,23 @@ class ReportGenerator:
                 lines.append("")
 
                 if br.operations:
-                    lines.append("**Operations:**")
-                    lines.append("")
+                    lines.append("| Operation | Status | Message | Timestamp |")
+                    lines.append("|-----------|--------|---------|-----------|")
                     for op in br.operations:
                         op_icon = "✅" if op.success else "❌"
-                        lines.append(f"- {op_icon} **{op.operation}**: {op.message}")
-                        if op.error:
-                            lines.append(f"  - Error: `{op.error}`")
+                        timestamp = op.timestamp.strftime('%H:%M:%S')
+                        message = op.message.replace('|', '\\|')[:50]  # Escape pipes and limit length
+                        lines.append(f"| {op.operation} | {op_icon} | {message} | {timestamp} |")
                     lines.append("")
+
+                    # Add errors if any
+                    errors = [op for op in br.operations if op.error]
+                    if errors:
+                        lines.append("**Errors:**")
+                        lines.append("")
+                        for op in errors:
+                            lines.append(f"- **{op.operation}**: `{op.error}`")
+                        lines.append("")
 
                 if self.config.include_diff_stats and br.status:
                     lines.append("**Status:**")
@@ -393,6 +421,33 @@ class ReportGenerator:
             background: #f8d7da;
             color: #721c24;
         }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }}
+        th {{
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }}
+        td {{
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }}
+        tr:hover {{
+            background: #f8f9fa;
+        }}
+        .table-container {{
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            margin: 20px 0;
+        }}
     </style>
 </head>
 <body>
@@ -417,6 +472,45 @@ class ReportGenerator:
         <div class="summary-card">
             <h3>Duration</h3>
             <div class="value" style="font-size: 24px;">{format_duration(report.summary.duration_seconds)}</div>
+        </div>
+    </div>
+
+    <div class="repo-section">
+        <h2>Branch Operations Summary</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Repository</th>
+                        <th>Branch</th>
+                        <th>Operations</th>
+                        <th>Status</th>
+                        <th>Success Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+"""
+
+        # Add summary table rows
+        for br in report.branch_reports:
+            status_badge = '<span class="badge success">Success</span>' if br.success else '<span class="badge failed">Failed</span>'
+            op_count = len(br.operations)
+            success_count = sum(1 for op in br.operations if op.success)
+            success_rate = (success_count / op_count * 100) if op_count > 0 else 0
+
+            html += f"""
+                    <tr>
+                        <td>{br.repository}</td>
+                        <td><code>{br.branch_name}</code></td>
+                        <td>{op_count}</td>
+                        <td>{status_badge}</td>
+                        <td>{success_rate:.1f}%</td>
+                    </tr>
+"""
+
+        html += """
+                </tbody>
+            </table>
         </div>
     </div>
 """

@@ -4,20 +4,27 @@ Notifications Module
 Multi-channel notification system for operation alerts.
 
 Features:
-- Multiple notification channels (console, file, webhook)
+- Multiple notification channels (console, file, webhook, Slack, email)
 - Configurable notification levels
 - Template-based messages
 - Batch notifications
 - Async delivery
+- Slack integration with rich formatting
+- Email integration with SMTP support
 """
 
 import logging
 import json
 from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 import os
+import urllib.request
+import urllib.error
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +44,31 @@ class NotificationChannel(Enum):
     FILE = "file"
     WEBHOOK = "webhook"
     EMAIL = "email"
+    SLACK = "slack"
+
+
+@dataclass
+class NotificationConfig:
+    """Configuration for notification manager"""
+    console_enabled: bool = True
+    file_enabled: bool = False
+    slack_enabled: bool = False
+    email_enabled: bool = False
+
+    # File configuration
+    file_path: str = "nava-ops-notifications.log"
+
+    # Slack configuration
+    slack_webhook_url: Optional[str] = None
+
+    # Email configuration
+    email_smtp_host: Optional[str] = None
+    email_smtp_port: int = 587
+    email_from: Optional[str] = None
+    email_to: List[str] = field(default_factory=list)
+    email_username: Optional[str] = None
+    email_password: Optional[str] = None
+    email_use_tls: bool = True
 
 
 @dataclass
@@ -57,26 +89,34 @@ class NotificationManager:
     Manages notifications across multiple channels
     """
 
-    def __init__(self, channels: Optional[List[NotificationChannel]] = None):
+    def __init__(self, config: Optional[NotificationConfig] = None):
         """
         Initialize notification manager
 
         Args:
-            channels: List of enabled channels (default: console only)
+            config: Notification configuration (default: console only)
         """
-        self.channels = channels or [NotificationChannel.CONSOLE]
+        self.config = config or NotificationConfig()
         self.notifications: List[Notification] = []
+
+        # Determine enabled channels
+        self.channels = []
+        if self.config.console_enabled:
+            self.channels.append(NotificationChannel.CONSOLE)
+        if self.config.file_enabled:
+            self.channels.append(NotificationChannel.FILE)
+        if self.config.slack_enabled:
+            self.channels.append(NotificationChannel.SLACK)
+        if self.config.email_enabled:
+            self.channels.append(NotificationChannel.EMAIL)
+
         self.handlers = {
             NotificationChannel.CONSOLE: self._handle_console,
             NotificationChannel.FILE: self._handle_file,
             NotificationChannel.WEBHOOK: self._handle_webhook,
             NotificationChannel.EMAIL: self._handle_email,
+            NotificationChannel.SLACK: self._handle_slack,
         }
-
-        # Configuration
-        self.file_path = "nava-ops-notifications.log"
-        self.webhook_url = None
-        self.email_config = {}
 
     def send(
         self,
@@ -182,77 +222,253 @@ class NotificationManager:
             }
 
             # Append to log file
-            with open(self.file_path, 'a') as f:
+            with open(self.config.file_path, 'a') as f:
                 f.write(json.dumps(log_entry) + '\n')
 
         except Exception as e:
             logger.error(f"Failed to write notification to file: {e}")
 
     def _handle_webhook(self, notification: Notification):
-        """Handle webhook notifications"""
-        if not self.webhook_url:
-            logger.debug("Webhook URL not configured, skipping webhook notification")
+        """Handle generic webhook notifications"""
+        # Kept for backward compatibility
+        logger.debug("Generic webhook handler - use Slack handler for Slack webhooks")
+
+    def _handle_slack(self, notification: Notification):
+        """Handle Slack notifications with rich formatting"""
+        if not self.config.slack_webhook_url:
+            logger.debug("Slack webhook URL not configured, skipping Slack notification")
             return
 
         try:
-            # Prepare payload
-            payload = {
-                "level": notification.level.value,
-                "title": notification.title,
-                "message": notification.message,
-                "timestamp": notification.timestamp.isoformat(),
-                "repository": notification.repository,
-                "branch": notification.branch,
-                "operation": notification.operation,
-                "metadata": notification.metadata
+            # Emoji mapping for levels
+            emoji_map = {
+                NotificationLevel.INFO: ":information_source:",
+                NotificationLevel.WARNING: ":warning:",
+                NotificationLevel.ERROR: ":x:",
+                NotificationLevel.SUCCESS: ":white_check_mark:",
             }
 
-            # Would send HTTP POST request here
-            # Example: requests.post(self.webhook_url, json=payload)
-            logger.info(f"Webhook notification sent to {self.webhook_url}")
+            # Color mapping for Slack attachments
+            color_map = {
+                NotificationLevel.INFO: "#36a64f",      # Green
+                NotificationLevel.WARNING: "#ff9900",   # Orange
+                NotificationLevel.ERROR: "#ff0000",     # Red
+                NotificationLevel.SUCCESS: "#00ff00",   # Bright green
+            }
 
+            # Build fields for attachment
+            fields = []
+            if notification.repository:
+                fields.append({
+                    "title": "Repository",
+                    "value": notification.repository,
+                    "short": True
+                })
+            if notification.branch:
+                fields.append({
+                    "title": "Branch",
+                    "value": notification.branch,
+                    "short": True
+                })
+            if notification.operation:
+                fields.append({
+                    "title": "Operation",
+                    "value": notification.operation,
+                    "short": True
+                })
+
+            # Prepare Slack payload
+            payload = {
+                "text": f"{emoji_map.get(notification.level, ':bell:')} *{notification.title}*",
+                "attachments": [
+                    {
+                        "color": color_map.get(notification.level, "#808080"),
+                        "text": notification.message,
+                        "fields": fields,
+                        "footer": "Nava Ops",
+                        "ts": int(notification.timestamp.timestamp())
+                    }
+                ]
+            }
+
+            # Send to Slack
+            data = json.dumps(payload).encode('utf-8')
+            req = urllib.request.Request(
+                self.config.slack_webhook_url,
+                data=data,
+                headers={'Content-Type': 'application/json'}
+            )
+
+            with urllib.request.urlopen(req, timeout=10) as response:
+                if response.status == 200:
+                    logger.info("Slack notification sent successfully")
+                else:
+                    logger.warning(f"Slack notification returned status {response.status}")
+
+        except urllib.error.URLError as e:
+            logger.error(f"Failed to send Slack notification (network error): {e}")
         except Exception as e:
-            logger.error(f"Failed to send webhook notification: {e}")
+            logger.error(f"Failed to send Slack notification: {e}")
 
     def _handle_email(self, notification: Notification):
-        """Handle email notifications"""
-        if not self.email_config:
-            logger.debug("Email not configured, skipping email notification")
+        """Handle email notifications via SMTP"""
+        if not self.config.email_smtp_host or not self.config.email_from or not self.config.email_to:
+            logger.debug("Email not fully configured, skipping email notification")
             return
 
         try:
-            # Would send email here
-            # Example: send via SMTP
-            logger.info("Email notification sent")
+            # Create message
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = f"[Nava Ops] {notification.title}"
+            msg['From'] = self.config.email_from
+            msg['To'] = ', '.join(self.config.email_to)
 
+            # Create both plain text and HTML versions
+            text_content = f"""
+{notification.title}
+
+{notification.message}
+
+Level: {notification.level.value.upper()}
+Timestamp: {notification.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+"""
+
+            if notification.repository:
+                text_content += f"Repository: {notification.repository}\n"
+            if notification.branch:
+                text_content += f"Branch: {notification.branch}\n"
+            if notification.operation:
+                text_content += f"Operation: {notification.operation}\n"
+
+            text_content += "\n---\nSent by Nava Ops Notification System"
+
+            # HTML version
+            level_colors = {
+                NotificationLevel.INFO: "#17a2b8",
+                NotificationLevel.WARNING: "#ffc107",
+                NotificationLevel.ERROR: "#dc3545",
+                NotificationLevel.SUCCESS: "#28a745",
+            }
+
+            html_content = f"""
+            <html>
+              <head></head>
+              <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                  <div style="background: {level_colors.get(notification.level, '#6c757d')}; color: white; padding: 15px; border-radius: 5px 5px 0 0;">
+                    <h2 style="margin: 0;">{notification.title}</h2>
+                  </div>
+                  <div style="background: #f8f9fa; padding: 20px; border: 1px solid #dee2e6; border-top: none;">
+                    <p style="font-size: 16px;">{notification.message}</p>
+                    <hr style="border: none; border-top: 1px solid #dee2e6; margin: 20px 0;">
+                    <table style="width: 100%; font-size: 14px;">
+                      <tr>
+                        <td style="padding: 5px; font-weight: bold;">Level:</td>
+                        <td style="padding: 5px;">{notification.level.value.upper()}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px; font-weight: bold;">Timestamp:</td>
+                        <td style="padding: 5px;">{notification.timestamp.strftime('%Y-%m-%d %H:%M:%S')}</td>
+                      </tr>
+"""
+
+            if notification.repository:
+                html_content += f"""
+                      <tr>
+                        <td style="padding: 5px; font-weight: bold;">Repository:</td>
+                        <td style="padding: 5px;">{notification.repository}</td>
+                      </tr>
+"""
+
+            if notification.branch:
+                html_content += f"""
+                      <tr>
+                        <td style="padding: 5px; font-weight: bold;">Branch:</td>
+                        <td style="padding: 5px;">{notification.branch}</td>
+                      </tr>
+"""
+
+            if notification.operation:
+                html_content += f"""
+                      <tr>
+                        <td style="padding: 5px; font-weight: bold;">Operation:</td>
+                        <td style="padding: 5px;">{notification.operation}</td>
+                      </tr>
+"""
+
+            html_content += """
+                    </table>
+                  </div>
+                  <div style="background: #e9ecef; padding: 10px; text-align: center; font-size: 12px; color: #6c757d; border-radius: 0 0 5px 5px;">
+                    Sent by Nava Ops Notification System
+                  </div>
+                </div>
+              </body>
+            </html>
+            """
+
+            # Attach parts
+            part1 = MIMEText(text_content, 'plain')
+            part2 = MIMEText(html_content, 'html')
+            msg.attach(part1)
+            msg.attach(part2)
+
+            # Send email
+            with smtplib.SMTP(self.config.email_smtp_host, self.config.email_smtp_port) as server:
+                if self.config.email_use_tls:
+                    server.starttls()
+
+                if self.config.email_username and self.config.email_password:
+                    server.login(self.config.email_username, self.config.email_password)
+
+                server.send_message(msg)
+                logger.info(f"Email notification sent to {', '.join(self.config.email_to)}")
+
+        except smtplib.SMTPException as e:
+            logger.error(f"Failed to send email notification (SMTP error): {e}")
         except Exception as e:
             logger.error(f"Failed to send email notification: {e}")
 
+    def notify(self, title: str, message: str, level: NotificationLevel = NotificationLevel.INFO, **kwargs):
+        """
+        Send a simple notification (convenience method)
+
+        Args:
+            title: Notification title
+            message: Notification message
+            level: Notification level (default: INFO)
+            **kwargs: Additional arguments for send()
+        """
+        self.send(level, title, message, **kwargs)
+
     def configure_file(self, file_path: str):
         """Configure file notification channel"""
-        self.file_path = file_path
+        self.config.file_path = file_path
+        self.config.file_enabled = True
         if NotificationChannel.FILE not in self.channels:
             self.channels.append(NotificationChannel.FILE)
 
-    def configure_webhook(self, webhook_url: str):
-        """Configure webhook notification channel"""
-        self.webhook_url = webhook_url
-        if NotificationChannel.WEBHOOK not in self.channels:
-            self.channels.append(NotificationChannel.WEBHOOK)
+    def configure_slack(self, webhook_url: str):
+        """Configure Slack notification channel"""
+        self.config.slack_webhook_url = webhook_url
+        self.config.slack_enabled = True
+        if NotificationChannel.SLACK not in self.channels:
+            self.channels.append(NotificationChannel.SLACK)
 
-    def configure_email(self, smtp_server: str, smtp_port: int,
+    def configure_email(self, smtp_host: str, smtp_port: int,
                        from_addr: str, to_addrs: List[str],
                        username: Optional[str] = None,
-                       password: Optional[str] = None):
+                       password: Optional[str] = None,
+                       use_tls: bool = True):
         """Configure email notification channel"""
-        self.email_config = {
-            "smtp_server": smtp_server,
-            "smtp_port": smtp_port,
-            "from_addr": from_addr,
-            "to_addrs": to_addrs,
-            "username": username,
-            "password": password
-        }
+        self.config.email_smtp_host = smtp_host
+        self.config.email_smtp_port = smtp_port
+        self.config.email_from = from_addr
+        self.config.email_to = to_addrs
+        self.config.email_username = username
+        self.config.email_password = password
+        self.config.email_use_tls = use_tls
+        self.config.email_enabled = True
         if NotificationChannel.EMAIL not in self.channels:
             self.channels.append(NotificationChannel.EMAIL)
 

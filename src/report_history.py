@@ -18,6 +18,14 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 
 
+class DateTimeEncoder(json.JSONEncoder):
+    """Custom JSON encoder that handles datetime objects"""
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+
 @dataclass
 class HistoricalTrend:
     """Represents a trend over time"""
@@ -83,7 +91,7 @@ class ReportHistoryManager:
         """Save report history to file"""
         try:
             with open(self.history_file, 'w') as f:
-                json.dump(self.history, f, indent=2)
+                json.dump(self.history, f, indent=2, cls=DateTimeEncoder)
         except Exception as e:
             print(f"Error saving history: {e}")
 
@@ -451,6 +459,6 @@ class ReportHistoryManager:
                 'export_timestamp': datetime.now().isoformat(),
                 'report_count': len(self.history),
                 'reports': self.history
-            }, f, indent=2)
+            }, f, indent=2, cls=DateTimeEncoder)
 
         return filename

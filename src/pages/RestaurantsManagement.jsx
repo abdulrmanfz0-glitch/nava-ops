@@ -1,5 +1,6 @@
 // src/pages/RestaurantsManagement.jsx
 import React from 'react';
+ reporting-revolution
 import { Building2, Plus, Search } from 'lucide-react';
 
 const RestaurantsManagement = () => {
@@ -53,3 +54,20 @@ const RestaurantsManagement = () => {
 };
 
 export default RestaurantsManagement;
+
+
+export default function RestaurantsManagement() {
+  return (
+    <div>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+        Restaurants Management
+      </h1>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <p className="text-gray-600 dark:text-gray-400">
+          Restaurant management features will be implemented here.
+        </p>
+      </div>
+    </div>
+  );
+}
+ 

@@ -4,14 +4,16 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// التحقق من وجود متغيرات البيئة
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('[SUPABASE] ❌ Missing Supabase environment variables!')
-  console.error('[SUPABASE] Please check your .env file and ensure:')
-  console.error('[SUPABASE] - VITE_SUPABASE_URL is set')
-  console.error('[SUPABASE] - VITE_SUPABASE_ANON_KEY is set')
-  
-  throw new Error('Supabase environment variables are missing. Please check your configuration.')
+// التحقق من وجود متغيرات البيئة مع معالجة أكثر مرونة
+const hasValidCredentials = !!(supabaseUrl && supabaseAnonKey)
+
+if (!hasValidCredentials && import.meta.env.DEV) {
+  // Show a single consolidated warning in development mode only
+  console.log(
+    '%c[SUPABASE]%c Supabase not configured - running in DEV_BYPASS_AUTH mode',
+    'color: #f59e0b; font-weight: bold',
+    'color: inherit'
+  )
 }
 
 // إعدادات متقدمة لـ Supabase
@@ -40,8 +42,13 @@ const supabaseOptions = {
   },
 }
 
-// إنشاء العميل
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, supabaseOptions)
+// إنشاء العميل - مع معالجة الحالات الخاصة
+export const supabase = hasValidCredentials
+  ? createClient(supabaseUrl, supabaseAnonKey, supabaseOptions)
+  : createClient('https://placeholder.supabase.co', 'placeholder-key', supabaseOptions)
+
+// تصدير حالة الاتصال
+export const isSupabaseConfigured = hasValidCredentials
 
 // 🔧 نظام متقدم للتعامل مع الأخطاء
 export class SupabaseError extends Error {
@@ -71,15 +78,26 @@ const ERROR_CODES = {
 
 // 🛠️ دوال مساعدة متقدمة
 export const checkSupabaseConnection = async () => {
+  // إذا لم تكن بيانات الاعتماد موجودة، إرجاع حالة غير متصل مباشرة
+  if (!hasValidCredentials) {
+    return {
+      connected: false,
+      error: 'Supabase credentials not configured',
+      responseTime: null,
+      timestamp: new Date().toISOString(),
+      requiresConfiguration: true
+    }
+  }
+
   try {
     const startTime = Date.now()
     const { data, error, count } = await supabase
       .from('user_profiles')
       .select('*', { count: 'exact', head: true })
       .limit(1)
-    
+
     const responseTime = Date.now() - startTime
-    
+
     if (error) {
       throw new SupabaseError(
         `فشل الاتصال بقاعدة البيانات: ${error.message}`,
@@ -87,21 +105,23 @@ export const checkSupabaseConnection = async () => {
         { responseTime }
       )
     }
-    
-    return { 
-      connected: true, 
+
+    return {
+      connected: true,
       error: null,
       responseTime,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      requiresConfiguration: false
     }
   } catch (error) {
     console.error('🔴 Supabase connection error:', error)
-    
-    return { 
-      connected: false, 
+
+    return {
+      connected: false,
       error: error.message,
       responseTime: null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      requiresConfiguration: false
     }
   }
 }

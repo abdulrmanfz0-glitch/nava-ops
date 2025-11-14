@@ -18,7 +18,7 @@ logger.info('Application started', {
 // Lazy load page components for performance
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const DashboardV2 = lazy(() => import('./pages/DashboardV2'));
+const DashboardV2 = lazy(() => import('./pages/DashboardV2Enhanced'));
 const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew'));
 const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useMenu } from '../contexts/MenuContext';
 import AIAssistant, { AIAssistantButton } from '../components/AIAssistant/AIAssistant';
+import MenuManagerPanel, { MenuManagerButton } from '../components/MenuManager/MenuManagerPanel';
 import {
   TrendingUp, TrendingDown, Activity, BarChart3,
   Award, Zap, Brain, Target, AlertTriangle,
@@ -15,6 +16,7 @@ export default function Dashboard() {
   const { menuItems, getStatistics } = useMenu();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [isMenuManagerOpen, setIsMenuManagerOpen] = useState(false);
   const [animatedValues, setAnimatedValues] = useState({
     totalSold: 0,
     totalRevenue: 0,
@@ -435,6 +437,15 @@ export default function Dashboard() {
       <AIAssistant
         isOpen={isAIAssistantOpen}
         onClose={() => setIsAIAssistantOpen(false)}
+      />
+
+      {/* Menu Manager */}
+      {!isMenuManagerOpen && (
+        <MenuManagerButton onClick={() => setIsMenuManagerOpen(true)} />
+      )}
+      <MenuManagerPanel
+        isOpen={isMenuManagerOpen}
+        onClose={() => setIsMenuManagerOpen(false)}
       />
     </div>
   );

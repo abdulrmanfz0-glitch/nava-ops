@@ -29,6 +29,7 @@ const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence'));
+const FinancialPerformanceReport = lazy(() => import('./pages/FinancialPerformanceReport'));
 const MenuIntelligence = lazy(() => import('./pages/MenuIntelligence'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
@@ -288,6 +289,17 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <FinancialIntelligence />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Financial Performance Report - Unified Dashboard */}
+                      <Route path="/financial-performance" element={
+                        <RequireAuth requiredPermissions={['financial:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <FinancialPerformanceReport />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

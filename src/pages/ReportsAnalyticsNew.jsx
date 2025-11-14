@@ -1,13 +1,13 @@
 // NAVA OPS - Enterprise Reports & Analytics Hub
 // Comprehensive reporting platform with AI insights and advanced analytics
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
 import PageHeader from '@/components/UI/PageHeader';
 import {
   BarChart3, Download, Calendar, TrendingUp, FileText, DollarSign,
   Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare,
-  Clock, Settings, Play, Eye, ChevronRight, Sparkles
+  Clock, Settings, Play, Eye, ChevronRight, Sparkles, Printer, Share2
 } from 'lucide-react';
 import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
@@ -19,6 +19,7 @@ import ChannelPerformanceReport from '@/components/Reports/ChannelPerformanceRep
 
 export default function ReportsAnalyticsNew() {
   const { addNotification } = useNotification();
+  const reportRef = useRef(null);
   const [activeTab, setActiveTab] = useState('builder');
   const [selectedReportType, setSelectedReportType] = useState(null);
   const [filters, setFilters] = useState({
@@ -29,6 +30,11 @@ export default function ReportsAnalyticsNew() {
   const [generatedReport, setGeneratedReport] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [recentReports, setRecentReports] = useState([]);
+  const [restaurantInfo] = useState({
+    name: 'Restaurant Name',
+    logo: null,
+    branch: 'Main Branch'
+  });
 
   useEffect(() => {
     // Load recent reports from localStorage
@@ -99,7 +105,7 @@ export default function ReportsAnalyticsNew() {
       });
 
       const filename = `${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${format}`;
-      await exportReport(generatedReport, format, filename);
+      await exportReport(generatedReport, format, filename, restaurantInfo);
 
       addNotification({
         title: 'Success',
@@ -116,21 +122,131 @@ export default function ReportsAnalyticsNew() {
     }
   };
 
+  const handlePrintReport = () => {
+    if (!reportRef.current) return;
+
+    try {
+      const printWindow = window.open('', '', 'height=800,width=1000');
+      const reportContent = reportRef.current.innerHTML;
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>${generatedReport.title}</title>
+            <style>
+              @media print {
+                body { margin: 0; padding: 20px; }
+                .no-print { display: none !important; }
+              }
+              * {
+                box-sizing: border-box;
+              }
+              body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+              }
+              .report-header {
+                border-bottom: 3px solid #0088ff;
+                padding-bottom: 20px;
+                margin-bottom: 30px;
+              }
+              .report-title {
+                font-size: 28px;
+                font-weight: bold;
+                margin: 0 0 10px 0;
+              }
+              .report-meta {
+                font-size: 12px;
+                color: #666;
+                margin: 10px 0;
+              }
+              .report-branding {
+                font-size: 10px;
+                text-align: right;
+                color: #999;
+                margin-top: 10px;
+              }
+              .section {
+                margin: 30px 0;
+                page-break-inside: avoid;
+              }
+              .section-title {
+                font-size: 18px;
+                font-weight: 600;
+                color: #0088ff;
+                margin: 20px 0 15px 0;
+                border-left: 4px solid #0088ff;
+                padding-left: 10px;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+              }
+              th, td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+              }
+              th {
+                background-color: #f5f5f5;
+                font-weight: 600;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="report-header">
+              <div class="report-branding">Restalyze • Professional Report Hub</div>
+              <h1 class="report-title">${generatedReport.title}</h1>
+              <div class="report-meta">${restaurantInfo.name} | ${restaurantInfo.branch}</div>
+              <div class="report-meta">Generated: ${new Date(generatedReport.generatedAt).toLocaleString()}</div>
+              <div class="report-meta">Report ID: ${generatedReport.id}</div>
+            </div>
+            ${reportContent}
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #999; text-align: center;">
+              <p>This report was generated by Restalyze • Premium Restaurant Analytics Platform</p>
+            </div>
+          </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
+
+      addNotification({
+        title: 'Success',
+        message: 'Print dialog opened',
+        type: 'success'
+      });
+    } catch (error) {
+      console.error('Print failed:', error);
+      addNotification({
+        title: 'Error',
+        message: 'Failed to open print dialog',
+        type: 'error'
+      });
+    }
+  };
+
   const handleViewReport = (report) => {
     setGeneratedReport(report);
     setActiveTab('view');
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 space-y-6 pb-12">
       <PageHeader
-        title="Enterprise Reports & Analytics"
-        subtitle="AI-powered reporting with advanced insights and analytics"
+        title="Restalyze Report Hub"
+        subtitle="Professional reporting with AI insights, advanced analytics, and client-ready exports"
         icon={BarChart3}
         badge={{
-          text: 'AI-Powered',
+          text: 'Premium Reports',
           icon: Sparkles,
-          color: 'purple'
+          color: 'blue'
         }}
       />
 
@@ -272,99 +388,150 @@ export default function ReportsAnalyticsNew() {
           {/* View Report Tab */}
           {activeTab === 'view' && generatedReport && (
             <div className="space-y-6">
-              {/* Report Header */}
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {generatedReport.title}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400">{generatedReport.subtitle}</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    <span>Generated: {new Date(generatedReport.generatedAt).toLocaleString()}</span>
-                    <span>•</span>
-                    <span>Report ID: {generatedReport.id}</span>
-                    <span>•</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 rounded">
-                      {generatedReport.metadata.confidence} confidence
-                    </span>
+              {/* Report Header with Branding */}
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">R</span>
+                      </div>
+                      <div>
+                        <h3 className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                          Restalyze Professional Report
+                        </h3>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">{restaurantInfo.name} • {restaurantInfo.branch}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Export Buttons */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleExport('pdf')}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    PDF
-                  </button>
-                  <button
-                    onClick={() => handleExport('excel')}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Excel
-                  </button>
-                  <button
-                    onClick={() => handleExport('csv')}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
-                             transition-colors duration-200 flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    CSV
-                  </button>
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    {generatedReport.title}
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400 mb-3">{generatedReport.subtitle}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
+                      <span className="text-gray-600 dark:text-gray-400">Generated</span>
+                      <p className="font-semibold text-gray-900 dark:text-white text-xs">{new Date(generatedReport.generatedAt).toLocaleString()}</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
+                      <span className="text-gray-600 dark:text-gray-400">Report ID</span>
+                      <p className="font-semibold text-gray-900 dark:text-white text-xs">{generatedReport.id.substring(0, 8)}</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
+                      <span className="text-gray-600 dark:text-gray-400">Confidence</span>
+                      <p className="font-semibold text-green-600 dark:text-green-400 text-xs">{generatedReport.metadata.confidence}</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
+                      <span className="text-gray-600 dark:text-gray-400">Status</span>
+                      <p className="font-semibold text-blue-600 dark:text-blue-400 text-xs">Ready</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Report Content */}
-              {generatedReport.type === 'financial_overview' && (
-                <FinancialOverview reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'menu_engineering' && (
-                <MenuEngineering reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'channel_performance' && (
-                <ChannelPerformanceReport reportData={generatedReport} />
-              )}
-
-              {/* Default Report View for other types */}
-              {!['financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
-                <div className="space-y-6">
-                  {generatedReport.executiveSummary && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                        Executive Summary
-                      </h3>
-                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {generatedReport.executiveSummary}
-                      </p>
-                    </div>
-                  )}
-
-                  {generatedReport.insights && generatedReport.insights.length > 0 && (
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        AI-Generated Insights
-                      </h3>
-                      <div className="space-y-3">
-                        {generatedReport.insights.map((insight, index) => (
-                          <div key={index} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                              {insight.title}
-                            </h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                              {insight.description}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mr-4">
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Export & Share:</span>
                 </div>
-              )}
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg
+                           transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
+                  title="Download as PDF"
+                >
+                  <Download className="w-4 h-4" />
+                  PDF
+                </button>
+                <button
+                  onClick={() => handleExport('excel')}
+                  className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg
+                           transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
+                  title="Download as Excel"
+                >
+                  <Download className="w-4 h-4" />
+                  Excel
+                </button>
+                <button
+                  onClick={() => handleExport('csv')}
+                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
+                           transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
+                  title="Download as CSV"
+                >
+                  <Download className="w-4 h-4" />
+                  CSV
+                </button>
+                <div className="h-6 border-l border-gray-300 dark:border-gray-600 mx-2"></div>
+                <button
+                  onClick={handlePrintReport}
+                  className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg
+                           transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
+                  title="Print Report"
+                >
+                  <Printer className="w-4 h-4" />
+                  Print
+                </button>
+                <button
+                  className="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600
+                           text-gray-900 dark:text-white rounded-lg transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
+                  title="Share Report (Coming Soon)"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share
+                </button>
+              </div>
+
+              {/* Report Content */}
+              <div ref={reportRef} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+                {generatedReport.type === 'financial_overview' && (
+                  <FinancialOverview reportData={generatedReport} />
+                )}
+                {generatedReport.type === 'menu_engineering' && (
+                  <MenuEngineering reportData={generatedReport} />
+                )}
+                {generatedReport.type === 'channel_performance' && (
+                  <ChannelPerformanceReport reportData={generatedReport} />
+                )}
+
+                {/* Default Report View for other types */}
+                {!['financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
+                  <div className="space-y-6">
+                    {generatedReport.executiveSummary && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                          Executive Summary
+                        </h3>
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {generatedReport.executiveSummary}
+                        </p>
+                      </div>
+                    )}
+
+                    {generatedReport.insights && generatedReport.insights.length > 0 && (
+                      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                          AI-Generated Insights
+                        </h3>
+                        <div className="space-y-3">
+                          {generatedReport.insights.map((insight, index) => (
+                            <div key={index} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                                {insight.title}
+                              </h4>
+                              <p className="text-sm text-gray-700 dark:text-gray-300">
+                                {insight.description}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

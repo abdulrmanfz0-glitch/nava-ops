@@ -1,0 +1,203 @@
+=== DASHBOARD V2 ARCHITECTURE ===
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                         DashboardV2.jsx                             │
+│                       (Main Entry Point)                            │
+└────────────────────────────┬────────────────────────────────────────┘
+                             │
+                ┌────────────▼─────────────┐
+                │  DashboardProvider       │
+                │  (DashboardContext)      │
+                └────────────┬─────────────┘
+                             │
+      ┌──────────────────────┼──────────────────────┐
+      │                      │                      │
+      ▼                      ▼                      ▼
+┌──────────────┐  ┌────────────────────┐  ┌─────────────────┐
+│ Page Header  │  │ Customization      │  │ DashboardGrid   │
+│              │  │ Panel              │  │ (CSS Grid)      │
+│ - Title      │  │ (Conditional)      │  │                 │
+│ - Date Range │  │ - Reset Button     │  │ 4-col (lg)      │
+│ - Customize  │  │ - Add Widget       │  │ 2-col (md)      │
+└──────────────┘  └────────────────────┘  │ 1-col (sm)      │
+                                           │                 │
+                                           │ ┌─────────────┐ │
+                                           │ │ GridItem    │ │
+                                           │ │ ┌─────────┐ │ │
+                                           │ │ │ Widget  │ │ │
+                                           │ │ └─────────┘ │ │
+                                           │ └─────────────┘ │
+                                           │ ┌─────────────┐ │
+                                           │ │ GridItem    │ │
+                                           │ │ ┌─────────┐ │ │
+                                           │ │ │ Widget  │ │ │
+                                           │ │ └─────────┘ │ │
+                                           │ └─────────────┘ │
+                                           └─────────────────┘
+
+=== WIDGET SYSTEM ===
+
+All Widgets Follow This Pattern:
+
+┌─────────────────────────────────────────┐
+│  Widget (MetricWidget, ChartWidget, etc)│
+├─────────────────────────────────────────┤
+│  ┌───────────────────────────────────┐  │
+│  │ useDashboard Hook                 │  │
+│  │ - dateRange                       │  │
+│  │ - selectedBranch                  │  │
+│  └───────────────────────────────────┘  │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │ Data Fetching (useEffect)         │  │
+│  │ - api.analytics.getDashboardOv... │  │
+│  │ - api.analytics.getRevenueTrends()│  │
+│  │ - api.insights.getAll()           │  │
+│  │ Dependencies: [metric, dateRange] │  │
+│  └───────────────────────────────────┘  │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │ BaseWidget (Wrapper)              │  │
+│  │ ┌─────────────────────────────────┤  │
+│  │ │ Header:                         │  │
+│  │ │ - Drag handle                   │  │
+│  │ │ - Icon                          │  │
+│  │ │ - Title/Subtitle                │  │
+│  │ │ - Action buttons (refresh, etc) │  │
+│  │ ├─────────────────────────────────┤  │
+│  │ │ Body:                           │  │
+│  │ │ - Loading/Error state           │  │
+│  │ │ - Content (StatCard, Chart, etc)│  │
+│  │ └─────────────────────────────────┤  │
+│  └───────────────────────────────────┘  │
+└─────────────────────────────────────────┘
+
+=== STATE MANAGEMENT ===
+
+DashboardContext:
+├── State
+│   ├── layout: Array<GridItem>
+│   │   └── { i, x, y, w, h, minW, minH }
+│   ├── widgets: Object<widgetId, WidgetConfig>
+│   │   └── { id, type, config: {...} }
+│   ├── isCustomizing: boolean
+│   ├── dateRange: { startDate, endDate }
+│   └── selectedBranch: string|null
+│
+├── Actions
+│   ├── updateLayout(newLayout)
+│   ├── addWidget(widgetType)
+│   ├── removeWidget(widgetId)
+│   ├── updateWidgetConfig(widgetId, config)
+│   ├── resetToDefault()
+│   ├── toggleCustomization()
+│   ├── saveDashboard()
+│   ├── setDateRange(range)
+│   └── setSelectedBranch(branchId)
+│
+├── Persistence
+│   ├── Load: localStorage on mount
+│   ├── Save: Debounced (1s) on state change
+│   └── Keys: nava_dashboard_layout, nava_dashboard_widgets
+│
+└── Widget Access
+    └── useDashboard() hook used in all widgets
+
+=== DATA FLOW ===
+
+User Interaction
+    │
+    ├─► Change Date Range ─► setDateRange() ─► Widgets re-fetch with new dates
+    │
+    ├─► Change Branch ─────► setSelectedBranch() ─► Widgets re-fetch for branch
+    │
+    ├─► Click Refresh ─────► Widget fetchData() ─► API call ─► Update state
+    │
+    └─► Toggle Customize ──► toggleCustomization() ─► Show/hide custom panel
+                            removeWidget()
+                            addWidget()
+                            resetToDefault()
+
+=== API ARCHITECTURE ===
+
+api.js (Centralized Service)
+├── apiRequest(fn, errorMessage, mockData)
+│   ├── DEV + no Supabase ──► return mockData
+│   ├── Supabase error ─────► throw APIError
+│   └── Success ────────────► return data
+│
+├── analyticsAPI (for Dashboard)
+│   ├── getDashboardOverview(branchId?, days=30)
+│   ├── getRevenueTrends(branchId?, days=30)
+│   ├── getBranchComparison(days=30)
+│   └── getTopPerformers(branchId?, days=30, limit=10)
+│
+├── insightsAPI
+│   ├── getAll(filters)
+│   └── updateStatus(id, status)
+│
+└── Other APIs
+    ├── branchesAPI, ordersAPI, metricsAPI
+    ├── reportsAPI, notificationsAPI, teamAPI
+    └── activitiesAPI, subscriptionsAPI
+
+=== WIDGET REGISTRY ===
+
+widgetRegistry.js
+├── WIDGET_CATEGORIES
+│   ├── METRICS
+│   ├── CHARTS
+│   ├── FEEDS
+│   ├── ANALYTICS
+│   └── OPERATIONS
+│
+├── WIDGET_SIZES
+│   ├── SMALL: 1x1
+│   ├── MEDIUM: 2x1
+│   ├── LARGE: 2x2
+│   ├── WIDE: 4x1 (full-width)
+│   └── TALL: 1x2
+│
+├── WIDGET_TYPES (15 widgets)
+│   ├── REVENUE_METRIC ──► MetricWidget
+│   ├── ORDERS_METRIC ──► MetricWidget
+│   ├── REVENUE_TREND ──► ChartWidget
+│   ├── ACTIVITY_FEED ──► ActivityFeedWidget
+│   ├── INSIGHTS_FEED ──► InsightsFeedWidget
+│   └── ... (12 more)
+│
+└── DEFAULT_LAYOUTS
+    ├── owner: 8 widgets
+    ├── manager: 7 widgets
+    └── analyst: 7 widgets
+
+=== STYLING SYSTEM ===
+
+Tailwind CSS + Framer Motion
+
+Color Palette:
+├── Primary: rgb(0 136 255) - NAVA Blue
+├── Secondary: rgb(139 92 246) - Purple
+├── Success: rgb(16 185 129) - Green
+├── Warning: rgb(245 158 11) - Orange
+├── Error: rgb(239 68 68) - Red
+└── Dark mode: gray-900, gray-800, etc
+
+Typography:
+├── Font: Inter
+├── Base: text-base
+└── Headings: text-3xl font-bold
+
+Spacing:
+├── Padding: p-4, p-6
+├── Rounded: rounded-2xl, rounded-xl, rounded-lg
+├── Shadows: shadow-sm, shadow-md, shadow-lg
+└── Gaps: gap-3, gap-6
+
+Animations (Framer Motion):
+├── Page entrance: 0.3s fade-in, slide-down
+├── Grid items: 0.3s scale-in
+├── Values: 1s counter animation
+├── Hover: scale transforms, color transitions
+└── List items: staggered (delay * index * 0.05s)
+

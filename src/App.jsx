@@ -1,9 +1,7 @@
 // src/App.jsx
 import React, { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { NotificationProvider } from './contexts/NotificationContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import Layout from './components/Layout/Layout';
 import LoadingSpinner from './components/UI/LoadingSpinner';
@@ -155,15 +153,11 @@ export default function App() {
         logger.fatal('Critical Application Error', { errorInfo }, error)
       }}
     >
-      <ThemeProvider>
-        <AuthProvider>
-          <NotificationProvider>
-            <SubscriptionProvider>
-              <BrowserRouter>
-                <div className="App">
-                  <OfflineIndicator />
-                  <Suspense fallback={<GlobalLoading />}>
-                    <Routes>
+      <SubscriptionProvider>
+        <div className="App">
+          <OfflineIndicator />
+          <Suspense fallback={<GlobalLoading />}>
+            <Routes>
                       {/* Public Routes */}
                       <Route path="/login" element={<Login />} />
 
@@ -338,14 +332,10 @@ export default function App() {
 
                       {/* 404 Route */}
                       <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
-                  </Suspense>
-                </div>
-              </BrowserRouter>
-            </SubscriptionProvider>
-          </NotificationProvider>
-        </AuthProvider>
-      </ThemeProvider>
+            </Routes>
+          </Suspense>
+        </div>
+      </SubscriptionProvider>
     </ErrorBoundary>
   );
 }

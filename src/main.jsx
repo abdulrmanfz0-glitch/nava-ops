@@ -40,7 +40,12 @@ const Root = () => {
   return (
     <StrictMode>
       <ErrorBoundary>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
           <NotificationProvider>
             <LocaleProvider>
               <ThemeProvider>

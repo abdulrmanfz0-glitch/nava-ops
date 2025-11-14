@@ -1,0 +1,435 @@
+/* NAVA OPS - Professional Report Print & Export Styles */
+/* Optimized for professional PDF/print exports with Restalyze branding */
+
+@media print {
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+
+  /* Root element */
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: #1f2937;
+  }
+
+  /* Hide non-printable elements */
+  button,
+  .no-print,
+  [data-no-print],
+  nav,
+  footer:not([data-print-footer]),
+  .print-hidden,
+  .export-hidden {
+    display: none !important;
+  }
+
+  /* Show print-only elements */
+  .print-only,
+  [data-print-only] {
+    display: block !important;
+  }
+
+  /* Branded Report Header */
+  .branded-report-header {
+    background: linear-gradient(135deg, #0088ff 0%, #00b4ff 100%);
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+  }
+
+  .branded-report-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 10px 0;
+    color: white;
+    page-break-inside: avoid;
+  }
+
+  .branded-report-header h2,
+  .branded-report-header .subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 5px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Logo/Branding box */
+  .restalyze-brand-box {
+    background: white;
+    color: #0088ff;
+    padding: 10px;
+    border-radius: 0;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+
+  .restalyze-brand-box .brand-name {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .restalyze-brand-box .brand-tagline {
+    font-size: 8px;
+    color: #64748b;
+  }
+
+  /* Metadata badges */
+  .report-metadata {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    page-break-inside: avoid;
+    flex-wrap: wrap;
+  }
+
+  .metadata-item {
+    page-break-inside: avoid;
+  }
+
+  .metadata-item label {
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .metadata-item value {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  /* Quality indicators */
+  .report-quality-indicators {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+    page-break-inside: avoid;
+  }
+
+  .quality-indicator {
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    page-break-inside: avoid;
+    background: #f9fafb;
+  }
+
+  .quality-indicator label {
+    font-size: 8px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .quality-indicator value {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1f2937;
+    display: block;
+  }
+
+  /* Sections */
+  section,
+  .section,
+  [data-section] {
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+  }
+
+  .section-header,
+  h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #1f2937;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    border-bottom: 2px solid #0088ff;
+    padding-bottom: 8px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  /* Executive Summary */
+  .executive-summary,
+  [data-executive-summary] {
+    background: #f0f9ff;
+    border-left: 4px solid #0088ff;
+    padding: 15px;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+  }
+
+  .executive-summary p {
+    margin: 5px 0;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #374151;
+  }
+
+  /* Metrics Cards */
+  .metrics-card,
+  .metric-card,
+  [data-metric-card] {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    padding: 12px;
+    page-break-inside: avoid;
+    margin-bottom: 8px;
+    display: inline-block;
+    width: 23%;
+    margin-right: 1%;
+    vertical-align: top;
+  }
+
+  .metrics-card label,
+  .metric-card label,
+  [data-metric-label] {
+    font-size: 9px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .metrics-card value,
+  .metric-card value,
+  [data-metric-value] {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .metrics-card .trend,
+  .metric-card .trend {
+    font-size: 9px;
+    color: #059669;
+    font-weight: 500;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    page-break-inside: avoid;
+    font-size: 10px;
+  }
+
+  table thead {
+    background: #0088ff;
+    color: white;
+  }
+
+  table th {
+    padding: 8px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid #0088ff;
+  }
+
+  table td {
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+  }
+
+  table tbody tr:nth-child(even) {
+    background: #f9fafb;
+  }
+
+  table tbody tr:hover {
+    background: #f3f4f6;
+  }
+
+  /* Charts & Images */
+  img,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+    margin: 15px 0;
+  }
+
+  /* Insights */
+  .insight,
+  .ai-insight,
+  [data-insight] {
+    border-left: 4px solid #0088ff;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    background: #f0f9ff;
+    page-break-inside: avoid;
+    font-size: 10px;
+  }
+
+  .insight.high,
+  .ai-insight.high {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+  }
+
+  .insight.medium,
+  .ai-insight.medium {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+  }
+
+  .insight.low,
+  .ai-insight.low {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  .insight-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1f2937;
+  }
+
+  .insight-description {
+    font-size: 9px;
+    color: #4b5563;
+    line-height: 1.5;
+  }
+
+  /* Footer */
+  [data-print-footer] {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #e5e7eb;
+    padding: 10px 20px;
+    font-size: 8px;
+    color: #6b7280;
+    display: flex;
+    justify-content: space-between;
+    page-break-inside: avoid;
+    background: white;
+  }
+
+  /* Page breaks */
+  .page-break {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  /* Avoid orphans and widows */
+  p, li, blockquote {
+    orphans: 2;
+    widows: 2;
+  }
+
+  /* Links - show URL in print */
+  a {
+    color: #0088ff;
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: none;
+  }
+
+  /* Spacing adjustments */
+  margin-bottom: 0;
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+/* Export-specific styles (visible on screen but optimized for export) */
+.export-optimized {
+  background: white;
+  color: #1f2937;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.export-optimized * {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Restalyze report container for exports */
+.restalyze-report {
+  background: white;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.restalyze-report .header {
+  background: linear-gradient(135deg, #0088ff 0%, #00b4ff 100%);
+  color: white;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.restalyze-report .content {
+  padding: 0;
+}
+
+.restalyze-report .footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 16px 24px;
+  margin-top: 24px;
+  font-size: 10px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Ensure proper colors in exports */
+.restalyze-report .primary-color {
+  color: #0088ff;
+  background: #0088ff;
+}
+
+.restalyze-report .brand-blue {
+  color: #0088ff;
+}
+
+.restalyze-report .success {
+  color: #059669;
+}
+
+.restalyze-report .warning {
+  color: #d97706;
+}
+
+.restalyze-report .danger {
+  color: #ef4444;
+}

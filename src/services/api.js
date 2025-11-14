@@ -632,6 +632,172 @@ export const notificationsAPI = {
 };
 
 // ============================================================================
+// CHANNEL PERFORMANCE API
+// ============================================================================
+
+export const channelPerformanceAPI = {
+  /**
+   * Get channel performance metrics for a period
+   */
+  async getChannelMetrics(filters = {}) {
+    let query = supabase
+      .from('orders')
+      .select('*, branches(name)')
+      .eq('status', 'completed');
+
+    if (filters.branchId) query = query.eq('branch_id', filters.branchId);
+    if (filters.startDate) query = query.gte('order_date', filters.startDate);
+    if (filters.endDate) query = query.lte('order_date', filters.endDate);
+
+    const orders = await apiRequest(
+      () => query,
+      'Failed to fetch channel metrics',
+      mockData.mockOrders
+    );
+
+    // Import channel service to calculate metrics
+    const { aggregateChannelMetrics } = await import('./channelPerformanceService');
+    return aggregateChannelMetrics(orders);
+  },
+
+  /**
+   * Get commission breakdown by channel
+   */
+  async getCommissionBreakdown(filters = {}) {
+    let query = supabase
+      .from('orders')
+      .select('total, channel')
+      .eq('status', 'completed');
+
+    if (filters.branchId) query = query.eq('branch_id', filters.branchId);
+    if (filters.startDate) query = query.gte('order_date', filters.startDate);
+    if (filters.endDate) query = query.lte('order_date', filters.endDate);
+
+    const orders = await apiRequest(
+      () => query,
+      'Failed to fetch commission data',
+      mockData.mockOrders
+    );
+
+    const { calculateCommission } = await import('./channelPerformanceService');
+    const channels = ['dine_in', 'takeout', 'delivery'];
+    const breakdown = {};
+
+    channels.forEach(channel => {
+      const channelRevenue = orders
+        .filter(o => o.channel === channel)
+        .reduce((sum, o) => sum + (o.total || 0), 0);
+
+      breakdown[channel] = calculateCommission(channelRevenue, channel);
+    });
+
+    return breakdown;
+  },
+
+  /**
+   * Get channel trends over time
+   */
+  async getChannelTrends(filters = {}) {
+    const days = filters.days || 30;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    let query = supabase
+      .from('orders')
+      .select('order_date, total, channel')
+      .eq('status', 'completed')
+      .gte('order_date', startDate.toISOString().split('T')[0]);
+
+    if (filters.branchId) query = query.eq('branch_id', filters.branchId);
+
+    const orders = await apiRequest(
+      () => query,
+      'Failed to fetch channel trends',
+      mockData.mockOrders
+    );
+
+    const { generateChannelTrends } = await import('./channelPerformanceService');
+    return generateChannelTrends(orders, days);
+  },
+
+  /**
+   * Get channel comparison data
+   */
+  async compareChannels(filters = {}) {
+    let query = supabase
+      .from('orders')
+      .select('total, channel, satisfaction_score')
+      .eq('status', 'completed');
+
+    if (filters.branchId) query = query.eq('branch_id', filters.branchId);
+    if (filters.startDate) query = query.gte('order_date', filters.startDate);
+    if (filters.endDate) query = query.lte('order_date', filters.endDate);
+
+    const orders = await apiRequest(
+      () => query,
+      'Failed to compare channels',
+      mockData.mockOrders
+    );
+
+    const { aggregateChannelMetrics, compareChannels } = await import('./channelPerformanceService');
+    const metrics = aggregateChannelMetrics(orders);
+    return compareChannels(metrics);
+  },
+
+  /**
+   * Get channel recommendations
+   */
+  async getChannelRecommendations(filters = {}) {
+    const metrics = await this.getChannelMetrics(filters);
+    const { getChannelRecommendations } = await import('./channelPerformanceService');
+    return getChannelRecommendations(metrics);
+  },
+
+  /**
+   * Get channel profitability analysis
+   */
+  async getProfitabilityAnalysis(filters = {}) {
+    let query = supabase
+      .from('orders')
+      .select('total, channel, order_date')
+      .eq('status', 'completed');
+
+    if (filters.branchId) query = query.eq('branch_id', filters.branchId);
+    if (filters.startDate) query = query.gte('order_date', filters.startDate);
+    if (filters.endDate) query = query.lte('order_date', filters.endDate);
+
+    const orders = await apiRequest(
+      () => query,
+      'Failed to fetch profitability data',
+      mockData.mockOrders
+    );
+
+    const { COMMISSION_STRUCTURE } = await import('./channelPerformanceService');
+    const channels = ['dine_in', 'takeout', 'delivery'];
+    const analysis = {};
+
+    channels.forEach(channel => {
+      const channelOrders = orders.filter(o => o.channel === channel);
+      const revenue = channelOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+      const rate = COMMISSION_STRUCTURE[channel]?.base || 0;
+      const commission = (revenue * rate) / 100;
+
+      analysis[channel] = {
+        revenue: Math.round(revenue * 100) / 100,
+        commission: Math.round(commission * 100) / 100,
+        netRevenue: Math.round((revenue - commission) * 100) / 100,
+        commissionRate: rate,
+        profitMargin: revenue > 0 ? Math.round(((revenue - commission) / revenue) * 10000) / 100 : 0,
+        orderCount: channelOrders.length,
+        avgOrderValue: channelOrders.length > 0 ? Math.round((revenue / channelOrders.length) * 100) / 100 : 0
+      };
+    });
+
+    return analysis;
+  }
+};
+
+// ============================================================================
 // ANALYTICS API (Aggregated Data)
 // ============================================================================
 
@@ -896,6 +1062,7 @@ export default {
   reports: reportsAPI,
   notifications: notificationsAPI,
   analytics: analyticsAPI,
+  channelPerformance: channelPerformanceAPI,
   team: teamAPI,
   activities: activitiesAPI,
   subscriptions: subscriptionsAPI

@@ -26,7 +26,7 @@ export class PDFExporter {
   }
 
   /**
-   * Add header with logo and title
+   * Add header with logo and title (Restalyze branding)
    */
   addHeader(title, subtitle = '', restaurantInfo = {}) {
     // Background banner with gradient effect (using Restalyze blue)
@@ -56,13 +56,43 @@ export class PDFExporter {
       }
     }
 
-    // Title
+  addHeader(title, subtitle = '', reportId = '', confidence = 'High') {
+    // Premium gradient background
+    this.pdf.setFillColor(...this.primaryColor);
+    this.pdf.rect(0, 0, this.pageWidth, 50, 'F');
+ 
+
+    // Restalyze branding box
+    this.pdf.setFillColor(255, 255, 255);
+    this.pdf.rect(this.margins.left, 8, 35, 12, 'F');
+    this.pdf.setFontSize(14);
+    this.pdf.setFont('helvetica', 'bold');
+    this.pdf.setTextColor(0, 136, 255);
+    this.pdf.text('RESTALYZE', this.margins.left + 3, 15);
+
+    // Professional Analytics Platform label
+    this.pdf.setFontSize(7);
+    this.pdf.setFont('helvetica', 'normal');
+    this.pdf.setTextColor(100, 116, 139);
+    this.pdf.text('Professional Analytics Platform', this.margins.left + 3, 18);
+
+    // Report metadata (right side)
+    this.pdf.setFontSize(9);
+    this.pdf.setTextColor(255, 255, 255);
+    this.pdf.setFont('helvetica', 'normal');
+    this.pdf.text('Report ID: ' + reportId, this.pageWidth - this.margins.right - 50, 15);
+    this.pdf.text('Confidence: ' + confidence, this.pageWidth - this.margins.right - 50, 20);
+    this.pdf.text('Generated: ' + new Date().toLocaleDateString(), this.pageWidth - this.margins.right - 50, 25);
+
+    // Title and subtitle
     this.pdf.setTextColor(255, 255, 255);
     this.pdf.setFontSize(20);
     this.pdf.setFont('helvetica', 'bold');
     this.pdf.text(title, this.margins.left, 35);
 
-    // Subtitle
+    this.pdf.text(title, this.margins.left, 38);
+ 
+
     if (subtitle) {
       this.pdf.setFontSize(10);
       this.pdf.setFont('helvetica', 'normal');
@@ -76,6 +106,14 @@ export class PDFExporter {
     this.pdf.text(new Date().toLocaleTimeString(), this.pageWidth - this.margins.right - 50, 12);
 
     this.currentY = 60;
+
+      this.pdf.setFontSize(11);
+      this.pdf.setFont('helvetica', 'normal');
+      this.pdf.text(subtitle, this.margins.left, 44);
+    }
+
+    this.currentY = 55;
+
     this.pdf.setTextColor(0, 0, 0);
   }
 
@@ -252,6 +290,25 @@ export class PDFExporter {
       this.pdf.setTextColor(150, 150, 150);
 
       // Page number center
+
+
+      // Top separator line
+      this.pdf.setDrawColor(200, 200, 200);
+      this.pdf.line(this.margins.left, this.pageHeight - 15, this.pageWidth - this.margins.right, this.pageHeight - 15);
+
+      this.pdf.setFontSize(8);
+      this.pdf.setTextColor(120, 120, 120);
+      this.pdf.setFont('helvetica', 'normal');
+
+      // Left: Restalyze branding
+      this.pdf.text(
+        'Restalyze Professional Report',
+        this.margins.left,
+        this.pageHeight - 10
+      );
+
+      // Center: Page number
+ 
       this.pdf.text(
         `Page ${i} of ${pageCount}`,
         this.pageWidth / 2,
@@ -266,6 +323,8 @@ export class PDFExporter {
         this.pageHeight - 10
       );
 
+
+ 
       // Right: Timestamp
       this.pdf.text(
         new Date().toLocaleString(),

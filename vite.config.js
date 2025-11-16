@@ -106,8 +106,6 @@ export default defineConfig(({ mode }) => {
             'vendor-ui': ['lucide-react'],
             'vendor-supabase': ['@supabase/supabase-js'],
             'vendor-export': ['jspdf', 'jspdf-autotable', 'xlsx', 'file-saver'],
-
- 
             'vendor-charts': ['recharts']
           },
           chunkFileNames: 'assets/js/[name]-[hash].js',

@@ -103,7 +103,6 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             // فصل المكتبات الكبيرة إلى chunks منفصلة
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],
- reporting-revolution
             'vendor-ui': ['lucide-react'],
             'vendor-supabase': ['@supabase/supabase-js'],
             'vendor-export': ['jspdf', 'jspdf-autotable', 'xlsx', 'file-saver'],

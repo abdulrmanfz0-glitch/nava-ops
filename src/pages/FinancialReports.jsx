@@ -1,4 +1,3 @@
- reporting-revolution
 // src/pages/FinancialReports.jsx
 import React from 'react';
 import { DollarSign, TrendingUp, Download } from 'lucide-react';

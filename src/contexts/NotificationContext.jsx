@@ -1,5 +1,4 @@
 // src/contexts/NotificationContext.jsx
- reporting-revolution
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
@@ -109,7 +108,6 @@ export function NotificationProvider({ children }) {
     return id;
   }, []);
 
- reporting-revolution
   // إشعارات سريعة
   const notificationHelpers = {
     success: (title, message, options) => 
@@ -172,7 +170,6 @@ export function NotificationProvider({ children }) {
     const total = notifications.length;
     const unread = notifications.filter(n => !n.read).length;
     const read = total - unread;
- reporting-revolution
     
 
 
@@ -187,7 +184,6 @@ export function NotificationProvider({ children }) {
     return { total, unread, read, byType };
   }, [notifications]);
 
- reporting-revolution
   const value = {
 
   // إشعارات سريعة - memoized
@@ -214,7 +210,6 @@ export function NotificationProvider({ children }) {
     clearAll,
     clearRead,
     getNotificationStats,
- reporting-revolution
     ...notificationHelpers
   };
 
@@ -365,7 +360,6 @@ function NotificationToast({ notification, onClose, onRead }) {
         )}
       </div>
 
- reporting-revolution
       <style jsx>{`
         @keyframes shrink {
           from { width: 100%; }

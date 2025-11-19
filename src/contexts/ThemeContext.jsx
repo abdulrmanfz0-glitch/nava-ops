@@ -1,5 +1,4 @@
 // src/contexts/ThemeContext.jsx
- reporting-revolution
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
@@ -18,7 +17,6 @@ export function useTheme() {
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     // Check localStorage first
- reporting-revolution
     const savedTheme = localStorage.getItem('theme');
 
     const savedTheme = localStorage.getItem('nava-theme');
@@ -34,7 +32,6 @@ export function ThemeProvider({ children }) {
   });
 
   useEffect(() => {
- reporting-revolution
     // Apply theme to document
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');

@@ -1,7 +1,6 @@
 // src/components/UI/LoadingSpinner.jsx
 import React from 'react';
 
- reporting-revolution
 const LoadingSpinner = ({ size = 'md', text = 'Loading...' }) => {
   const sizeClasses = {
     sm: 'w-8 h-8',

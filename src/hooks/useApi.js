@@ -5,7 +5,7 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import logger from '../lib/logger';
-import { useNotification } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 export function useApi(apiFunction, options = {}) {
   const {

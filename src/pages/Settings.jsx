@@ -1,4 +1,3 @@
- reporting-revolution
 // src/pages/Settings.jsx
 import React from 'react';
 import { Settings as SettingsIcon, User, Bell, Shield, Database } from 'lucide-react';
@@ -229,7 +228,6 @@ export default function Settings() {
       </div>
     </div>
   );
- reporting-revolution
 };
 
 export default Settings;

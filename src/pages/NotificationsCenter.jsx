@@ -1,4 +1,3 @@
- reporting-revolution
 // src/pages/NotificationsCenter.jsx
 import React from 'react';
 import { Bell, CheckCircle, AlertCircle, Info } from 'lucide-react';

@@ -6,8 +6,8 @@
  * to provide conversational analytics and intelligent insights.
  */
 
-import { supabase } from '@/lib/supabaseClient';
-import { logger } from '@/utils/logger';
+import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 class ClaudeNexusService {
   constructor() {

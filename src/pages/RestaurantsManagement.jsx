@@ -1,6 +1,5 @@
 // src/pages/RestaurantsManagement.jsx
 import React from 'react';
- reporting-revolution
 import { Building2, Plus, Search } from 'lucide-react';
 
 const RestaurantsManagement = () => {

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
- reporting-revolution
 import { LogIn, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
@@ -56,7 +55,6 @@ export default function Login() {
   };
 
   return (
- reporting-revolution
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Logo & Branding */}
@@ -220,7 +218,6 @@ export default function Login() {
       </div>
     </div>
   );
- reporting-revolution
 };
 
 export default Login;

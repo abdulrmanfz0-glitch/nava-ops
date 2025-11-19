@@ -1,4 +1,3 @@
- reporting-revolution
 // src/pages/TeamManagement.jsx
 import React from 'react';
 import { Users, Plus, Search } from 'lucide-react';

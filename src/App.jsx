@@ -2,12 +2,8 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
-import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { DashboardProvider } from './contexts/DashboardContext';
-
- 
 import Layout from './components/Layout/Layout';
-import LoadingSpinner from './components/UI/LoadingSpinner';
 import OfflineIndicator from './components/UI/OfflineIndicator';
 import ErrorBoundary from './components/ErrorBoundary';
 import { logger, PerformanceLogger } from './lib/logger';
@@ -22,7 +18,6 @@ logger.info('Application started', {
 // Lazy load page components for performance
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
- reporting-revolution
 const RestaurantsManagement = lazy(() => import('./pages/RestaurantsManagement'));
 const ReportHub = lazy(() => import('./pages/ReportHub'));
 
@@ -158,107 +153,6 @@ export default function App() {
   }, []);
 
   return (
- reporting-revolution
-    <ThemeProvider>
-      <AuthProvider>
-        <NotificationProvider>
-          <BrowserRouter>
-            <div className="App">
-              <OfflineIndicator />
-              <Suspense fallback={<GlobalLoading />}>
-                <Routes>
-                  {/* صفحة تسجيل الدخول */}
-                  <Route path="/login" element={<Login />} />
-
-                  {/* المسارات الرئيسية مع Layout */}
-                  <Route path="/" element={
-                    <RequireAuth>
-                      <Layout>
-                        <Dashboard />
-                      </Layout>
-                    </RequireAuth>
-                  } />
-
-                  {/* إدارة المطاعم */}
-                  <Route path="/restaurants" element={
-                    <RequireAuth requiredPermissions={['restaurants:view']}>
-                      <Layout>
-                        <RestaurantsManagement />
-                      </Layout>
-                    </RequireAuth>
-                  } />
-
-                  {/* Report Hub - Unified Reporting Center */}
-                  <Route path="/report-hub" element={
-                    <RequireAuth requiredPermissions={['reports:view']}>
-                      <Layout>
-                        <ReportHub />
-                      </Layout>
-                    </RequireAuth>
-                  } />
-
-                  {/* Legacy redirect from old reports route */}
-                  <Route path="/reports" element={<Navigate to="/report-hub" replace />} />
-
-                  {/* إدارة الفريق */}
-                  <Route path="/team" element={
-                    <RequireAuth requiredPermissions={['team:manage']}>
-                      <Layout>
-                        <TeamManagement />
-                      </Layout>
-                    </RequireAuth>
-                  } />
-
-                  {/* التقارير المالية */}
-                  <Route path="/financial" element={
-                    <RequireAuth requiredPermissions={['financial:view']}>
-                      <Layout>
-                        <FinancialReports />
-                      </Layout>
-                    </RequireAuth>
-                  } />
-
-                  {/* مركز الإشعارات */}
-                  <Route path="/notifications" element={
-                    <RequireAuth>
-                      <Layout>
-                        <NotificationsCenter />
-                      </Layout>
-                    </RequireAuth>
-                  } />
-
-                  {/* الإعدادات */}
-                  <Route path="/settings" element={
-                    <RequireAuth>
-                      <Layout>
-                        <Settings />
-                      </Layout>
-                    </RequireAuth>
-                  } />
-
-                  {/* صفحة 404 مخصصة */}
-                  <Route path="*" element={
-                    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-                      <div className="text-center">
-                        <h1 className="text-6xl font-bold text-gray-300 dark:text-gray-600 mb-4">404</h1>
-                        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">الصفحة غير موجودة</h2>
-                        <p className="text-gray-500 dark:text-gray-400 mb-8">عذراً، الصفحة التي تبحث عنها غير موجودة.</p>
-                        <Navigate to="/" replace>
-                          <button className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg transition-colors duration-200">
-                            العودة للرئيسية
-                          </button>
-                        </Navigate>
-                      </div>
-                    </div>
-                  } />
-                </Routes>
-              </Suspense>
-            </div>
-          </BrowserRouter>
-        </NotificationProvider>
-      </AuthProvider>
-    </ThemeProvider>
-
     <ErrorBoundary
       errorMessage="A critical error occurred in the application. Please refresh the page."
       onError={(error, errorInfo) => {
@@ -321,6 +215,17 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <ReportsAnalytics />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Report Hub - Unified Reporting Center */}
+                      <Route path="/report-hub" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <ReportHub />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

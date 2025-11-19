@@ -1,4 +1,3 @@
- reporting-revolution
 // src/pages/Dashboard.jsx - SaaS Multi-Branch Analytics Dashboard
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
@@ -41,7 +40,6 @@ import {
 
 export default function Dashboard() {
   const { userProfile } = useAuth();
- reporting-revolution
   const { dataEntries, branches, getStatistics, getBranchStatistics } = useData();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedBranch, setSelectedBranch] = useState('all');
@@ -808,7 +806,6 @@ export default function Dashboard() {
         </div>
       </div>
 
- reporting-revolution
       {/* Category Distribution */}
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 p-6">
         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">

@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase, checkSupabaseConnection, handleSupabaseError } from '../lib/supabase';
 import { useNotification } from './NotificationContext';
- reporting-revolution
 
 import logger from '../lib/logger';
 
@@ -39,7 +38,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('checking');
   const [sessionExpiry, setSessionExpiry] = useState(null);
- reporting-revolution
   const { showNotification } = useNotification();
 
   // التحقق من انتهاء الجلسة
@@ -126,7 +124,6 @@ export function AuthProvider({ children }) {
       }
     };
 
- reporting-revolution
     const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
     return () => clearInterval(interval);
   }, [sessionExpiry]);
@@ -312,7 +309,6 @@ export function AuthProvider({ children }) {
 
   const handleUserSession = async (user, expiresAt = null) => {
     setUser(user);
- reporting-revolution
     setConnectionStatus('authenticated');
 
  
@@ -321,7 +317,6 @@ export function AuthProvider({ children }) {
       setSessionExpiry(new Date(expiresAt * 1000));
     }
 
- reporting-revolution
     // Fetch user profile
     try {
       const { data: profile, error } = await supabase
@@ -377,7 +372,6 @@ export function AuthProvider({ children }) {
         email: user.email,
         role: 'viewer',
         full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
- reporting-revolution
         is_active: true,
         created_at: new Date().toISOString(),
       };
@@ -400,7 +394,6 @@ export function AuthProvider({ children }) {
 
       if (error) throw error;
 
- reporting-revolution
       setUserProfile(data);
       return data;
     } catch (error) {
@@ -423,7 +416,6 @@ export function AuthProvider({ children }) {
     }
   };
 
- reporting-revolution
   const login = async (email, password) => {
 
   const logUserActivity = async (userId, activityType, metadata = {}) => {
@@ -460,7 +452,6 @@ export function AuthProvider({ children }) {
 
       if (error) throw error;
 
- reporting-revolution
 
       await logUserActivity(data.user.id, 'login', {
         ipAddress: await getClientIP(),
@@ -474,7 +465,6 @@ export function AuthProvider({ children }) {
         user: data.user
       };
     } catch (error) {
- reporting-revolution
       console.error('Login error:', error);
 
       logger.error('Login error', { error: error.message });
@@ -542,7 +532,6 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
- reporting-revolution
     try {
 
     if (DEV_BYPASS_AUTH) {
@@ -564,7 +553,6 @@ export function AuthProvider({ children }) {
       setUser(null);
       setUserProfile(null);
       setSessionExpiry(null);
- reporting-revolution
       setConnectionStatus('unauthenticated');
 
     } catch (error) {
@@ -578,7 +566,6 @@ export function AuthProvider({ children }) {
     }
   };
 
- reporting-revolution
   // نظام الصلاحيات
 
   const resetPassword = async (email) => {
@@ -670,7 +657,6 @@ export function AuthProvider({ children }) {
     const rolePermissions = {
       viewer: ['dashboard:view', 'reports:view'],
       ops: ['dashboard:view', 'reports:view', 'restaurants:view', 'restaurants:edit', 'team:view'],
- reporting-revolution
       admin: [
         'dashboard:view', 'reports:view', 'restaurants:view', 'restaurants:edit',
         'restaurants:delete', 'team:view', 'team:manage', 'financial:view',
@@ -691,7 +677,6 @@ export function AuthProvider({ children }) {
     loading,
     connectionStatus,
     sessionExpiry,
- reporting-revolution
     isAuthenticated: !!user,
     isAdmin: userProfile?.role === 'admin',
     isOps: userProfile?.role === 'ops' || userProfile?.role === 'admin',

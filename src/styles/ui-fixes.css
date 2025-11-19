@@ -1,0 +1,556 @@
+/* NAVA OPS - UI Fixes and Enhancements */
+/* Common UI/UX issues and their fixes */
+
+/* ==================== DROPDOWN VISIBILITY FIXES ==================== */
+
+/* Fix dropdown visibility issues in dark mode */
+select,
+.dropdown-options,
+.select-field {
+  background: #1e293b !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Fix dropdown options visibility */
+select option,
+.dropdown-option {
+  background: #1e293b !important;
+  color: white !important;
+  padding: 10px !important;
+}
+
+/* Hover state for dropdown options */
+select option:hover,
+.dropdown-option:hover {
+  background: #0ea5e9 !important;
+  color: white !important;
+}
+
+/* Focus state for dropdowns */
+select:focus,
+.dropdown-options:focus {
+  outline: none;
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+
+/* Enhanced dropdown styling */
+.enhanced-dropdown {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.enhanced-dropdown:hover {
+  border-color: #0ea5e9 !important;
+  background: #2d3e50 !important;
+}
+
+.enhanced-dropdown option {
+  background: #1e293b !important;
+  color: white !important;
+  padding: 12px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.enhanced-dropdown option:hover {
+  background: #0ea5e9 !important;
+  color: white !important;
+}
+
+/* Light mode dropdown fixes */
+.light-mode select,
+.light-mode .dropdown-options,
+.light-mode .enhanced-dropdown {
+  background: white !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.light-mode select option,
+.light-mode .dropdown-option,
+.light-mode .enhanced-dropdown option {
+  background: white !important;
+  color: #1f2937 !important;
+}
+
+/* ==================== BUTTON HOVER STATES ==================== */
+
+/* Primary button enhancements */
+.btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px -5px rgba(14, 165, 233, 0.3);
+}
+
+/* Secondary button enhancements */
+.btn-secondary {
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Danger button enhancements */
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);
+}
+
+/* Success button enhancements */
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+}
+
+/* Outline button enhancements */
+.btn-outline {
+  border: 2px solid currentColor;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: currentColor;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Ghost button enhancements */
+.btn-ghost {
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(14, 165, 233, 0.1);
+  transform: scale(1.05);
+}
+
+/* ==================== MODAL Z-INDEX FIXES ==================== */
+
+/* Ensure modals are always on top */
+.modal-overlay {
+  z-index: 1000;
+  position: fixed;
+  inset: 0;
+}
+
+.modal-content {
+  z-index: 1001;
+  position: relative;
+}
+
+/* Toast notifications should be above modals */
+.toast-container,
+.notification-container {
+  z-index: 1100;
+}
+
+/* Dropdown menus should be above content but below modals */
+.dropdown-menu,
+.context-menu {
+  z-index: 900;
+}
+
+/* Tooltips should be above most content */
+.tooltip {
+  z-index: 1050;
+}
+
+/* ==================== RESPONSIVE SIDEBAR FIXES ==================== */
+
+/* Mobile sidebar improvements */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Sidebar overlay for mobile */
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .mobile-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Adjust main content when sidebar is open */
+  .main-content {
+    transition: margin 0.3s ease;
+  }
+
+  .main-content.sidebar-open {
+    margin-right: 0;
+  }
+}
+
+/* Desktop sidebar */
+@media (min-width: 769px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .mobile-overlay {
+    display: none;
+  }
+}
+
+/* ==================== CARD HOVER EFFECTS ==================== */
+
+/* Restaurant card enhancements */
+.restaurant-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.restaurant-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent, rgba(14, 165, 233, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+}
+
+.restaurant-card:hover::after {
+  opacity: 1;
+}
+
+.restaurant-card.active {
+  border: 2px solid #0ea5e9;
+  background: rgba(14, 165, 233, 0.05);
+}
+
+/* ==================== INPUT FIELD FIXES ==================== */
+
+/* Fix autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0px 1000px #1e293b inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Light mode autofill */
+.light-mode input:-webkit-autofill,
+.light-mode input:-webkit-autofill:hover,
+.light-mode input:-webkit-autofill:focus,
+.light-mode textarea:-webkit-autofill,
+.light-mode textarea:-webkit-autofill:hover,
+.light-mode textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1f2937;
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+/* Input focus enhancements */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Disabled input styling */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ==================== TABLE FIXES ==================== */
+
+/* Table responsiveness */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.3);
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: rgba(14, 165, 233, 0.5);
+}
+
+/* Table row hover */
+.table-row:hover {
+  background: rgba(14, 165, 233, 0.05);
+  transition: background 0.2s ease;
+}
+
+/* ==================== SCROLLBAR FIXES ==================== */
+
+/* Custom scrollbar for all scrollable containers */
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(14, 165, 233, 0.5);
+}
+
+/* ==================== LOADING STATE FIXES ==================== */
+
+/* Skeleton loading improvements */
+.skeleton {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #2d2d2d 25%, #3d3d3d 50%, #2d2d2d 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ==================== TOOLTIP FIXES ==================== */
+
+/* Tooltip positioning and visibility */
+.tooltip {
+  position: absolute;
+  z-index: 1050;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tooltip.show {
+  opacity: 1;
+}
+
+/* ==================== BADGE FIXES ==================== */
+
+/* Badge positioning */
+.badge-absolute {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+/* Notification badge pulse */
+.badge-pulse {
+  animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* ==================== ACCESSIBILITY FIXES ==================== */
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip to content link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #0ea5e9;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 9999;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ==================== RTL SUPPORT FIXES ==================== */
+
+/* Ensure proper RTL direction */
+[dir="rtl"] .sidebar {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .modal-close {
+  left: auto;
+  right: 1rem;
+}
+
+[dir="rtl"] .badge-absolute {
+  right: auto;
+  left: -8px;
+}
+
+/* ==================== ANIMATION PERFORMANCE ==================== */
+
+/* Use GPU acceleration for animations */
+.animate-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Disable animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==================== PRINT FIXES ==================== */
+
+@media print {
+  /* Hide interactive elements */
+  button,
+  .btn,
+  .no-print,
+  .sidebar,
+  nav,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .page-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+}

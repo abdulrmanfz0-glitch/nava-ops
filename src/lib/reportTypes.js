@@ -273,6 +273,126 @@ export const TIME_PERIODS = {
 };
 
 /**
+ * Detailed Report Period Definitions
+ * Extracted from Restalyze v11.0.0 Platinum Edition
+ */
+export const DETAILED_REPORT_PERIODS = {
+  DAILY: {
+    id: 'daily',
+    label: 'Daily Performance Report',
+    description: 'Complete 24-hour analysis from 12:00 AM to 11:59 PM',
+    timeframe: '24 hours',
+    bestFor: 'Daily reconciliation and immediate operational decisions',
+    icon: 'Calendar',
+    color: 'blue',
+    recommendedMetrics: [
+      'Total Revenue',
+      'Order Count',
+      'Average Order Value',
+      'Peak Hours Analysis',
+      'Staff Performance',
+      'Customer Feedback'
+    ],
+    insights: [
+      'Hour-by-hour breakdown',
+      'Day-over-day comparison',
+      'Real-time alerts',
+      'Shift performance'
+    ]
+  },
+  WEEKLY: {
+    id: 'weekly',
+    label: 'Weekly Analytics Report',
+    description: '7-day comprehensive analysis (Monday to Sunday) with week-over-week comparisons',
+    timeframe: '7 days',
+    bestFor: 'Staff performance review and weekly inventory planning',
+    icon: 'CalendarDays',
+    color: 'green',
+    recommendedMetrics: [
+      'Weekly Revenue Trends',
+      'Top Selling Items',
+      'Staff Efficiency',
+      'Inventory Turnover',
+      'Customer Retention',
+      'Marketing Campaign Performance'
+    ],
+    insights: [
+      'Day-by-day breakdown',
+      'Week-over-week growth',
+      'Weekend vs weekday performance',
+      'Staff scheduling optimization'
+    ]
+  },
+  MONTHLY: {
+    id: 'monthly',
+    label: 'Monthly Executive Report',
+    description: 'Complete 30-day performance overview with trend analysis and strategic insights',
+    timeframe: '30 days',
+    bestFor: 'Financial planning and strategic business decisions',
+    icon: 'CalendarRange',
+    color: 'purple',
+    recommendedMetrics: [
+      'Monthly Revenue & Profit',
+      'Cost Analysis',
+      'Menu Engineering',
+      'Branch Performance',
+      'Customer Lifetime Value',
+      'ROI on Marketing'
+    ],
+    insights: [
+      'Month-over-month trends',
+      'Profitability analysis',
+      'Cost optimization opportunities',
+      'Strategic recommendations'
+    ]
+  },
+  QUARTERLY: {
+    id: 'quarterly',
+    label: 'Quarterly Strategic Report',
+    description: '90-day business intelligence review with seasonal trend analysis',
+    timeframe: '90 days',
+    bestFor: 'Long-term strategy and performance benchmarking',
+    icon: 'BarChart3',
+    color: 'orange',
+    recommendedMetrics: [
+      'Quarterly Growth Rate',
+      'Market Share Analysis',
+      'Competitive Positioning',
+      'Seasonal Patterns',
+      'Investment ROI',
+      'Strategic Goals Progress'
+    ],
+    insights: [
+      'Quarter-over-quarter comparison',
+      'Seasonal trends identification',
+      'Long-term growth trajectory',
+      'Strategic planning insights'
+    ]
+  },
+  CUSTOM: {
+    id: 'custom',
+    label: 'Custom Period Report',
+    description: 'Flexible date range analysis tailored to specific business needs',
+    timeframe: 'Variable',
+    bestFor: 'Special events, promotions, or unique business scenarios',
+    icon: 'CalendarSearch',
+    color: 'indigo',
+    recommendedMetrics: [
+      'Event-specific metrics',
+      'Campaign performance',
+      'Custom KPIs',
+      'Comparative analysis'
+    ],
+    insights: [
+      'Flexible date ranges',
+      'Custom metric selection',
+      'Event impact analysis',
+      'Promotion effectiveness'
+    ]
+  }
+};
+
+/**
  * Export Formats
  */
 export const EXPORT_FORMATS = {
@@ -364,6 +484,7 @@ export default {
   REPORT_CATEGORIES,
   REPORT_TYPES,
   TIME_PERIODS,
+  DETAILED_REPORT_PERIODS,
   EXPORT_FORMATS,
   REPORT_STATUS,
   FILTER_TYPES,

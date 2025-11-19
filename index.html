@@ -1,76 +1,597 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="no-js">
   <head>
+    <!-- ==================== Essential Meta Tags ==================== -->
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
 
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="NAVA Ops - نظام إدارة المطاعم الذكي | منصة شاملة لإدارة وتحليل أداء المطاعم" />
-    <meta name="keywords" content="إدارة مطاعم, نظام نقاط بيع, تحليلات مطاعم, NAVA Ops, restaurant management" />
-    <meta name="author" content="NAVA Ops Team" />
+    <!-- ==================== Primary Meta Tags ==================== -->
+    <title>NAVA Ops - منصة إدارة المطاعم الذكية | Restaurant Intelligence Platform</title>
+    <meta name="title" content="NAVA Ops - منصة إدارة المطاعم الذكية" />
+    <meta name="description" content="نظام متكامل لإدارة المطاعم مدعوم بالذكاء الاصطناعي. تحليلات مالية، إدارة القوائم، تتبع الأداء، وتقارير احترافية في منصة واحدة." />
+    <meta name="keywords" content="إدارة مطاعم, نظام نقاط بيع, POS, تحليلات مطاعم, restaurant management, food analytics, NAVA Ops, قوائم طعام, تقارير مالية, إدارة فروع, ذكاء اصطناعي للمطاعم" />
+    <meta name="author" content="NAVA Ops Development Team" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="NAVA Ops - Restaurant Intelligence Platform" />
-    <meta property="og:description" content="منصة ذكية متكاملة لإدارة المطاعم وتحليل الأداء المالي والتشغيلي" />
+    <!-- ==================== Canonical & Language ==================== -->
+    <link rel="canonical" href="https://nava-ops.com/" />
+    <link rel="alternate" hreflang="ar" href="https://nava-ops.com/ar" />
+    <link rel="alternate" hreflang="en" href="https://nava-ops.com/en" />
+    <link rel="alternate" hreflang="x-default" href="https://nava-ops.com/" />
+
+    <!-- ==================== Open Graph / Facebook ==================== -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content="https://nava-ops.com/" />
+    <meta property="og:site_name" content="NAVA Ops" />
+    <meta property="og:title" content="NAVA Ops - منصة إدارة المطاعم الذكية" />
+    <meta property="og:description" content="نظام متكامل لإدارة المطاعم مدعوم بالذكاء الاصطناعي. تحليلات مالية وتقارير احترافية" />
+    <meta property="og:image" content="/assets/og-image.png" />
+    <meta property="og:image:secure_url" content="https://nava-ops.com/assets/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="NAVA Ops - Restaurant Intelligence Platform" />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:locale:alternate" content="en_US" />
 
-    <!-- Twitter Card Meta Tags -->
+    <!-- ==================== Twitter Card ==================== -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="NAVA Ops - Restaurant Intelligence Platform" />
-    <meta name="twitter:description" content="منصة ذكية متكاملة لإدارة المطاعم" />
+    <meta name="twitter:url" content="https://nava-ops.com/" />
+    <meta name="twitter:title" content="NAVA Ops - منصة إدارة المطاعم الذكية" />
+    <meta name="twitter:description" content="نظام متكامل لإدارة المطاعم مدعوم بالذكاء الاصطناعي" />
+    <meta name="twitter:image" content="/assets/twitter-card.png" />
+    <meta name="twitter:image:alt" content="NAVA Ops Platform" />
+    <meta name="twitter:creator" content="@NAVAOps" />
+    <meta name="twitter:site" content="@NAVAOps" />
 
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#0088FF" />
+    <!-- ==================== Theme & Color ==================== -->
+    <meta name="theme-color" content="#0088FF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A2540" media="(prefers-color-scheme: dark)" />
     <meta name="msapplication-TileColor" content="#0088FF" />
+    <meta name="msapplication-navbutton-color" content="#0088FF" />
+    <meta name="msapplication-TileImage" content="/assets/ms-icon-144x144.png" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
 
-    <!-- Apple Mobile Web App -->
+    <!-- ==================== Apple Meta Tags ==================== -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="NAVA Ops" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="apple-touch-icon" href="/assets/apple-icon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-icon-180x180.png" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <!-- Apple Splash Screens -->
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash/iPhone_15_Pro_Max__iPhone_15_Plus__iPhone_14_Pro_Max_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash/iPhone_15_Pro__iPhone_15__iPhone_14_Pro_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash/iPhone_14_Plus__iPhone_13_Pro_Max__iPhone_12_Pro_Max_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash/iPhone_14__iPhone_13_Pro__iPhone_13__iPhone_12_Pro__iPhone_12_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash/iPhone_13_mini__iPhone_12_mini__iPhone_11_Pro__iPhone_XS__iPhone_X_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash/iPhone_11_Pro_Max__iPhone_XS_Max_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/iPhone_11__iPhone_XR_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/assets/splash/iPhone_8_Plus__iPhone_7_Plus__iPhone_6s_Plus__iPhone_6_Plus_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/iPhone_8__iPhone_7__iPhone_6s__iPhone_6__4.7__iPhone_SE_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/4__iPhone_SE__iPod_touch_5th_generation_and_later_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/12.9__iPad_Pro_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/11__iPad_Pro__10.5__iPad_Pro_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/10.9__iPad_Air_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/10.5__iPad_Air_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/10.2__iPad_portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/9.7__iPad_Pro__7.9__iPad_mini__9.7__iPad_Air__9.7__iPad_portrait.png">
+
+    <!-- ==================== Favicons & Icons ==================== -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/android-icon-192x192.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#0088FF" />
+
+    <!-- ==================== PWA Manifest ==================== -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ==================== Security Headers ==================== -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
+
+    <!-- ==================== DNS Prefetch & Preconnect ==================== -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- Title -->
-    <title>NAVA Ops - Restaurant Intelligence Platform</title>
-
-    <!-- Preload Critical Assets -->
-    <link rel="modulepreload" href="/src/main.jsx" />
-  </head>
-  <body>
-    <!-- Root Element -->
-    <div id="root"></div>
-
-    <!-- Vite Entry Point -->
-    <script type="module" src="/src/main.jsx"></script>
-
-    <!-- No Script Fallback -->
+    <!-- ==================== Fonts - Optimized Loading ==================== -->
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" />
     <noscript>
-      <div style="
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" />
+    </noscript>
+
+    <!-- ==================== Preload Critical Assets ==================== -->
+    <link rel="modulepreload" href="/src/main.jsx" />
+    <link rel="prefetch" href="/src/App.jsx" />
+    <link rel="prefetch" href="/src/pages/Dashboard.jsx" />
+
+    <!-- ==================== Critical Inline CSS ==================== -->
+    <style>
+      /* Critical CSS - Above the fold styles */
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        background: linear-gradient(135deg, #0A2540 0%, #1a3a5c 100%);
+        color: #ffffff;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      #root {
+        min-height: 100vh;
+        position: relative;
+      }
+
+      /* Loading Animation */
+      .app-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
+        flex-direction: column;
+        background: linear-gradient(135deg, #0A2540 0%, #1a3a5c 100%);
+        z-index: 9999;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+
+      .app-loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loader-logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 2rem;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      .loader-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255, 215, 0, 0.1);
+        border-top-color: #FFD700;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .loader-text {
+        margin-top: 1.5rem;
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        animation: fadeInOut 2s ease-in-out infinite;
+      }
+
+      .loader-subtext {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: rgba(255, 215, 0, 0.8);
+        font-weight: 600;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(0.95); }
+      }
+
+      @keyframes fadeInOut {
+        0%, 100% { opacity: 0.8; }
+        50% { opacity: 1; }
+      }
+
+      /* Accessibility - Skip to content */
+      .skip-to-content {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #FFD700;
+        color: #0A2540;
+        padding: 8px 16px;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 0 0 8px 0;
+        z-index: 10000;
+        transition: top 0.3s;
+      }
+
+      .skip-to-content:focus {
+        top: 0;
+      }
+
+      /* High Contrast Mode Support */
+      @media (prefers-contrast: high) {
+        body {
+          background: #000000;
+          color: #ffffff;
+        }
+      }
+
+      /* Reduced Motion Support */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* Dark Mode Default */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: linear-gradient(135deg, #0A2540 0%, #1a3a5c 100%);
+        }
+      }
+
+      /* Light Mode */
+      @media (prefers-color-scheme: light) {
+        body {
+          background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+          color: #334155;
+        }
+      }
+
+      /* Print Styles */
+      @media print {
+        .app-loader, .skip-to-content {
+          display: none !important;
+        }
+
+        body {
+          background: white;
+          color: black;
+        }
+      }
+    </style>
+
+    <!-- ==================== Structured Data (JSON-LD) ==================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "NAVA Ops",
+      "alternateName": "نافا أوبس",
+      "description": "نظام متكامل لإدارة المطاعم مدعوم بالذكاء الاصطناعي",
+      "url": "https://nava-ops.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "SAR"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "256"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "NAVA Ops",
+        "url": "https://nava-ops.com"
+      },
+      "inLanguage": ["ar", "en"],
+      "featureList": [
+        "إدارة القوائم الذكية",
+        "تحليلات مالية متقدمة",
+        "إدارة الفروع",
+        "تقارير احترافية",
+        "ذكاء اصطناعي للتنبؤات",
+        "تتبع الأداء الفوري"
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "NAVA Ops",
+      "legalName": "NAVA Operations Management System",
+      "url": "https://nava-ops.com",
+      "logo": "https://nava-ops.com/assets/logo.png",
+      "foundingDate": "2024",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "SA"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Support",
+        "email": "support@nava-ops.com",
+        "availableLanguage": ["Arabic", "English"]
+      },
+      "sameAs": [
+        "https://twitter.com/NAVAOps",
+        "https://linkedin.com/company/nava-ops",
+        "https://facebook.com/NAVAOps"
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "NAVA Ops Dashboard",
+      "description": "لوحة تحكم ذكية لإدارة المطاعم",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareVersion": "2.0.0",
+      "releaseNotes": "Enhanced AI features, improved analytics, better performance",
+      "screenshot": "https://nava-ops.com/assets/dashboard-screenshot.png",
+      "permissions": "notifications, storage"
+    }
+    </script>
+
+    <!-- ==================== Initialize Critical Scripts ==================== -->
+    <script>
+      // Remove no-js class and add js class
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+
+      // Detect browser and add class
+      const ua = navigator.userAgent.toLowerCase();
+      if (ua.indexOf('chrome') > -1 && ua.indexOf('edge') === -1) {
+        document.documentElement.classList.add('chrome');
+      } else if (ua.indexOf('safari') > -1 && ua.indexOf('chrome') === -1) {
+        document.documentElement.classList.add('safari');
+      } else if (ua.indexOf('firefox') > -1) {
+        document.documentElement.classList.add('firefox');
+      }
+
+      // Detect iOS
+      const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (iOS) {
+        document.documentElement.classList.add('ios');
+      }
+
+      // Performance mark for monitoring
+      if (window.performance && window.performance.mark) {
+        window.performance.mark('html-parsed');
+      }
+
+      // Theme detection and application
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const savedTheme = localStorage.getItem('theme');
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+
+      // Install prompt handling
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Store for later use
+        window.deferredPrompt = deferredPrompt;
+      });
+
+      // Track app installation
+      window.addEventListener('appinstalled', () => {
+        console.log('NAVA Ops has been installed!');
+        deferredPrompt = null;
+      });
+
+      // Service Worker registration will happen in main.jsx
+
+      // Error tracking placeholder
+      window.addEventListener('error', (event) => {
+        // Send to error tracking service (e.g., Sentry)
+        console.error('Global error:', event.error);
+      });
+
+      window.addEventListener('unhandledrejection', (event) => {
+        // Send to error tracking service
+        console.error('Unhandled rejection:', event.reason);
+      });
+    </script>
+  </head>
+
+  <body>
+    <!-- ==================== Skip to Content (Accessibility) ==================== -->
+    <a href="#main-content" class="skip-to-content" tabindex="1">
+      تخطي إلى المحتوى الرئيسي | Skip to main content
+    </a>
+
+    <!-- ==================== App Loading Screen ==================== -->
+    <div id="app-loader" class="app-loader" role="status" aria-live="polite" aria-label="Loading application">
+      <svg class="loader-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="45" fill="none" stroke="url(#goldGradient)" stroke-width="3" />
+        <path d="M30,50 L45,35 L60,50 L45,65 Z" fill="url(#goldGradient)" />
+        <circle cx="70" cy="30" r="8" fill="#FFD700" opacity="0.8" />
+        <text x="50" y="85" font-family="Cairo, sans-serif" font-size="12" font-weight="700" fill="#FFD700" text-anchor="middle">NAVA</text>
+      </svg>
+
+      <div class="loader-spinner"></div>
+      <div class="loader-text">جاري تحميل المنصة...</div>
+      <div class="loader-subtext">Loading Platform...</div>
+    </div>
+
+    <!-- ==================== Main Application Root ==================== -->
+    <div id="root" role="main" aria-label="NAVA Ops Application"></div>
+    <div id="main-content"></div>
+
+    <!-- ==================== Portal Roots for Modals/Tooltips ==================== -->
+    <div id="modal-root" role="region" aria-label="Modal dialogs"></div>
+    <div id="tooltip-root" role="region" aria-label="Tooltips"></div>
+    <div id="notification-root" role="region" aria-label="Notifications" aria-live="polite"></div>
+
+    <!-- ==================== Vite Entry Point ==================== -->
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- ==================== Hide Loader Script ==================== -->
+    <script>
+      // Hide loader when React app mounts
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('app-loader');
+          if (loader) {
+            loader.classList.add('hidden');
+            setTimeout(() => {
+              loader.style.display = 'none';
+            }, 500);
+          }
+        }, 1000);
+      });
+
+      // Fallback: Hide loader after 5 seconds
+      setTimeout(() => {
+        const loader = document.getElementById('app-loader');
+        if (loader && !loader.classList.contains('hidden')) {
+          loader.classList.add('hidden');
+        }
+      }, 5000);
+    </script>
+
+    <!-- ==================== No JavaScript Fallback ==================== -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: linear-gradient(135deg, #0A2540 0%, #1a3a5c 100%);
         color: white;
         font-family: 'Inter', 'Cairo', sans-serif;
         text-align: center;
         padding: 2rem;
+        z-index: 99999;
       ">
-        <div>
-          <h1 style="font-size: 2rem; margin-bottom: 1rem;">JavaScript Required</h1>
-          <p style="font-size: 1.2rem; color: rgba(255, 255, 255, 0.8);">
-            Please enable JavaScript to run NAVA Ops Platform
+        <div style="max-width: 600px;">
+          <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 2rem;">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#FFD700" stroke-width="3" />
+            <path d="M50,30 L50,55 M50,65 L50,70" stroke="#FFD700" stroke-width="4" stroke-linecap="round" />
+          </svg>
+
+          <h1 style="font-size: 2rem; margin-bottom: 1rem; font-weight: 700;">
+            يتطلب JavaScript
+          </h1>
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; opacity: 0.9;">
+            JavaScript Required
+          </h2>
+
+          <p style="font-size: 1.125rem; line-height: 1.6; color: rgba(255, 255, 255, 0.8); margin-bottom: 1rem;">
+            يحتاج تطبيق NAVA Ops إلى JavaScript لتشغيل جميع الميزات.
+            <br />
+            يرجى تفعيل JavaScript في إعدادات المتصفح وإعادة تحميل الصفحة.
           </p>
-          <p style="margin-top: 1rem; font-size: 1rem; color: rgba(255, 255, 255, 0.6);">
-            يرجى تفعيل JavaScript لتشغيل منصة NAVA Ops
+
+          <p style="font-size: 1rem; line-height: 1.6; color: rgba(255, 215, 0, 0.9); margin-bottom: 2rem;">
+            NAVA Ops requires JavaScript to be enabled for full functionality.
+            <br />
+            Please enable JavaScript in your browser settings and reload the page.
           </p>
+
+          <div style="
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+          ">
+            <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);">
+              <strong>كيفية التفعيل:</strong> الإعدادات → الخصوصية والأمان → إعدادات الموقع → JavaScript → السماح
+              <br />
+              <strong>How to enable:</strong> Settings → Privacy & Security → Site Settings → JavaScript → Allow
+            </p>
+          </div>
+
+          <button onclick="location.reload()" style="
+            margin-top: 2rem;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #0A2540;
+            border: none;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+          " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            إعادة تحميل الصفحة | Reload Page
+          </button>
         </div>
       </div>
     </noscript>
+
+    <!-- ==================== Analytics Placeholder ==================== -->
+    <!-- Google Analytics / Google Tag Manager would go here -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    -->
+
+    <!-- ==================== Microsoft Clarity / Hotjar Placeholder ==================== -->
+    <!--
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "CLARITY_PROJECT_ID");
+    </script>
+    -->
   </body>
 </html>

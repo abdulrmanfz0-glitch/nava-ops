@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Modern NAVA Primary Palette
+        // Modern NAVA Primary Palette (Blue)
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -22,6 +22,31 @@ export default {
           800: '#00478e',
           900: '#003366',
           950: '#002244',
+        },
+        // Gold/Navy Brand Colors for NAVA
+        gold: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#FFD700',  // NAVA Gold
+          600: '#f59e0b',
+          700: '#d97706',
+          800: '#b45309',
+          900: '#92400e',
+        },
+        navy: {
+          50: '#f0f4f8',
+          100: '#d9e2ec',
+          200: '#bcccdc',
+          300: '#9fb3c8',
+          400: '#829ab1',
+          500: '#0A2540',  // NAVA Navy
+          600: '#1a3a5c',
+          700: '#243b53',
+          800: '#102a43',
+          900: '#0d1f33',
         },
         // Modern Secondary Palette
         secondary: {
@@ -147,12 +172,19 @@ export default {
         'lg': 'var(--shadow-lg)',
         'xl': 'var(--shadow-xl)',
 
-        // Modern Shadows
+        // Modern Shadows with Depth
         'soft': '0 2px 8px -2px rgba(0, 0, 0, 0.08), 0 6px 20px -3px rgba(0, 0, 0, 0.06)',
         'glow': '0 0 20px -5px rgba(0, 136, 255, 0.3)',
         'glow-lg': '0 0 30px -5px rgba(0, 136, 255, 0.4)',
         'glow-primary': '0 8px 16px -4px rgba(0, 136, 255, 0.2)',
         'glow-success': '0 8px 16px -4px rgba(16, 185, 129, 0.2)',
+        'glow-gold': '0 8px 16px -4px rgba(255, 215, 0, 0.2)',
+
+        // Elevation shadows for cards and modals
+        'elevation-1': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        'elevation-2': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'elevation-3': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'elevation-4': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
       },
       animation: {
         // Smooth, modern animations
@@ -161,14 +193,18 @@ export default {
         'slide-up': 'slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         'slide-down': 'slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         'slide-in-right': 'slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-out-right': 'slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         'slide-in-left': 'slideInLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         'scale-in': 'scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         'scale-out': 'scaleOut 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         'bounce-in': 'bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
         'pulse-soft': 'pulseSoft 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 3s ease-in-out infinite',
         'spin-slow': 'spin 3s linear infinite',
         'wiggle': 'wiggle 0.5s ease-in-out',
         'shimmer': 'shimmer 2s linear infinite',
+        'modal-slide-in': 'modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       },
       keyframes: {
         fadeIn: {
@@ -188,8 +224,12 @@ export default {
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
         slideInRight: {
-          '0%': { transform: 'translateX(24px)', opacity: '0' },
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideOutRight: {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(120%)', opacity: '0' },
         },
         slideInLeft: {
           '0%': { transform: 'translateX(-24px)', opacity: '0' },
@@ -213,6 +253,14 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
         },
+        pulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.7' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
         wiggle: {
           '0%, 100%': { transform: 'rotate(0deg)' },
           '25%': { transform: 'rotate(-3deg)' },
@@ -221,6 +269,10 @@ export default {
         shimmer: {
           '0%': { backgroundPosition: '-1000px 0' },
           '100%': { backgroundPosition: '1000px 0' },
+        },
+        modalSlideIn: {
+          '0%': { opacity: '0', transform: 'translateY(-20px) scale(0.95)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
       },
       backgroundImage: {
@@ -235,6 +287,11 @@ export default {
         'gradient-warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
         'gradient-error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
         'gradient-dark': 'linear-gradient(135deg, #171717 0%, #262626 100%)',
+
+        // NAVA Brand Gradients
+        'gradient-gold': 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+        'gradient-navy': 'linear-gradient(135deg, #0A2540 0%, #1a3a5c 100%)',
+        'gradient-premium': 'linear-gradient(135deg, #0088FF 0%, #00b4ff 100%)',
       },
       spacing: {
         '18': '4.5rem',
@@ -255,11 +312,22 @@ export default {
         'full': '9999px',
       },
       zIndex: {
+        '0': '0',
+        '10': '10',
+        '20': '20',
+        '30': '30',
+        '40': '40',
+        '50': '50',
         '60': '60',
         '70': '70',
         '80': '80',
         '90': '90',
         '100': '100',
+        '900': '900',   // Dropdowns
+        '1000': '1000', // Modals
+        '1050': '1050', // Tooltips
+        '1100': '1100', // Notifications
+        '9999': '9999', // Max
       },
       transitionDuration: {
         '0': '0ms',
@@ -273,8 +341,24 @@ export default {
       transitionTimingFunction: {
         'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
         'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'ease-in-out-back': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+      },
+      backdropBlur: {
+        'xs': '2px',
+        'sm': '4px',
+        'DEFAULT': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '24px',
+        '2xl': '40px',
+        '3xl': '64px',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Add RTL support plugin if needed
+    // require('@tailwindcss/forms'),
+    // require('@tailwindcss/typography'),
+    // require('tailwindcss-rtl'),
+  ],
 }

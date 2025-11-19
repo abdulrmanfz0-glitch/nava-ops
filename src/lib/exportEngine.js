@@ -1,11 +1,31 @@
 // NAVA OPS - Advanced Export Engine
 // Comprehensive export utilities for PDF, Excel, CSV with rich formatting
+// Now includes html2canvas integration for full report exports
 
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { logger } from './logger';
+
+/**
+ * Lazy load html2canvas for chart and HTML element capture
+ * Install with: npm install html2canvas
+ */
+let html2canvas = null;
+const loadHtml2Canvas = async () => {
+  if (!html2canvas) {
+    try {
+      const module = await import('html2canvas');
+      html2canvas = module.default;
+      logger.info('html2canvas loaded successfully');
+    } catch (error) {
+      logger.warn('html2canvas not available. Install with: npm install html2canvas', { error: error.message });
+      throw new Error('html2canvas not installed. Run: npm install html2canvas');
+    }
+  }
+  return html2canvas;
+};
 
 /**
  * PDF Export with Advanced Formatting
@@ -57,64 +77,25 @@ export class PDFExporter {
       }
     }
 
-  addHeader(title, subtitle = '', reportId = '', confidence = 'High') {
-    // Premium gradient background
-    this.pdf.setFillColor(...this.primaryColor);
-    this.pdf.rect(0, 0, this.pageWidth, 50, 'F');
- 
-
-    // Restalyze branding box
-    this.pdf.setFillColor(255, 255, 255);
-    this.pdf.rect(this.margins.left, 8, 35, 12, 'F');
-    this.pdf.setFontSize(14);
+    // Title
+    this.pdf.setFontSize(18);
     this.pdf.setFont('helvetica', 'bold');
-    this.pdf.setTextColor(0, 136, 255);
-    this.pdf.text('RESTALYZE', this.margins.left + 3, 15);
-
-    // Professional Analytics Platform label
-    this.pdf.setFontSize(7);
-    this.pdf.setFont('helvetica', 'normal');
-    this.pdf.setTextColor(100, 116, 139);
-    this.pdf.text('Professional Analytics Platform', this.margins.left + 3, 18);
-
-    // Report metadata (right side)
-    this.pdf.setFontSize(9);
-    this.pdf.setTextColor(255, 255, 255);
-    this.pdf.setFont('helvetica', 'normal');
-    this.pdf.text('Report ID: ' + reportId, this.pageWidth - this.margins.right - 50, 15);
-    this.pdf.text('Confidence: ' + confidence, this.pageWidth - this.margins.right - 50, 20);
-    this.pdf.text('Generated: ' + new Date().toLocaleDateString(), this.pageWidth - this.margins.right - 50, 25);
-
-    // Title and subtitle
-    this.pdf.setTextColor(255, 255, 255);
-    this.pdf.setFontSize(20);
-    this.pdf.setFont('helvetica', 'bold');
-    this.pdf.text(title, this.margins.left, 35);
-
     this.pdf.text(title, this.margins.left, 38);
- 
 
+    // Subtitle
     if (subtitle) {
       this.pdf.setFontSize(10);
       this.pdf.setFont('helvetica', 'normal');
-      this.pdf.text(subtitle, this.margins.left, 42);
+      this.pdf.text(subtitle, this.margins.left, 44);
     }
 
-    // Right side - Date and Report ID
+    // Right side - Date and time
     this.pdf.setFontSize(8);
     this.pdf.setFont('helvetica', 'normal');
     this.pdf.text(new Date().toLocaleDateString(), this.pageWidth - this.margins.right - 50, 8);
     this.pdf.text(new Date().toLocaleTimeString(), this.pageWidth - this.margins.right - 50, 12);
 
-    this.currentY = 60;
-
-      this.pdf.setFontSize(11);
-      this.pdf.setFont('helvetica', 'normal');
-      this.pdf.text(subtitle, this.margins.left, 44);
-    }
-
     this.currentY = 55;
-
     this.pdf.setTextColor(0, 0, 0);
   }
 
@@ -225,6 +206,74 @@ export class PDFExporter {
       this.currentY += height + 10;
     } catch (error) {
       logger.error('Failed to add chart to PDF', error);
+    }
+  }
+
+  /**
+   * Capture and add HTML element as image using html2canvas
+   *
+   * @param {HTMLElement} element - DOM element to capture
+   * @param {string} title - Optional title for the chart
+   * @param {Object} options - html2canvas options
+   * @returns {Promise<void>}
+   */
+  async addChartFromElement(element, title = '', options = {}) {
+    try {
+      const html2canvasLib = await loadHtml2Canvas();
+
+      // Default options for high-quality capture
+      const captureOptions = {
+        scale: 2, // Higher resolution
+        useCORS: true, // Allow cross-origin images
+        allowTaint: false,
+        backgroundColor: '#ffffff',
+        logging: false,
+        ...options
+      };
+
+      // Capture element as canvas
+      const canvas = await html2canvasLib(element, captureOptions);
+
+      // Convert canvas to data URL
+      const chartDataUrl = canvas.toDataURL('image/png', 1.0);
+
+      // Calculate height to maintain aspect ratio
+      const chartWidth = this.pageWidth - this.margins.left - this.margins.right;
+      const aspectRatio = canvas.height / canvas.width;
+      const chartHeight = chartWidth * aspectRatio;
+
+      // Add to PDF
+      this.addChart(chartDataUrl, title, chartHeight);
+
+      logger.info('Chart captured and added to PDF', { title, width: chartWidth, height: chartHeight });
+    } catch (error) {
+      logger.error('Failed to capture and add chart from element', { error: error.message });
+      // Add error placeholder
+      this.checkPageBreak(20);
+      this.pdf.setFontSize(10);
+      this.pdf.setTextColor(239, 68, 68); // Red
+      this.pdf.text('Failed to capture chart. Please try again.', this.margins.left, this.currentY);
+      this.currentY += 15;
+    }
+  }
+
+  /**
+   * Add multiple charts from element selectors
+   *
+   * @param {Array<Object>} charts - Array of {selector, title} objects
+   * @returns {Promise<void>}
+   */
+  async addMultipleCharts(charts) {
+    for (const chart of charts) {
+      const element = typeof chart.selector === 'string'
+        ? document.querySelector(chart.selector)
+        : chart.selector;
+
+      if (element) {
+        await this.addChartFromElement(element, chart.title || '', chart.options || {});
+      } else {
+        logger.warn('Chart element not found', { selector: chart.selector });
+      }
     }
   }
 
@@ -999,6 +1048,7 @@ const exportAsExcel = async (reportData, filename, restaurantInfo = {}) => {
     reportData.metrics.forEach(metric => {
       metrics[metric.label] = metric.value;
     });
+  }
 
   // Add cover sheet with metadata
   if (restaurantInfo.name || reportData.title) {
@@ -1013,10 +1063,6 @@ const exportAsExcel = async (reportData, filename, restaurantInfo = {}) => {
   }
 
   // Add summary sheet
-  if (reportData.metrics) {
-    excel.addSheet('Summary', reportData.metrics);
- 
-  }
   excel.addSummarySheet(reportData.title || 'Report Summary', metrics);
 
   // Add data sheets
@@ -1062,10 +1108,206 @@ const exportAsCSV = async (reportData, filename, restaurantInfo = {}) => {
   logger.info('CSV exported successfully with metadata', { filename, restaurant: restaurantInfo.name });
 };
 
+/**
+ * Export full report with charts using html2canvas
+ *
+ * @param {Object} options - Configuration options
+ * @param {string} options.containerId - Container element ID (default: 'report-container')
+ * @param {string} options.filename - Output filename
+ * @param {string} options.title - Report title
+ * @param {string} options.subtitle - Report subtitle
+ * @param {Array<string>} options.chartSelectors - CSS selectors for chart elements
+ * @param {Object} options.restaurantInfo - Restaurant information
+ * @returns {Promise<void>}
+ */
+export const exportFullReportWithCharts = async (options = {}) => {
+  try {
+    const {
+      containerId = 'report-container',
+      filename = 'full-report.pdf',
+      title = 'Full Report',
+      subtitle = '',
+      chartSelectors = [],
+      restaurantInfo = {}
+    } = options;
+
+    logger.info('Starting full report export with charts', { filename, chartCount: chartSelectors.length });
+
+    // Create PDF exporter
+    const pdf = new PDFExporter();
+
+    // Add header
+    pdf.addHeader(title, subtitle, restaurantInfo);
+
+    // Add charts from selectors
+    if (chartSelectors.length > 0) {
+      for (const selector of chartSelectors) {
+        const element = document.querySelector(selector);
+        if (element) {
+          const chartTitle = element.getAttribute('data-chart-title') || '';
+          await pdf.addChartFromElement(element, chartTitle);
+        } else {
+          logger.warn('Chart element not found', { selector });
+        }
+      }
+    } else {
+      // If no specific selectors, try to capture entire container
+      const container = document.getElementById(containerId);
+      if (container) {
+        await pdf.addChartFromElement(container, '');
+      }
+    }
+
+    // Save PDF
+    pdf.save(filename);
+
+    logger.info('Full report with charts exported successfully', { filename });
+  } catch (error) {
+    logger.error('Failed to export full report with charts', { error: error.message });
+    throw error;
+  }
+};
+
+/**
+ * Capture element as image and download
+ *
+ * @param {HTMLElement|string} elementOrSelector - Element or CSS selector
+ * @param {string} filename - Output filename
+ * @param {Object} options - html2canvas options
+ * @returns {Promise<void>}
+ */
+export const captureElementAsImage = async (elementOrSelector, filename = 'capture.png', options = {}) => {
+  try {
+    const html2canvasLib = await loadHtml2Canvas();
+
+    // Get element
+    const element = typeof elementOrSelector === 'string'
+      ? document.querySelector(elementOrSelector)
+      : elementOrSelector;
+
+    if (!element) {
+      throw new Error('Element not found');
+    }
+
+    // Capture options
+    const captureOptions = {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: '#ffffff',
+      logging: false,
+      ...options
+    };
+
+    // Capture element
+    const canvas = await html2canvasLib(element, captureOptions);
+
+    // Convert to blob and download
+    canvas.toBlob((blob) => {
+      saveAs(blob, filename);
+      logger.info('Element captured and downloaded as image', { filename });
+    }, 'image/png', 1.0);
+  } catch (error) {
+    logger.error('Failed to capture element as image', { error: error.message });
+    throw error;
+  }
+};
+
+/**
+ * Export report section by section with page breaks
+ *
+ * @param {Array<Object>} sections - Array of section configurations
+ * @param {string} filename - Output filename
+ * @param {Object} reportInfo - Report metadata
+ * @returns {Promise<void>}
+ */
+export const exportReportBySections = async (sections, filename = 'report.pdf', reportInfo = {}) => {
+  try {
+    logger.info('Starting section-by-section report export', { sectionCount: sections.length });
+
+    const pdf = new PDFExporter();
+
+    // Add header
+    pdf.addHeader(
+      reportInfo.title || 'Report',
+      reportInfo.subtitle || '',
+      reportInfo.restaurantInfo || {}
+    );
+
+    // Process each section
+    for (const section of sections) {
+      // Add section header
+      if (section.sectionTitle) {
+        pdf.addSection(section.sectionTitle);
+      }
+
+      // Add executive summary if present
+      if (section.summary) {
+        pdf.addExecutiveSummary(section.summary);
+      }
+
+      // Add metrics cards if present
+      if (section.metrics) {
+        pdf.addMetricsCards(section.metrics);
+      }
+
+      // Add table if present
+      if (section.table) {
+        pdf.addTable(section.table.headers, section.table.data, section.table.options);
+      }
+
+      // Add chart from element if present
+      if (section.chartSelector) {
+        const element = document.querySelector(section.chartSelector);
+        if (element) {
+          await pdf.addChartFromElement(element, section.chartTitle || '');
+        }
+      }
+
+      // Add chart from data URL if present
+      if (section.chartDataUrl) {
+        pdf.addChart(section.chartDataUrl, section.chartTitle || '');
+      }
+
+      // Add insights if present
+      if (section.insights) {
+        pdf.addInsights(section.insights);
+      }
+
+      // Add custom text if present
+      if (section.text) {
+        pdf.checkPageBreak(20);
+        pdf.pdf.setFontSize(10);
+        pdf.pdf.setFont('helvetica', 'normal');
+        pdf.pdf.setTextColor(60, 60, 60);
+        const lines = pdf.pdf.splitTextToSize(section.text, pdf.pageWidth - pdf.margins.left - pdf.margins.right);
+        lines.forEach(line => {
+          pdf.checkPageBreak(10);
+          pdf.pdf.text(line, pdf.margins.left, pdf.currentY);
+          pdf.currentY += 6;
+        });
+        pdf.currentY += 5;
+      }
+    }
+
+    // Save PDF
+    pdf.save(filename);
+
+    logger.info('Section-by-section report exported successfully', { filename, sections: sections.length });
+  } catch (error) {
+    logger.error('Failed to export report by sections', { error: error.message });
+    throw error;
+  }
+};
+
 export default {
   PDFExporter,
   ExcelExporter,
   CSVExporter,
   JSONExporter,
-  exportReport
+  exportReport,
+  exportFullReportWithCharts,
+  captureElementAsImage,
+  exportReportBySections,
+  loadHtml2Canvas
 };

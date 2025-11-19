@@ -39,6 +39,7 @@ const ClaudeNexusDemo = lazy(() => import('./pages/ClaudeNexusDemo'));
 const GitOperations = lazy(() => import('./GitOperations'));
 const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
+const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
 
 // Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -373,6 +374,17 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <Billing />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Smart Features Dashboard - AI-Powered Analytics */}
+                      <Route path="/smart-features" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <Layout>
+                              <SmartFeatures />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

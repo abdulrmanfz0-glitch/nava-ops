@@ -417,20 +417,117 @@
     text-wrap: balance;
   }
 
+  /* ========== Glass Effects ========== */
   .glass-effect {
     @apply backdrop-blur-xl bg-white/80 dark:bg-gray-900/80;
     @apply border border-gray-200/50 dark:border-gray-700/50;
   }
 
+  .glass-effect-strong {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+  }
+
+  .dark .glass-effect-strong {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* ========== Gradient Utilities ========== */
   .gradient-text {
     @apply bg-gradient-to-r from-primary-500 to-secondary-500;
     @apply bg-clip-text text-transparent;
   }
 
+  .gradient-primary {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  }
+
+  .gradient-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+
+  .gradient-warning {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, #0A2540 0%, #1a3a5c 100%);
+  }
+
+  .gradient-mesh {
+    background: radial-gradient(at 40% 20%, rgba(0, 136, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+  }
+
+  /* ========== Hover Effects ========== */
   .hover-lift {
     @apply transition-transform duration-300 hover:-translate-y-1;
   }
 
+  .hover-lift-strong {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift-strong:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+
+  /* ========== Advanced Tooltips ========== */
+  .advanced-tooltip {
+    position: relative;
+  }
+
+  .advanced-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+
+  .advanced-tooltip:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+
+  /* ========== Scroll Utilities ========== */
   .scroll-smooth {
     scroll-behavior: smooth;
   }
@@ -465,6 +562,88 @@
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-gray-300 dark:bg-gray-700 rounded-full;
     @apply hover:bg-gray-400 dark:hover:bg-gray-600;
+  }
+
+  /* ========== Brand Colors ========== */
+  .brand-primary {
+    color: #FFD700;
+  }
+
+  .bg-brand-primary {
+    background-color: #0A2540;
+  }
+
+  .bg-brand-gold {
+    background-color: #FFD700;
+  }
+
+  .border-brand-gold {
+    border-color: #FFD700;
+  }
+
+  .text-brand-gold {
+    color: #FFD700;
+  }
+
+  /* ========== Sidebar Item Styles ========== */
+  .sidebar-item {
+    @apply transition-all duration-300 rounded-xl px-4 py-3 mb-2;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .sidebar-item:hover {
+    background: rgba(255, 215, 0, 0.15);
+    transform: translateX(-5px);
+    color: #FFD700;
+  }
+
+  .sidebar-item.active {
+    background: rgba(255, 215, 0, 0.25);
+    border-right: 4px solid #FFD700;
+    color: #FFD700;
+  }
+
+  /* ========== Animation Utilities ========== */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .data-pulse {
+    animation: pulse 2s infinite;
+  }
+
+  /* ========== Text Enhancements ========== */
+  .text-enhanced {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .text-secondary {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* ========== Additional Keyframe Animations ========== */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -526,7 +705,7 @@
   }
 }
 
-/* ========== Notification Animations ========== */
+/* ========== Advanced Notification Animations ========== */
 @keyframes shrink {
   from {
     width: 100%;
@@ -534,6 +713,21 @@
   to {
     width: 0%;
   }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 0.3s ease-out forwards;
 }
 
 /* ========== Dev Mode Indicator ========== */

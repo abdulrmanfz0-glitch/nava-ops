@@ -103,6 +103,15 @@ export const navigationConfig = [
         description: 'Premium professional reports with AI insights, anomaly detection, and actionable recommendations',
         keywords: ['report', 'hub', 'premium', 'professional', 'analytics', 'export', 'pdf', 'insights', 'ai', 'recommendations'],
         badge: { type: 'badge', value: 'Premium' }
+      },
+      {
+        id: 'smart-features',
+        title: 'Smart Features',
+        path: '/smart-features',
+        icon: 'Sparkles',
+        description: 'AI-powered insights, predictive analytics, and performance scoring dashboard',
+        keywords: ['smart', 'ai', 'insights', 'predictions', 'scoring', 'analytics', 'performance', 'intelligent'],
+        badge: { type: 'badge', value: 'AI' }
       }
     ]
   },

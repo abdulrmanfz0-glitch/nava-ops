@@ -234,35 +234,65 @@ export function NotificationProvider({ children }) {
 function NotificationContainer() {
   const { notifications, removeNotification, markAsRead } = useNotification();
 
-  if (notifications.length === 0) return null;
+  // Queue management: Show max 3 notifications
+  const MAX_VISIBLE_NOTIFICATIONS = 3;
+  const visibleNotifications = notifications.slice(0, MAX_VISIBLE_NOTIFICATIONS);
+
+  if (visibleNotifications.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-3 w-96 max-w-full">
-      {notifications.map((notification) => (
+    <div className="fixed top-4 right-4 z-50 space-y-3 w-96 max-w-full pointer-events-none">
+      {visibleNotifications.map((notification, index) => (
         <NotificationToast
           key={notification.id}
           notification={notification}
           onClose={() => removeNotification(notification.id)}
           onRead={() => markAsRead(notification.id)}
+          index={index}
         />
       ))}
+
+      {/* Queue Indicator */}
+      {notifications.length > MAX_VISIBLE_NOTIFICATIONS && (
+        <div className="bg-gray-900/90 backdrop-blur-md text-white px-4 py-2 rounded-lg shadow-lg text-center text-sm font-medium pointer-events-auto animate-slide-in-right">
+          +{notifications.length - MAX_VISIBLE_NOTIFICATIONS} إشعارات أخرى في قائمة الانتظار
+        </div>
+      )}
     </div>
   );
 }
 
 // مكون Toast للإشعارات
-function NotificationToast({ notification, onClose, onRead }) {
+function NotificationToast({ notification, onClose, onRead, index }) {
   const {
     title,
     message,
     type,
     action,
     persistent,
-    read
+    read,
+    duration = 3000
   } = notification;
+
+  const [progress, setProgress] = React.useState(100);
+  const [isExiting, setIsExiting] = React.useState(false);
 
   const Icon = NOTIFICATION_ICONS[type];
   const colors = NOTIFICATION_COLORS[type];
+
+  // Progress bar countdown
+  React.useEffect(() => {
+    if (!persistent && duration > 0) {
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          const decrement = (100 / duration) * 50; // Update every 50ms
+          return Math.max(0, prev - decrement);
+        });
+      }, 50);
+
+      return () => clearInterval(interval);
+    }
+  }, [persistent, duration]);
 
   const handleClick = () => {
     if (!read) {
@@ -273,14 +303,27 @@ function NotificationToast({ notification, onClose, onRead }) {
     }
   };
 
+  const handleClose = (e) => {
+    e?.stopPropagation();
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  };
+
   return (
-    <div 
+    <div
       className={`
-        relative transform transition-all duration-300 ease-in-out
+        relative transform transition-all duration-300 ease-in-out pointer-events-auto
         ${colors.bg} ${colors.border} border rounded-2xl shadow-lg
         hover:shadow-xl cursor-pointer group
         ${read ? 'opacity-80' : 'opacity-100'}
+        ${isExiting ? 'animate-slide-out-right' : 'animate-slide-in-right'}
       `}
+      style={{
+        animationDelay: `${index * 100}ms`,
+        animationFillMode: 'both'
+      }}
       onClick={handleClick}
     >
       <div className="p-4">
@@ -298,15 +341,13 @@ function NotificationToast({ notification, onClose, onRead }) {
             )}
             
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
+              onClick={handleClose}
               className={`
                 opacity-0 group-hover:opacity-100 transition-opacity duration-200
                 p-1 rounded-full hover:bg-black/10
                 ${colors.text}
               `}
+              aria-label="إغلاق الإشعار"
             >
               <X size={16} />
             </button>
@@ -341,33 +382,23 @@ function NotificationToast({ notification, onClose, onRead }) {
           </div>
         )}
 
-        {/* شريط التقدم (لغير المستديمة) */}
-        {!persistent && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 rounded-b-2xl overflow-hidden">
-            <div 
+        {/* شريط التقدم (لغير المستديمة) - Enhanced with smooth countdown */}
+        {!persistent && duration > 0 && (
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200/50 dark:bg-gray-700/50 rounded-b-2xl overflow-hidden">
+            <div
               className={`
-                h-full transition-all duration-1000 ease-linear
+                h-full transition-all duration-75 ease-linear
                 ${type === NOTIFICATION_TYPES.SUCCESS ? 'bg-green-500' :
                   type === NOTIFICATION_TYPES.ERROR ? 'bg-red-500' :
                   type === NOTIFICATION_TYPES.WARNING ? 'bg-yellow-500' : 'bg-blue-500'}
               `}
-              style={{ 
-                width: '100%',
-                animation: 'shrink 5s linear forwards'
+              style={{
+                width: `${progress}%`
               }}
             />
           </div>
         )}
       </div>
-
-      <style jsx>{`
-        @keyframes shrink {
-          from { width: 100%; }
-          to { width: 0%; }
-        }
-      `}</style>
-
- 
     </div>
   );
 }

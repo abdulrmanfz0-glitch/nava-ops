@@ -80,6 +80,11 @@ reports/
 !README.md
 !ARCHITECTURE.md
 !BRANDING_AUDIT_REPORT.md
+!ONBOARDING.md
+!DX_ARCHITECTURE.md
+!GIT_WORKFLOW.md
+!DX_README.md
+!DX_TRANSFORMATION_SUMMARY.md
 
 # Allow src directory files (override lib/ exclusion for src/lib)
 !src/

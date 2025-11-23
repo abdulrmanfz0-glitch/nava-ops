@@ -7,7 +7,7 @@
  */
 
 import { supabase } from '@/lib/supabase';
-import { logger } from '@/lib/logger';
+import logger from '@/lib/logger';
 
 class ClaudeNexusService {
   constructor() {

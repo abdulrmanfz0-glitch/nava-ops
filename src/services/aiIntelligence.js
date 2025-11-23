@@ -3,7 +3,7 @@
  * API wrapper for AI Intelligence Layer functionality
  */
 
-import { logger } from '@/lib/logger';
+import logger from '@/lib/logger';
 import * as AI from '@/lib/aiIntelligence';
 
 /**

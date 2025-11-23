@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// التحقق من وجود متغيرات البيئة مع معالجة أكثر مرونة
+// Check for environment variables with flexible handling
 const hasValidCredentials = !!(supabaseUrl && supabaseAnonKey)
 
 if (!hasValidCredentials && import.meta.env.DEV) {
@@ -16,7 +16,7 @@ if (!hasValidCredentials && import.meta.env.DEV) {
   )
 }
 
-// إعدادات متقدمة لـ Supabase
+// Advanced Supabase settings
 const supabaseOptions = {
   auth: {
     autoRefreshToken: true,
@@ -24,7 +24,7 @@ const supabaseOptions = {
     detectSessionInUrl: true,
     storage: localStorage,
     flowType: 'pkce',
-    debug: import.meta.env.DEV, // تفعيل وضع التصحيح في التطوير فقط
+    debug: import.meta.env.DEV, // Enable debug mode in development only
   },
   realtime: {
     params: {
@@ -42,15 +42,15 @@ const supabaseOptions = {
   },
 }
 
-// إنشاء العميل - مع معالجة الحالات الخاصة
+// Create client - with special case handling
 export const supabase = hasValidCredentials
   ? createClient(supabaseUrl, supabaseAnonKey, supabaseOptions)
   : createClient('https://placeholder.supabase.co', 'placeholder-key', supabaseOptions)
 
-// تصدير حالة الاتصال
+// Export connection status
 export const isSupabaseConfigured = hasValidCredentials
 
-// 🔧 نظام متقدم للتعامل مع الأخطاء
+// 🔧 Advanced error handling system
 export class SupabaseError extends Error {
   constructor(message, code, details) {
     super(message)
@@ -61,24 +61,24 @@ export class SupabaseError extends Error {
   }
 }
 
-// 📊 خريطة رموز الأخطاء
+// 📊 Error codes map
 const ERROR_CODES = {
-  'PGRST116': 'البيانات المطلوبة غير موجودة',
-  '23505': 'هذا السجل موجود مسبقاً',
-  '42501': 'ليس لديك صلاحية للقيام بهذا الإجراء',
-  '42703': 'حقل غير موجود في الجدول',
-  '42P01': 'الجدول غير موجود',
-  'network_error': 'خطأ في الاتصال بالخادم',
-  'auth/invalid-email': 'البريد الإلكتروني غير صالح',
-  'auth/invalid-password': 'كلمة المرور غير صحيحة',
-  'auth/email-not-confirmed': 'البريد الإلكتروني غير مفعل',
-  'auth/user-not-found': 'المستخدم غير موجود',
-  'auth/weak-password': 'كلمة المرور ضعيفة',
+  'PGRST116': 'The requested data was not found',
+  '23505': 'This record already exists',
+  '42501': 'You do not have permission to perform this action',
+  '42703': 'Field does not exist in table',
+  '42P01': 'Table does not exist',
+  'network_error': 'Server connection error',
+  'auth/invalid-email': 'Invalid email address',
+  'auth/invalid-password': 'Incorrect password',
+  'auth/email-not-confirmed': 'Email not verified',
+  'auth/user-not-found': 'User not found',
+  'auth/weak-password': 'Password is too weak',
 }
 
-// 🛠️ دوال مساعدة متقدمة
+// 🛠️ Advanced helper functions
 export const checkSupabaseConnection = async () => {
-  // إذا لم تكن بيانات الاعتماد موجودة، إرجاع حالة غير متصل مباشرة
+  // If credentials are not present, return disconnected status immediately
   if (!hasValidCredentials) {
     return {
       connected: false,
@@ -100,7 +100,7 @@ export const checkSupabaseConnection = async () => {
 
     if (error) {
       throw new SupabaseError(
-        `فشل الاتصال بقاعدة البيانات: ${error.message}`,
+        `Database connection failed: ${error.message}`,
         error.code,
         { responseTime }
       )
@@ -126,7 +126,7 @@ export const checkSupabaseConnection = async () => {
   }
 }
 
-// 🔄 نظام إعادة المحاولة التلقائي
+// 🔄 Automatic retry system
 export const retryOperation = async (operation, maxRetries = 3, delay = 1000) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -143,17 +143,17 @@ export const retryOperation = async (operation, maxRetries = 3, delay = 1000) =>
   }
 }
 
-// 🎯 معالجة أخطاء Supabase بشكل مركزي
+// 🎯 Centralized Supabase error handling
 export const handleSupabaseError = (error) => {
   if (!error) {
     return {
-      message: 'خطأ غير معروف',
+      message: 'Unknown error',
       code: 'UNKNOWN_ERROR',
-      userMessage: 'حدث خطأ غير متوقع'
+      userMessage: 'An unexpected error occurred'
     }
   }
 
-  // تسجيل الخطأ للتصحيح
+  // Log error for debugging
   console.error('🔴 Supabase Error:', {
     message: error.message,
     code: error.code,
@@ -162,10 +162,10 @@ export const handleSupabaseError = (error) => {
     stack: error.stack
   })
 
-  // تحويل رمز الخطأ إلى رسالة مفهومة للمستخدم
-  const userMessage = ERROR_CODES[error.code] || 
-                     ERROR_CODES[error.message] || 
-                     'حدث خطأ أثناء المعالجة، يرجى المحاولة مرة أخرى'
+  // Convert error code to user-friendly message
+  const userMessage = ERROR_CODES[error.code] ||
+                     ERROR_CODES[error.message] ||
+                     'An error occurred during processing. Please try again.'
 
   return {
     message: error.message,
@@ -176,9 +176,9 @@ export const handleSupabaseError = (error) => {
   }
 }
 
-// 📝 دوال مساعدة للاستعلامات
+// 📝 Query helper functions
 export const queryHelpers = {
-  // استعلام آمن مع معالجة الأخطاء
+  // Safe query with error handling
   async safeQuery(queryPromise) {
     try {
       const { data, error, count, status, statusText } = await queryPromise
@@ -233,7 +233,7 @@ export const queryHelpers = {
   }
 }
 
-// 📊 مراقبة أداء Supabase
+// 📊 Supabase performance monitoring
 export const performanceMonitor = {
   queries: new Map(),
   
@@ -255,7 +255,7 @@ export const performanceMonitor = {
       query.status = success ? 'success' : 'failed'
       query.timestamp = new Date().toISOString()
       
-      // تسجيل الاستعلامات البطيئة
+      // Log slow queries
       if (query.duration > 1000) {
         console.warn(`🐌 Slow query detected: ${query.name} took ${query.duration}ms`)
       }
@@ -277,7 +277,7 @@ export const performanceMonitor = {
   }
 }
 
-// 🔔 نظام مراقبة الحالة في الوقت الحقيقي
+// 🔔 Real-time status monitoring system
 export const setupRealtimeMonitor = () => {
   const channel = supabase
     .channel('system-monitor')
@@ -296,10 +296,10 @@ export const setupRealtimeMonitor = () => {
   return channel
 }
 
-// 🧹 أداة تنظيف الجلسات
+// 🧹 Session cleanup tool
 export const cleanupSessions = async () => {
   try {
-    // تنظيف التخزين المحلي من الجلسات القديمة
+    // Clean local storage from old sessions
     const sessions = JSON.parse(localStorage.getItem('supabase.auth.token') || '[]')
     const validSessions = sessions.filter(session => {
       if (!session.expires_at) return false
@@ -314,10 +314,10 @@ export const cleanupSessions = async () => {
   }
 }
 
-// التصدير الافتراضي
+// Default export
 export default supabase
 
-// التصدير للاستخدام العالمي (للتطوير فقط)
+// Export for global use (development only)
 if (import.meta.env.DEV) {
   window.supabase = supabase
   window.supabaseHelpers = {

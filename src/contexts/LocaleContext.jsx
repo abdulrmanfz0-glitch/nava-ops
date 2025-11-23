@@ -246,7 +246,7 @@ export function LocaleProvider({ children }) {
     } catch (e) {
       logger.warn('Failed to get locale from localStorage', { error: e.message });
     }
-    return import.meta.env.VITE_DEFAULT_LANGUAGE || 'ar';
+    return import.meta.env.VITE_DEFAULT_LANGUAGE || 'en';
   };
 
   const [locale, setLocaleState] = useState(getInitialLocale());

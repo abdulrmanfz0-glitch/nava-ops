@@ -62,7 +62,7 @@ export default function TeamManagement() {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [showEmployeeDetails, setShowEmployeeDetails] = useState(null);
   
-  // فلاتر متقدمة
+  // Advanced filters
   const [filters, setFilters] = useState({
     search: '',
     role: 'all',
@@ -89,43 +89,43 @@ export default function TeamManagement() {
   });
 
   const roleConfig = {
-    admin: { 
-      label: 'مدير النظام', 
+    admin: {
+      label: 'System Admin',
       color: 'bg-purple-100 text-purple-700 border-purple-300',
       level: 5,
       icon: Shield,
       permissions: ['all']
     },
-    ops: { 
-      label: 'مشرف تشغيلي', 
+    ops: {
+      label: 'Operations Supervisor',
       color: 'bg-blue-100 text-blue-700 border-blue-300',
       level: 4,
       icon: Target,
       permissions: ['restaurants:manage', 'team:view', 'reports:view', 'tasks:manage']
     },
-    manager: { 
-      label: 'مدير فرع', 
+    manager: {
+      label: 'Branch Manager',
       color: 'bg-green-100 text-green-700 border-green-300',
       level: 3,
       icon: Users,
       permissions: ['restaurants:view', 'team:view', 'reports:view', 'tasks:manage']
     },
-    accountant: { 
-      label: 'محاسب', 
+    accountant: {
+      label: 'Accountant',
       color: 'bg-amber-100 text-amber-700 border-amber-300',
       level: 2,
       icon: BarChart3,
       permissions: ['financial:view', 'reports:view']
     },
-    analyst: { 
-      label: 'محلل بيانات', 
+    analyst: {
+      label: 'Data Analyst',
       color: 'bg-indigo-100 text-indigo-700 border-indigo-300',
       level: 2,
       icon: TrendingUp,
       permissions: ['reports:view', 'analytics:view']
     },
-    staff: { 
-      label: 'موظف', 
+    staff: {
+      label: 'Staff',
       color: 'bg-gray-100 text-gray-700 border-gray-300',
       level: 1,
       icon: UserCheck,
@@ -134,17 +134,17 @@ export default function TeamManagement() {
   };
 
   const departmentConfig = {
-    management: 'الإدارة',
-    operations: 'التشغيل',
-    finance: 'المالية',
-    marketing: 'التسويق',
-    hr: 'الموارد البشرية',
-    it: 'تقنية المعلومات',
-    sales: 'المبيعات',
-    support: 'الدعم'
+    management: 'Management',
+    operations: 'Operations',
+    finance: 'Finance',
+    marketing: 'Marketing',
+    hr: 'Human Resources',
+    it: 'Information Technology',
+    sales: 'Sales',
+    support: 'Support'
   };
 
-  // جلب بيانات الموظفين مع تحديثات حية
+  // Fetch employee data with live updates
   useEffect(() => {
     fetchEmployees();
     fetchBrands();
@@ -163,7 +163,7 @@ export default function TeamManagement() {
           completed_tasks:tasks!completed(count)
         `);
 
-      // تطبيق صلاحيات المستخدم
+      // Apply user permissions
       if (userProfile?.role === 'ops' && userProfile?.brand_id) {
         query = query.eq('brand_id', userProfile.brand_id);
       }
@@ -176,8 +176,8 @@ export default function TeamManagement() {
       logger.error('Error fetching employees', { error: error.message });
       addNotification({
         type: 'error',
-        title: 'خطأ في جلب البيانات',
-        message: 'تعذر تحميل قائمة الموظفين'
+        title: 'Data Fetch Error',
+        message: 'Failed to load employee list'
       });
     } finally {
       setLoading(false);
@@ -198,7 +198,7 @@ export default function TeamManagement() {
     }
   };
 
-  // تحديثات حية للموظفين
+  // Live updates for employees
   const setupRealtimeSubscription = () => {
     const subscription = supabase
       .channel('employees-changes')
@@ -220,13 +220,13 @@ export default function TeamManagement() {
     };
   };
 
-  // إنشاء أو تحديث موظف
+  // Create or update employee
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       if (editingEmployee) {
-        // تحديث موظف موجود
+        // Update existing employee
         const { error } = await supabase
           .from('user_profiles')
           .update({
@@ -239,11 +239,11 @@ export default function TeamManagement() {
 
         addNotification({
           type: 'success',
-          title: 'تم التحديث',
-          message: 'تم تحديث بيانات الموظف بنجاح'
+          title: 'Updated Successfully',
+          message: 'Employee data has been updated successfully'
         });
       } else {
-        // إنشاء موظف جديد
+        // Create new employee
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: form.email,
           password: generateTemporaryPassword(),
@@ -258,7 +258,7 @@ export default function TeamManagement() {
 
         if (authError) throw authError;
 
-        // تحديث الملف الشخصي
+        // Update profile
         const { error: profileError } = await supabase
           .from('user_profiles')
           .update({
@@ -282,8 +282,8 @@ export default function TeamManagement() {
 
         addNotification({
           type: 'success',
-          title: 'تم الإنشاء',
-          message: 'تم إنشاء حساب الموظف بنجاح'
+          title: 'Created Successfully',
+          message: 'Employee account has been created successfully'
         });
       }
 
@@ -293,13 +293,13 @@ export default function TeamManagement() {
       logger.error('Error saving employee', { error: error.message });
       addNotification({
         type: 'error',
-        title: 'خطأ في الحفظ',
-        message: 'تعذر حفظ بيانات الموظف'
+        title: 'Save Error',
+        message: 'Failed to save employee data'
       });
     }
   };
 
-  // توليد كلمة مرور مؤقتة
+  // Generate temporary password
   const generateTemporaryPassword = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
     let password = '';
@@ -309,9 +309,9 @@ export default function TeamManagement() {
     return password;
   };
 
-  // إعادة تعيين كلمة المرور
+  // Reset password
   const resetPassword = async (employeeId, employeeEmail) => {
-    if (!confirm(`هل تريد إعادة تعيين كلمة مرور ${employeeEmail}؟`)) return;
+    if (!confirm(`Do you want to reset the password for ${employeeEmail}?`)) return;
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(employeeEmail, {
@@ -322,27 +322,27 @@ export default function TeamManagement() {
 
       addNotification({
         type: 'success',
-        title: 'تم إرسال رابط التعيين',
-        message: 'تم إرسال رابط إعادة تعيين كلمة المرور إلى البريد الإلكتروني'
+        title: 'Reset Link Sent',
+        message: 'Password reset link has been sent to the email address'
       });
     } catch (error) {
       logger.error('Error resetting password', { error: error.message });
       addNotification({
         type: 'error',
-        title: 'خطأ في التعيين',
-        message: 'تعذر إرسال رابط إعادة التعيين'
+        title: 'Reset Error',
+        message: 'Failed to send password reset link'
       });
     }
   };
 
-  // تغيير حالة الموظف
+  // Toggle employee status
   const toggleEmployeeStatus = async (employeeId, currentStatus) => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    
+
     try {
       const { error } = await supabase
         .from('user_profiles')
-        .update({ 
+        .update({
           status: newStatus,
           updated_at: new Date().toISOString()
         })
@@ -352,8 +352,8 @@ export default function TeamManagement() {
 
       addNotification({
         type: 'success',
-        title: 'تم تغيير الحالة',
-        message: `تم ${newStatus === 'active' ? 'تفعيل' : 'تعطيل'} حساب الموظف`
+        title: 'Status Changed',
+        message: `Employee account has been ${newStatus === 'active' ? 'activated' : 'deactivated'}`
       });
 
       await fetchEmployees();
@@ -361,13 +361,13 @@ export default function TeamManagement() {
       logger.error('Error updating employee status', { error: error.message });
       addNotification({
         type: 'error',
-        title: 'خطأ في التحديث',
-        message: 'تعذر تغيير حالة الموظف'
+        title: 'Update Error',
+        message: 'Failed to change employee status'
       });
     }
   };
 
-  // تحرير موظف
+  // Edit employee
   const handleEdit = (employee) => {
     setEditingEmployee(employee);
     setForm({
@@ -410,33 +410,33 @@ export default function TeamManagement() {
     setShowEmployeeForm(false);
   };
 
-  // تصدير البيانات
+  // Export data
   const handleExportCSV = () => {
     const rows = filteredEmployees.map(employee => ({
-      'المعرف': employee.id,
-      'الاسم': employee.full_name,
-      'البريد الإلكتروني': employee.auth_user?.email,
-      'الهاتف': employee.phone,
-      'الدور': roleConfig[employee.role]?.label,
-      'القسم': departmentConfig[employee.department] || employee.department,
-      'الفرع': employee.brand?.name,
-      'الحالة': employee.status === 'active' ? 'نشط' : 'غير نشط',
-      'تاريخ الانضمام': employee.join_date ? formatDate(employee.join_date) : '',
-      'آخر دخول': employee.auth_user?.last_sign_in_at ? formatDateTime(employee.auth_user.last_sign_in_at) : '',
-      'عدد المهام': employee.tasks?.[0]?.count || 0
+      'ID': employee.id,
+      'Name': employee.full_name,
+      'Email': employee.auth_user?.email,
+      'Phone': employee.phone,
+      'Role': roleConfig[employee.role]?.label,
+      'Department': departmentConfig[employee.department] || employee.department,
+      'Branch': employee.brand?.name,
+      'Status': employee.status === 'active' ? 'Active' : 'Inactive',
+      'Join Date': employee.join_date ? formatDate(employee.join_date) : '',
+      'Last Login': employee.auth_user?.last_sign_in_at ? formatDateTime(employee.auth_user.last_sign_in_at) : '',
+      'Tasks Count': employee.tasks?.[0]?.count || 0
     }));
-    
-    exportUtils.exportToCSV(rows, `موظفين_نافا_${formatDate(new Date())}`);
+
+    exportUtils.exportToCSV(rows, `nava_employees_${formatDate(new Date())}`);
   };
 
   const handleExportPDF = () => {
-    exportUtils.exportToPDF("#team-root", `تقرير_الموظفين_${formatDate(new Date())}`);
+    exportUtils.exportToPDF("#team-root", `employees_report_${formatDate(new Date())}`);
   };
 
-  // تنسيق التاريخ
+  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('ar-SA', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: '2-digit'
@@ -445,7 +445,7 @@ export default function TeamManagement() {
 
   const formatDateTime = (dateString) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleString('ar-SA', {
+    return new Date(dateString).toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: '2-digit',
@@ -454,29 +454,29 @@ export default function TeamManagement() {
     });
   };
 
-  // حساب مدة العمل
+  // Calculate work duration
   const getWorkDuration = (joinDate) => {
     if (!joinDate) return '-';
-    
+
     const join = new Date(joinDate);
     const now = new Date();
     const diffTime = Math.abs(now - join);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const years = Math.floor(diffDays / 365);
     const months = Math.floor((diffDays % 365) / 30);
-    
+
     if (years > 0) {
-      return `${years} سنة و ${months} شهر`;
+      return `${years} year(s) and ${months} month(s)`;
     } else {
-      return `${months} شهر`;
+      return `${months} month(s)`;
     }
   };
 
-  // تصفية البيانات
+  // Filter data
   const filteredEmployees = useMemo(() => {
     let data = [...employees];
 
-    // البحث
+    // Search
     if (filters.search.trim()) {
       const query = filters.search.toLowerCase();
       data = data.filter(employee =>
@@ -487,7 +487,7 @@ export default function TeamManagement() {
       );
     }
 
-    // الفلترة
+    // Filtering
     if (filters.role !== 'all') {
       data = data.filter(employee => employee.role === filters.role);
     }
@@ -507,7 +507,7 @@ export default function TeamManagement() {
     return data;
   }, [employees, filters]);
 
-  // إحصائيات الفريق
+  // Team statistics
   const teamStats = useMemo(() => {
     const total = employees.length;
     const active = employees.filter(e => e.status === 'active').length;
@@ -527,7 +527,7 @@ export default function TeamManagement() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-200 border-t-primary-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">جاري تحميل بيانات الفريق...</p>
+          <p className="text-gray-600">Loading team data...</p>
         </div>
       </div>
     );
@@ -535,14 +535,14 @@ export default function TeamManagement() {
 
   return (
     <div className="p-6 space-y-6" id="team-root">
-      {/* البطاقة الرئيسية */}
+      {/* Main card */}
       <div className="bg-white rounded-2xl p-6 shadow-card border border-gray-200">
-        
-        {/* الهيدر المحسن */}
+
+        {/* Enhanced header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">إدارة الفريق والموظفين</h1>
-            <p className="text-gray-600 mt-1">إدارة أعضاء الفريق، الصلاحيات، وتقارير الأداء</p>
+            <h1 className="text-2xl font-bold text-gray-900">Team & Employee Management</h1>
+            <p className="text-gray-600 mt-1">Manage team members, permissions, and performance reports</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -552,7 +552,7 @@ export default function TeamManagement() {
                 onClick={() => setShowEmployeeForm(true)}
               >
                 <UserPlus size={18} />
-                إضافة موظف جديد
+                Add New Employee
               </button>
             )}
             <button
@@ -560,48 +560,48 @@ export default function TeamManagement() {
               className="btn-success flex items-center gap-2"
             >
               <Download size={18} />
-              تصدير CSV
+              Export CSV
             </button>
             <button
               onClick={handleExportPDF}
               className="btn-secondary flex items-center gap-2"
             >
               <FileText size={18} />
-              تصدير PDF
+              Export PDF
             </button>
           </div>
         </div>
 
-        {/* إحصائيات محسنة */}
+        {/* Enhanced statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <StatCard 
-            title="إجمالي الموظفين" 
-            value={teamStats.total} 
+          <StatCard
+            title="Total Employees"
+            value={teamStats.total}
             icon={Users}
             color="blue"
           />
-          <StatCard 
-            title="موظفين نشطين" 
-            value={teamStats.active} 
+          <StatCard
+            title="Active Employees"
+            value={teamStats.active}
             icon={UserCheck}
             color="green"
             percentage={teamStats.total > 0 ? (teamStats.active / teamStats.total) * 100 : 0}
           />
-          <StatCard 
-            title="المشرفون" 
-            value={teamStats.admins} 
+          <StatCard
+            title="Supervisors"
+            value={teamStats.admins}
             icon={Shield}
             color="purple"
           />
-          <StatCard 
-            title="جدد هذا الشهر" 
-            value={teamStats.newThisMonth} 
+          <StatCard
+            title="New This Month"
+            value={teamStats.newThisMonth}
             icon={TrendingUp}
             color="amber"
           />
         </div>
 
-        {/* شريط الفلاتر المتقدم */}
+        {/* Advanced filter bar */}
         <AdvancedFilterBar
           filters={filters}
           setFilters={setFilters}
@@ -609,25 +609,25 @@ export default function TeamManagement() {
           brands={brands}
         />
 
-        {/* جدول الموظفين المحسن */}
+        {/* Enhanced employee table */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  الموظف
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Employee
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  المسمى والفرع
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Title & Branch
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  الدور والصلاحيات
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Role & Permissions
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  الحالة والنشاط
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status & Activity
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  الإجراءات
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -655,14 +655,14 @@ export default function TeamManagement() {
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     <div className="flex flex-col items-center">
                       <Users size={48} className="text-gray-300 mb-4" />
-                      <p className="text-lg">لا يوجد موظفون مطابقون للبحث</p>
-                      <p className="text-sm mt-2">جرب تعديل شروط البحث أو أضف موظفاً جديداً</p>
+                      <p className="text-lg">No employees match the search criteria</p>
+                      <p className="text-sm mt-2">Try adjusting search terms or add a new employee</p>
                       {hasPermission(['team:create']) && (
                         <button
                           className="btn-primary mt-4"
                           onClick={() => setShowEmployeeForm(true)}
                         >
-                          إضافة أول موظف
+                          Add First Employee
                         </button>
                       )}
                     </div>
@@ -674,7 +674,7 @@ export default function TeamManagement() {
         </div>
       </div>
 
-      {/* نافذة إضافة/تعديل موظف */}
+      {/* Add/Edit employee modal */}
       <EmployeeFormModal
         show={showEmployeeForm}
         onClose={resetForm}
@@ -688,7 +688,7 @@ export default function TeamManagement() {
         userProfile={userProfile}
       />
 
-      {/* نافذة تفاصيل الموظف */}
+      {/* Employee details modal */}
       <EmployeeDetailsModal
         show={!!showEmployeeDetails}
         employee={showEmployeeDetails}
@@ -703,8 +703,8 @@ export default function TeamManagement() {
   );
 }
 
-// مكون صف الموظف المنفصل
-function EmployeeTableRow({ 
+// Separate employee row component
+function EmployeeTableRow({
   employee, 
   roleConfig, 
   departmentConfig, 
@@ -739,11 +739,11 @@ function EmployeeTableRow({
                 {employee.full_name}
               </button>
               {employee.auth_user?.email_confirmed_at ? (
-                <span className="text-green-500 text-xs" title="البريد الإلكتروني مفعل">
+                <span className="text-green-500 text-xs" title="Email verified">
                   ✓
                 </span>
               ) : (
-                <span className="text-yellow-500 text-xs" title="بانتظار تفعيل البريد">
+                <span className="text-yellow-500 text-xs" title="Awaiting email verification">
                   ⏳
                 </span>
               )}
@@ -763,10 +763,10 @@ function EmployeeTableRow({
       
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-sm text-gray-900">
-          {employee.position || 'بدون مسمى'}
+          {employee.position || 'No title'}
         </div>
         <div className="text-xs text-gray-500 mt-1">
-          {departmentConfig[employee.department] || employee.department || 'لا يوجد قسم'}
+          {departmentConfig[employee.department] || employee.department || 'No department'}
         </div>
         {employee.brand && (
           <div className="text-xs text-primary-600 font-medium mt-1">
@@ -783,38 +783,38 @@ function EmployeeTableRow({
           </span>
         </div>
         <div className="text-xs text-gray-500">
-          {employee.permissions?.length > 0 
-            ? `${employee.permissions.length} صلاحية` 
-            : 'صلاحيات أساسية'
+          {employee.permissions?.length > 0
+            ? `${employee.permissions.length} permission(s)`
+            : 'Basic permissions'
           }
         </div>
       </td>
-      
+
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex flex-col gap-2">
           <span className={`px-3 py-1 text-xs rounded-full w-fit ${
-            employee.status === 'active' 
-              ? 'bg-green-100 text-green-700' 
+            employee.status === 'active'
+              ? 'bg-green-100 text-green-700'
               : 'bg-red-100 text-red-700'
           }`}>
-            {employee.status === 'active' ? 'نشط' : 'غير نشط'}
+            {employee.status === 'active' ? 'Active' : 'Inactive'}
           </span>
-          
+
           <div className="text-xs text-gray-500">
             <div className="flex items-center">
-              <Clock size={12} className="ml-1" />
+              <Clock size={12} className="mr-1" />
               {getWorkDuration(employee.join_date)}
             </div>
             {employee.auth_user?.last_sign_in_at && (
               <div className="mt-1">
-                آخر دخول: {formatDateTime(employee.auth_user.last_sign_in_at)}
+                Last login: {formatDateTime(employee.auth_user.last_sign_in_at)}
               </div>
             )}
           </div>
 
           {employee.tasks && (
             <div className="text-xs text-gray-500">
-              المهام: {employee.tasks[0]?.count || 0}
+              Tasks: {employee.tasks[0]?.count || 0}
             </div>
           )}
         </div>
@@ -825,17 +825,17 @@ function EmployeeTableRow({
           <button
             onClick={() => onViewDetails(employee)}
             className="text-gray-600 hover:text-gray-800 p-2 rounded hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100"
-            title="عرض التفاصيل"
+            title="View details"
           >
             <Eye size={16} />
           </button>
 
-          {/* قائمة الإجراءات */}
+          {/* Actions menu */}
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="text-gray-600 hover:text-gray-800 p-2 rounded hover:bg-gray-100 transition-colors"
-              title="المزيد"
+              title="More"
             >
               <MoreVertical size={16} />
             </button>
@@ -851,10 +851,10 @@ function EmployeeTableRow({
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
                   >
                     <Edit2 size={14} />
-                    تعديل البيانات
+                    Edit Data
                   </button>
                 )}
-                
+
                 {hasPermission(['team:edit']) && employee.id !== currentUserId && (
                   <button
                     onClick={() => {
@@ -864,10 +864,10 @@ function EmployeeTableRow({
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   >
                     {employee.status === 'active' ? <UserX size={14} /> : <UserCheck size={14} />}
-                    {employee.status === 'active' ? 'تعطيل' : 'تفعيل'}
+                    {employee.status === 'active' ? 'Deactivate' : 'Activate'}
                   </button>
                 )}
-                
+
                 {hasPermission(['auth:manage']) && (
                   <button
                     onClick={() => {
@@ -877,15 +877,15 @@ function EmployeeTableRow({
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   >
                     <Key size={14} />
-                    إعادة تعيين كلمة المرور
+                    Reset Password
                   </button>
                 )}
-                
+
                 {hasPermission(['team:delete']) && employee.id !== currentUserId && (
                   <button
                     onClick={() => {
-                      if (confirm(`هل أنت متأكد من حذف ${employee.full_name}؟`)) {
-                        // سيتم تنفيذ الحذف من خلال تغيير الحالة
+                      if (confirm(`Are you sure you want to delete ${employee.full_name}?`)) {
+                        // Deletion will be executed by changing status
                         onToggleStatus(employee.id, 'active');
                       }
                       setShowMenu(false);
@@ -893,7 +893,7 @@ function EmployeeTableRow({
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
                   >
                     <Trash2 size={14} />
-                    حذف الموظف
+                    Delete Employee
                   </button>
                 )}
               </div>
@@ -905,7 +905,7 @@ function EmployeeTableRow({
   );
 }
 
-// مكون البطاقة الإحصائية
+// Statistics card component
 function StatCard({ title, value, icon: Icon, color, percentage }) {
   const colorClasses = {
     blue: 'bg-blue-50 border-blue-200 text-blue-700',
@@ -932,35 +932,35 @@ function StatCard({ title, value, icon: Icon, color, percentage }) {
   );
 }
 
-// مكون شريط الفلاتر المتقدم
+// Advanced filter bar component
 function AdvancedFilterBar({ filters, setFilters, employees, brands }) {
   const departments = [...new Set(employees.map(e => e.department).filter(Boolean))];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6">
       <div className="relative">
-        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
         <input
           type="text"
-          placeholder="ابحث عن موظف..."
-          className="w-full pr-10 pl-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          placeholder="Search for employee..."
+          className="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
         />
       </div>
-      
+
       <select
         className="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
         value={filters.role}
         onChange={(e) => setFilters({ ...filters, role: e.target.value })}
       >
-        <option value="all">جميع الأدوار</option>
-        <option value="admin">مدير النظام</option>
-        <option value="ops">مشرف تشغيلي</option>
-        <option value="manager">مدير فرع</option>
-        <option value="accountant">محاسب</option>
-        <option value="analyst">محلل بيانات</option>
-        <option value="staff">موظف</option>
+        <option value="all">All Roles</option>
+        <option value="admin">System Admin</option>
+        <option value="ops">Operations Supervisor</option>
+        <option value="manager">Branch Manager</option>
+        <option value="accountant">Accountant</option>
+        <option value="analyst">Data Analyst</option>
+        <option value="staff">Staff</option>
       </select>
 
       <select
@@ -968,9 +968,9 @@ function AdvancedFilterBar({ filters, setFilters, employees, brands }) {
         value={filters.status}
         onChange={(e) => setFilters({ ...filters, status: e.target.value })}
       >
-        <option value="all">جميع الحالات</option>
-        <option value="active">نشط</option>
-        <option value="inactive">غير نشط</option>
+        <option value="all">All Statuses</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
       </select>
 
       <select
@@ -978,7 +978,7 @@ function AdvancedFilterBar({ filters, setFilters, employees, brands }) {
         value={filters.brand}
         onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
       >
-        <option value="all">جميع الفروع</option>
+        <option value="all">All Branches</option>
         {brands.map(brand => (
           <option key={brand.id} value={brand.id}>
             {brand.name}
@@ -991,7 +991,7 @@ function AdvancedFilterBar({ filters, setFilters, employees, brands }) {
         value={filters.department}
         onChange={(e) => setFilters({ ...filters, department: e.target.value })}
       >
-        <option value="all">جميع الأقسام</option>
+        <option value="all">All Departments</option>
         {departments.map(dept => (
           <option key={dept} value={dept}>
             {dept}
@@ -1002,18 +1002,18 @@ function AdvancedFilterBar({ filters, setFilters, employees, brands }) {
   );
 }
 
-// مكون النموذج المحسن
-function EmployeeFormModal({ 
-  show, 
-  onClose, 
-  form, 
-  setForm, 
-  editingEmployee, 
-  onSubmit, 
-  roleConfig, 
-  departmentConfig, 
+// Enhanced form modal component
+function EmployeeFormModal({
+  show,
+  onClose,
+  form,
+  setForm,
+  editingEmployee,
+  onSubmit,
+  roleConfig,
+  departmentConfig,
   brands,
-  userProfile 
+  userProfile
 }) {
   if (!show) return null;
 
@@ -1024,7 +1024,7 @@ function EmployeeFormModal({
       <div className="bg-white w-full max-w-4xl rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
           <h3 className="text-lg font-semibold text-gray-900">
-            {editingEmployee ? 'تعديل بيانات الموظف' : 'إضافة موظف جديد'}
+            {editingEmployee ? 'Edit Employee Data' : 'Add New Employee'}
           </h3>
           <button
             onClick={onClose}
@@ -1035,10 +1035,10 @@ function EmployeeFormModal({
         </div>
 
         <form onSubmit={onSubmit} className="p-6 space-y-6">
-          {/* المعلومات الأساسية */}
+          {/* Basic information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
               <input
                 type="text"
                 className="w-full input-field"
@@ -1049,7 +1049,7 @@ function EmployeeFormModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
               <input
                 type="email"
                 className="w-full input-field"
@@ -1063,7 +1063,7 @@ function EmployeeFormModal({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
               <input
                 type="tel"
                 className="w-full input-field"
@@ -1074,48 +1074,48 @@ function EmployeeFormModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">المسمى الوظيفي</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
               <input
                 type="text"
                 className="w-full input-field"
                 value={form.position}
                 onChange={(e) => setForm({ ...form, position: e.target.value })}
-                placeholder="مثل: مدير مبيعات، محاسب أول..."
+                placeholder="e.g., Sales Manager, Senior Accountant..."
               />
             </div>
           </div>
 
-          {/* المعلومات الوظيفية */}
+          {/* Job information */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">الدور *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Role *</label>
               <select
                 className="w-full input-field"
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
                 required
               >
-                <option value="staff">موظف</option>
-                <option value="analyst">محلل بيانات</option>
-                <option value="accountant">محاسب</option>
-                <option value="manager">مدير فرع</option>
+                <option value="staff">Staff</option>
+                <option value="analyst">Data Analyst</option>
+                <option value="accountant">Accountant</option>
+                <option value="manager">Branch Manager</option>
                 {userProfile?.role === 'admin' && (
                   <>
-                    <option value="ops">مشرف تشغيلي</option>
-                    <option value="admin">مدير النظام</option>
+                    <option value="ops">Operations Supervisor</option>
+                    <option value="admin">System Admin</option>
                   </>
                 )}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">القسم</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
               <select
                 className="w-full input-field"
                 value={form.department}
                 onChange={(e) => setForm({ ...form, department: e.target.value })}
               >
-                <option value="">اختر القسم</option>
+                <option value="">Select Department</option>
                 {Object.entries(departmentConfig).map(([key, value]) => (
                   <option key={key} value={key}>{value}</option>
                 ))}
@@ -1123,39 +1123,39 @@ function EmployeeFormModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">الحالة</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
               <select
                 className="w-full input-field"
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
               >
-                <option value="active">نشط</option>
-                <option value="inactive">غير نشط</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">الفرع</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
               <select
                 className="w-full input-field"
                 value={form.brand_id}
                 onChange={(e) => setForm({ ...form, brand_id: e.target.value })}
                 disabled={isOpsUser}
               >
-                <option value="">اختر الفرع</option>
+                <option value="">Select Branch</option>
                 {brands.map(brand => (
                   <option key={brand.id} value={brand.id}>{brand.name}</option>
                 ))}
               </select>
               {isOpsUser && (
-                <p className="text-xs text-gray-500 mt-1">محدد تلقائياً حسب فرعك</p>
+                <p className="text-xs text-gray-500 mt-1">Automatically set based on your branch</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ الانضمام</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Join Date</label>
               <input
                 type="date"
                 className="w-full input-field"
@@ -1165,50 +1165,50 @@ function EmployeeFormModal({
             </div>
           </div>
 
-          {/* المعلومات المالية والإضافية */}
+          {/* Financial and additional information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">الراتب الشهري</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Salary</label>
               <input
                 type="number"
                 className="w-full input-field"
                 value={form.salary}
                 onChange={(e) => setForm({ ...form, salary: e.target.value })}
-                placeholder="الراتب بالريال السعودي"
+                placeholder="Salary in SAR"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">جهة الاتصال في الطوارئ</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Emergency Contact</label>
               <input
                 type="text"
                 className="w-full input-field"
                 value={form.emergency_contact}
                 onChange={(e) => setForm({ ...form, emergency_contact: e.target.value })}
-                placeholder="الاسم ورقم الهاتف"
+                placeholder="Name and phone number"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
             <textarea
               className="w-full input-field"
               rows={2}
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="العنوان التفصيلي"
+              placeholder="Detailed address"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">ملاحظات</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
             <textarea
               className="w-full input-field"
               rows={3}
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              placeholder="ملاحظات إضافية عن الموظف..."
+              placeholder="Additional notes about the employee..."
             />
           </div>
 
@@ -1218,13 +1218,13 @@ function EmployeeFormModal({
               onClick={onClose}
               className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              إلغاء
+              Cancel
             </button>
             <button
               type="submit"
               className="btn-primary px-6 py-2"
             >
-              {editingEmployee ? 'تحديث البيانات' : 'إضافة الموظف'}
+              {editingEmployee ? 'Update Data' : 'Add Employee'}
             </button>
           </div>
         </form>
@@ -1233,7 +1233,7 @@ function EmployeeFormModal({
   );
 }
 
-// مكون تفاصيل الموظف
+// Employee details component
 function EmployeeDetailsModal({ show, employee, onClose, roleConfig, departmentConfig, formatDate, formatDateTime, getWorkDuration }) {
   if (!show || !employee) return null;
 
@@ -1243,7 +1243,7 @@ function EmployeeDetailsModal({ show, employee, onClose, roleConfig, departmentC
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm grid place-items-center z-50 p-4">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
-          <h3 className="text-lg font-semibold text-gray-900">تفاصيل الموظف</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Employee Details</h3>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 p-1 rounded hover:bg-gray-100 transition-colors"
@@ -1253,7 +1253,7 @@ function EmployeeDetailsModal({ show, employee, onClose, roleConfig, departmentC
         </div>
 
         <div className="p-6 space-y-6">
-          {/* الصورة والمعلومات الأساسية */}
+          {/* Photo and basic information */}
           <div className="flex items-center gap-4">
             <img
               src={employee.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(employee.full_name || 'User')}&background=1E40AF&color=fff&size=100`}
@@ -1270,118 +1270,118 @@ function EmployeeDetailsModal({ show, employee, onClose, roleConfig, departmentC
                 <span className={`px-3 py-1 text-sm rounded-full ${
                   employee.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                 }`}>
-                  {employee.status === 'active' ? 'نشط' : 'غير نشط'}
+                  {employee.status === 'active' ? 'Active' : 'Inactive'}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* الشبكة التفصيلية */}
+          {/* Detailed grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* المعلومات الشخصية */}
+            {/* Personal information */}
             <div className="space-y-4">
-              <h5 className="font-semibold text-gray-900 border-b pb-2">المعلومات الشخصية</h5>
-              
+              <h5 className="font-semibold text-gray-900 border-b pb-2">Personal Information</h5>
+
               <div>
-                <label className="text-sm text-gray-600">البريد الإلكتروني</label>
+                <label className="text-sm text-gray-600">Email</label>
                 <p className="text-gray-900">{employee.auth_user?.email}</p>
               </div>
-              
+
               {employee.phone && (
                 <div>
-                  <label className="text-sm text-gray-600">رقم الهاتف</label>
+                  <label className="text-sm text-gray-600">Phone Number</label>
                   <p className="text-gray-900">{employee.phone}</p>
                 </div>
               )}
-              
+
               {employee.address && (
                 <div>
-                  <label className="text-sm text-gray-600">العنوان</label>
+                  <label className="text-sm text-gray-600">Address</label>
                   <p className="text-gray-900">{employee.address}</p>
                 </div>
               )}
-              
+
               {employee.emergency_contact && (
                 <div>
-                  <label className="text-sm text-gray-600">الاتصال في الطوارئ</label>
+                  <label className="text-sm text-gray-600">Emergency Contact</label>
                   <p className="text-gray-900">{employee.emergency_contact}</p>
                 </div>
               )}
             </div>
 
-            {/* المعلومات الوظيفية */}
+            {/* Job information */}
             <div className="space-y-4">
-              <h5 className="font-semibold text-gray-900 border-b pb-2">المعلومات الوظيفية</h5>
-              
+              <h5 className="font-semibold text-gray-900 border-b pb-2">Job Information</h5>
+
               {employee.position && (
                 <div>
-                  <label className="text-sm text-gray-600">المسمى الوظيفي</label>
+                  <label className="text-sm text-gray-600">Job Title</label>
                   <p className="text-gray-900">{employee.position}</p>
                 </div>
               )}
-              
+
               {employee.department && (
                 <div>
-                  <label className="text-sm text-gray-600">القسم</label>
+                  <label className="text-sm text-gray-600">Department</label>
                   <p className="text-gray-900">{departmentConfig[employee.department] || employee.department}</p>
                 </div>
               )}
-              
+
               {employee.brand && (
                 <div>
-                  <label className="text-sm text-gray-600">الفرع</label>
+                  <label className="text-sm text-gray-600">Branch</label>
                   <p className="text-gray-900">{employee.brand.name}</p>
                 </div>
               )}
-              
+
               <div>
-                <label className="text-sm text-gray-600">مدة العمل</label>
+                <label className="text-sm text-gray-600">Work Duration</label>
                 <p className="text-gray-900">{getWorkDuration(employee.join_date)}</p>
               </div>
-              
+
               {employee.join_date && (
                 <div>
-                  <label className="text-sm text-gray-600">تاريخ الانضمام</label>
+                  <label className="text-sm text-gray-600">Join Date</label>
                   <p className="text-gray-900">{formatDate(employee.join_date)}</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* النشاط والإحصائيات */}
+          {/* Activity and statistics */}
           <div className="space-y-4">
-            <h5 className="font-semibold text-gray-900 border-b pb-2">النشاط والإحصائيات</h5>
-            
+            <h5 className="font-semibold text-gray-900 border-b pb-2">Activity & Statistics</h5>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-3 rounded-lg">
-                <label className="text-sm text-gray-600">آخر دخول</label>
+                <label className="text-sm text-gray-600">Last Login</label>
                 <p className="text-gray-900 text-sm">
-                  {employee.auth_user?.last_sign_in_at 
+                  {employee.auth_user?.last_sign_in_at
                     ? formatDateTime(employee.auth_user.last_sign_in_at)
-                    : 'لم يسجل دخول بعد'
+                    : 'Not logged in yet'
                   }
                 </p>
               </div>
-              
+
               <div className="bg-gray-50 p-3 rounded-lg">
-                <label className="text-sm text-gray-600">تفعيل البريد</label>
+                <label className="text-sm text-gray-600">Email Verification</label>
                 <p className="text-gray-900 text-sm">
-                  {employee.auth_user?.email_confirmed_at ? 'مفعل' : 'بانتظار التفعيل'}
+                  {employee.auth_user?.email_confirmed_at ? 'Verified' : 'Awaiting Verification'}
                 </p>
               </div>
             </div>
 
             {employee.tasks && (
               <div className="bg-primary-50 p-4 rounded-lg border border-primary-200">
-                <h6 className="font-semibold text-primary-700 mb-2">إحصائيات المهام</h6>
+                <h6 className="font-semibold text-primary-700 mb-2">Task Statistics</h6>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-primary-600">إجمالي المهام:</span>
-                    <span className="font-medium mr-2">{employee.tasks[0]?.count || 0}</span>
+                    <span className="text-primary-600">Total Tasks:</span>
+                    <span className="font-medium ml-2">{employee.tasks[0]?.count || 0}</span>
                   </div>
                   <div>
-                    <span className="text-primary-600">المهام المكتملة:</span>
-                    <span className="font-medium mr-2">{employee.completed_tasks[0]?.count || 0}</span>
+                    <span className="text-primary-600">Completed Tasks:</span>
+                    <span className="font-medium ml-2">{employee.completed_tasks[0]?.count || 0}</span>
                   </div>
                 </div>
               </div>
@@ -1390,7 +1390,7 @@ function EmployeeDetailsModal({ show, employee, onClose, roleConfig, departmentC
 
           {employee.notes && (
             <div className="space-y-2">
-              <h5 className="font-semibold text-gray-900 border-b pb-2">ملاحظات</h5>
+              <h5 className="font-semibold text-gray-900 border-b pb-2">Notes</h5>
               <p className="text-gray-700 text-sm leading-relaxed">{employee.notes}</p>
             </div>
           )}

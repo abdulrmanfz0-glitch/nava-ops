@@ -4,8 +4,8 @@
 export const mockBranches = [
   {
     id: 1,
-    name: 'فرع الرياض الرئيسي',
-    location: 'الرياض، حي النخيل',
+    name: 'Riyadh Main Branch',
+    location: 'Riyadh, Al-Nakheel District',
     status: 'active',
     revenue: 125000,
     orders_count: 450,
@@ -13,8 +13,8 @@ export const mockBranches = [
   },
   {
     id: 2,
-    name: 'فرع جدة',
-    location: 'جدة، حي الروضة',
+    name: 'Jeddah Branch',
+    location: 'Jeddah, Al-Rawdah District',
     status: 'active',
     revenue: 98000,
     orders_count: 380,
@@ -22,8 +22,8 @@ export const mockBranches = [
   },
   {
     id: 3,
-    name: 'فرع الدمام',
-    location: 'الدمام، الكورنيش',
+    name: 'Dammam Branch',
+    location: 'Dammam, Corniche',
     status: 'active',
     revenue: 87000,
     orders_count: 320,
@@ -73,29 +73,29 @@ export const mockRevenueTrends = Array.from({ length: 30 }, (_, i) => {
 export const mockInsights = [
   {
     id: 1,
-    title: 'ارتفاع المبيعات',
-    description: 'زيادة ملحوظة في المبيعات خلال الأسبوع الماضي بنسبة 15%',
+    title: 'Sales Increase',
+    description: 'Notable increase in sales over the past week by 15%',
     type: 'positive',
     status: 'new',
-    branch: { name: 'فرع الرياض الرئيسي' },
+    branch: { name: 'Riyadh Main Branch' },
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: 2,
-    title: 'تحسين في التقييمات',
-    description: 'تحسن تقييمات العملاء من 4.2 إلى 4.7 نجوم',
+    title: 'Rating Improvement',
+    description: 'Customer ratings improved from 4.2 to 4.7 stars',
     type: 'positive',
     status: 'new',
-    branch: { name: 'فرع جدة' },
+    branch: { name: 'Jeddah Branch' },
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: 3,
-    title: 'انخفاض في وقت التسليم',
-    description: 'انخفض متوسط وقت التسليم من 35 دقيقة إلى 28 دقيقة',
+    title: 'Delivery Time Reduction',
+    description: 'Average delivery time decreased from 35 minutes to 28 minutes',
     type: 'warning',
     status: 'new',
-    branch: { name: 'فرع الدمام' },
+    branch: { name: 'Dammam Branch' },
     created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
   }
 ];
@@ -118,33 +118,33 @@ export const mockOrderStatistics = {
   cancelled: 25,
   averageValue: 270,
   topSellingItems: [
-    { name: 'برجر لحم', quantity: 450, revenue: 67500 },
-    { name: 'بيتزا مارجريتا', quantity: 380, revenue: 57000 },
-    { name: 'مشروبات', quantity: 820, revenue: 16400 }
+    { name: 'Beef Burger', quantity: 450, revenue: 67500 },
+    { name: 'Margherita Pizza', quantity: 380, revenue: 57000 },
+    { name: 'Beverages', quantity: 820, revenue: 16400 }
   ]
 };
 
 export const mockNotifications = [
   {
     id: 1,
-    title: 'طلب جديد',
-    message: 'تم استلام طلب جديد من فرع الرياض',
+    title: 'New Order',
+    message: 'New order received from Riyadh branch',
     type: 'order',
     is_read: false,
     created_at: new Date(Date.now() - 10 * 60 * 1000).toISOString()
   },
   {
     id: 2,
-    title: 'تحديث الطلب',
-    message: 'تم تحديث حالة الطلب #1234',
+    title: 'Order Update',
+    message: 'Order #1234 status has been updated',
     type: 'order',
     is_read: false,
     created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString()
   },
   {
     id: 3,
-    title: 'تنبيه النظام',
-    message: 'تحديث جديد متوفر للنظام',
+    title: 'System Alert',
+    message: 'A new system update is available',
     type: 'system',
     is_read: true,
     created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
@@ -160,7 +160,7 @@ export const mockReports = [
     status: 'completed',
     file_url: '/reports/daily-2024-01-15.pdf',
     created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    branches: { name: 'فرع الرياض الرئيسي' }
+    branches: { name: 'Riyadh Main Branch' }
   },
   {
     id: 2,
@@ -168,7 +168,7 @@ export const mockReports = [
     status: 'completed',
     file_url: '/reports/weekly-2024-w03.pdf',
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    branches: { name: 'فرع جدة' }
+    branches: { name: 'Jeddah Branch' }
   },
   {
     id: 3,
@@ -176,7 +176,7 @@ export const mockReports = [
     status: 'pending',
     file_url: null,
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    branches: { name: 'فرع الدمام' }
+    branches: { name: 'Dammam Branch' }
   }
 ];
 
@@ -190,7 +190,7 @@ export const mockTeamMembers = [
     created_at: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(),
     member: {
       email: 'ahmed.manager@nava-ops.com',
-      full_name: 'أحمد المدير',
+      full_name: 'Ahmed Manager',
       role: 'manager',
       avatar_url: null
     }
@@ -204,7 +204,7 @@ export const mockTeamMembers = [
     created_at: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(),
     member: {
       email: 'sara.staff@nava-ops.com',
-      full_name: 'سارة الموظفة',
+      full_name: 'Sara Staff',
       role: 'staff',
       avatar_url: null
     }
@@ -218,7 +218,7 @@ export const mockTeamMembers = [
     created_at: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
     member: {
       email: 'mohammed.staff@nava-ops.com',
-      full_name: 'محمد الموظف',
+      full_name: 'Mohammed Staff',
       role: 'staff',
       avatar_url: null
     }

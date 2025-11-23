@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
   const [sessionExpiry, setSessionExpiry] = useState(null);
   const { showNotification } = useNotification();
 
-  // التحقق من انتهاء الجلسة
+  // Check session expiry
   useEffect(() => {
     const checkSessionExpiry = () => {
       if (sessionExpiry && new Date() > new Date(sessionExpiry)) {
@@ -115,8 +115,8 @@ export function AuthProvider({ children }) {
       if (sessionExpiry && new Date() > new Date(sessionExpiry)) {
         addNotification({
           type: 'warning',
-          title: 'انتهت الجلسة',
-          message: 'لقد انتهت جلستك، يرجى تسجيل الدخول مرة أخرى',
+          title: 'Session Expired',
+          message: 'Your session has expired. Please log in again.',
           duration: 5000
         });
  
@@ -128,7 +128,7 @@ export function AuthProvider({ children }) {
     return () => clearInterval(interval);
   }, [sessionExpiry]);
 
-  // تهيئة المصادقة
+  // Initialize authentication
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -263,8 +263,8 @@ export function AuthProvider({ children }) {
                 await handleUserSession(session.user, session.expires_at);
                 addNotification({
                   type: 'success',
-                  title: 'تم تسجيل الدخول بنجاح',
-                  message: 'مرحباً بعودتك!',
+                  title: 'Login Successful',
+                  message: 'Welcome back!',
                   duration: 3000
                 });
               }
@@ -276,8 +276,8 @@ export function AuthProvider({ children }) {
               setSessionExpiry(null);
               addNotification({
                 type: 'info',
-                title: 'تم تسجيل الخروج',
-                message: 'تم تسجيل خروجك بنجاح',
+                title: 'Logged Out',
+                message: 'You have been logged out successfully.',
                 duration: 3000
               });
               break;
@@ -566,7 +566,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // نظام الصلاحيات
+  // Permission system
 
   const resetPassword = async (email) => {
     try {
@@ -611,8 +611,8 @@ export function AuthProvider({ children }) {
 
       addNotification({
         type: 'success',
-        title: 'تم التحديث',
-        message: 'تم تحديث الملف الشخصي بنجاح',
+        title: 'Profile Updated',
+        message: 'Your profile has been updated successfully.',
         duration: 3000
       });
 
@@ -623,7 +623,7 @@ export function AuthProvider({ children }) {
 
       addNotification({
         type: 'error',
-        title: 'خطأ في التحديث',
+        title: 'Update Error',
         message: handledError.message,
         duration: 5000
       });

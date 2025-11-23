@@ -12,7 +12,7 @@ import {
   Bell
 } from 'lucide-react';
 
-// أنواع الإشعارات
+// Notification types
 const NOTIFICATION_TYPES = {
   SUCCESS: 'success',
   ERROR: 'error', 
@@ -20,7 +20,7 @@ const NOTIFICATION_TYPES = {
   INFO: 'info'
 };
 
-// أيقونات الإشعارات
+// Notification icons
 const NOTIFICATION_ICONS = {
   [NOTIFICATION_TYPES.SUCCESS]: CheckCircle,
   [NOTIFICATION_TYPES.ERROR]: XCircle,
@@ -28,7 +28,7 @@ const NOTIFICATION_ICONS = {
   [NOTIFICATION_TYPES.INFO]: Info
 };
 
-// ألوان الإشعارات
+// Notification colors
 const NOTIFICATION_COLORS = {
   [NOTIFICATION_TYPES.SUCCESS]: {
     bg: 'bg-green-50',
@@ -70,7 +70,7 @@ export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // إضافة إشعار جديد
+  // Add new notification
   const addNotification = useCallback(({
     title,
     message,
@@ -98,7 +98,7 @@ export function NotificationProvider({ children }) {
       setUnreadCount(prev => prev + 1);
     }
 
-    // إزالة تلقائية إذا لم يكن persistent
+    // Auto-remove if not persistent
     if (!persistent && duration > 0) {
       setTimeout(() => {
         removeNotification(id);
@@ -108,7 +108,7 @@ export function NotificationProvider({ children }) {
     return id;
   }, []);
 
-  // إشعارات سريعة
+  // Quick notification helpers
   const notificationHelpers = {
     success: (title, message, options) => 
       addNotification({ title, message, type: NOTIFICATION_TYPES.SUCCESS, ...options }),
@@ -125,7 +125,7 @@ export function NotificationProvider({ children }) {
 
 
  
-  // إزالة إشعار
+  // Remove notification
   const removeNotification = useCallback((id) => {
     setNotifications(prev => {
       const notification = prev.find(n => n.id === id);
@@ -136,7 +136,7 @@ export function NotificationProvider({ children }) {
     });
   }, []);
 
-  // تحديد إشعار كمقروء
+  // Mark notification as read
   const markAsRead = useCallback((id) => {
     setNotifications(prev => 
       prev.map(notification => 
@@ -146,7 +146,7 @@ export function NotificationProvider({ children }) {
     setUnreadCount(prev => Math.max(0, prev - 1));
   }, []);
 
-  // تحديد كل الإشعارات كمقروءة
+  // Mark all notifications as read
   const markAllAsRead = useCallback(() => {
     setNotifications(prev => 
       prev.map(notification => ({ ...notification, read: true }))
@@ -154,18 +154,18 @@ export function NotificationProvider({ children }) {
     setUnreadCount(0);
   }, []);
 
-  // مسح جميع الإشعارات
+  // Clear all notifications
   const clearAll = useCallback(() => {
     setNotifications([]);
     setUnreadCount(0);
   }, []);
 
-  // مسح الإشعارات المقروءة فقط
+  // Clear read notifications only
   const clearRead = useCallback(() => {
     setNotifications(prev => prev.filter(notification => !notification.read));
   }, []);
 
-  // الحصول على إحصائيات الإشعارات
+  // Get notification statistics
   const getNotificationStats = useCallback(() => {
     const total = notifications.length;
     const unread = notifications.filter(n => !n.read).length;
@@ -186,7 +186,7 @@ export function NotificationProvider({ children }) {
 
   const value = {
 
-  // إشعارات سريعة - memoized
+  // Quick notification helpers - memoized
   const success = useCallback((title, message, options) =>
     addNotification({ title, message, type: NOTIFICATION_TYPES.SUCCESS, ...options }), [addNotification]);
 
@@ -224,13 +224,13 @@ export function NotificationProvider({ children }) {
     <NotificationContext.Provider value={value}>
       {children}
       
-      {/* حاوية الإشعارات العائمة */}
+      {/* Floating notifications container */}
       <NotificationContainer />
     </NotificationContext.Provider>
   );
 }
 
-// مكون حاوية الإشعارات
+// Notification container component
 function NotificationContainer() {
   const { notifications, removeNotification, markAsRead } = useNotification();
 
@@ -255,14 +255,14 @@ function NotificationContainer() {
       {/* Queue Indicator */}
       {notifications.length > MAX_VISIBLE_NOTIFICATIONS && (
         <div className="bg-gray-900/90 backdrop-blur-md text-white px-4 py-2 rounded-lg shadow-lg text-center text-sm font-medium pointer-events-auto animate-slide-in-right">
-          +{notifications.length - MAX_VISIBLE_NOTIFICATIONS} إشعارات أخرى في قائمة الانتظار
+          +{notifications.length - MAX_VISIBLE_NOTIFICATIONS} more notifications queued
         </div>
       )}
     </div>
   );
 }
 
-// مكون Toast للإشعارات
+// Notification Toast component
 function NotificationToast({ notification, onClose, onRead, index }) {
   const {
     title,
@@ -327,7 +327,7 @@ function NotificationToast({ notification, onClose, onRead, index }) {
       onClick={handleClick}
     >
       <div className="p-4">
-        {/* الهيدر */}
+        {/* Header */}
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-3">
             <Icon className={`${colors.icon} flex-shrink-0`} size={20} />
@@ -335,7 +335,7 @@ function NotificationToast({ notification, onClose, onRead, index }) {
           </div>
           
           <div className="flex items-center gap-2">
-            {/* علامة غير مقروء */}
+            {/* Unread indicator */}
             {!read && (
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
             )}
@@ -347,19 +347,19 @@ function NotificationToast({ notification, onClose, onRead, index }) {
                 p-1 rounded-full hover:bg-black/10
                 ${colors.text}
               `}
-              aria-label="إغلاق الإشعار"
+              aria-label="Close notification"
             >
               <X size={16} />
             </button>
           </div>
         </div>
 
-        {/* المحتوى */}
+        {/* Content */}
         <div className={`text-sm ${colors.text} ml-8`}>
           <p>{message}</p>
         </div>
 
-        {/* الإجراءات */}
+        {/* Actions */}
         {action && (
           <div className="mt-3 ml-8">
             <button
@@ -382,7 +382,7 @@ function NotificationToast({ notification, onClose, onRead, index }) {
           </div>
         )}
 
-        {/* شريط التقدم (لغير المستديمة) - Enhanced with smooth countdown */}
+        {/* Progress bar (for non-persistent) - Enhanced with smooth countdown */}
         {!persistent && duration > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200/50 dark:bg-gray-700/50 rounded-b-2xl overflow-hidden">
             <div
@@ -403,7 +403,7 @@ function NotificationToast({ notification, onClose, onRead, index }) {
   );
 }
 
-// مكون بادج عداد الإشعارات
+// Notification badge counter component
 export function NotificationBadge({ className = '' }) {
   const { unreadCount } = useNotification();
 
@@ -420,7 +420,7 @@ export function NotificationBadge({ className = '' }) {
   );
 }
 
-// مكون زر الإشعارات للشريط العلوي
+// Notification bell button for header bar
 export function NotificationBell() {
   const { unreadCount, markAllAsRead } = useNotification();
 
@@ -429,7 +429,7 @@ export function NotificationBell() {
       <button
         onClick={markAllAsRead}
         className="p-2 rounded-lg hover:bg-white/10 transition-colors relative"
-        title="الإشعارات"
+        title="Notifications"
       >
         <Bell size={20} className="text-white" />
         <NotificationBadge />
@@ -438,7 +438,7 @@ export function NotificationBell() {
   );
 }
 
-// تصدير أنواع الإشعارات للاستخدام الخارجي
+// Export notification types for external use
 export { NOTIFICATION_TYPES };
 
 export default NotificationContext;

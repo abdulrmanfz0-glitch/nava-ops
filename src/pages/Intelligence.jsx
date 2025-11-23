@@ -21,7 +21,9 @@ import RecommendationCard from '../components/Intelligence/RecommendationCard';
 import HealthScoreWidget from '../components/Intelligence/HealthScoreWidget';
 import PredictionChart from '../components/Intelligence/PredictionChart';
 import ScenarioSimulator from '../components/Intelligence/ScenarioSimulator';
-import AICopilot from '../components/Intelligence/AICopilot';
+
+// Global AI Chat
+import { useAIChat } from '../contexts/AIChatContext';
 
 // Intelligence Engine
 import intelligenceEngine from '../lib/intelligenceEngine';
@@ -34,7 +36,7 @@ import logger from '../lib/logger';
 const Intelligence = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [showCopilot, setShowCopilot] = useState(false);
+  const { openChat } = useAIChat();
 
   // Intelligence Data
   const [insights, setInsights] = useState([]);
@@ -199,11 +201,11 @@ const Intelligence = () => {
                 <span className="text-sm font-medium">Refresh</span>
               </button>
               <button
-                onClick={() => setShowCopilot(true)}
+                onClick={openChat}
                 className="px-4 py-2 bg-white text-purple-600 hover:bg-blue-50 rounded-lg font-semibold transition-colors flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>AI Copilot</span>
+                <span>Ask AI</span>
               </button>
             </div>
           </div>
@@ -444,21 +446,7 @@ const Intelligence = () => {
         </div>
       )}
 
-      {/* AI Copilot */}
-      {showCopilot && <AICopilot onClose={() => setShowCopilot(false)} />}
-
-      {/* Floating Action Button */}
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setShowCopilot(true)}
-        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:shadow-3xl transition-shadow z-40"
-      >
-        <MessageCircle className="w-8 h-8" />
-      </motion.button>
-    </div>
+      </div>
   );
 };
 

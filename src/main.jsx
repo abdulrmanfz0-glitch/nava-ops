@@ -14,6 +14,11 @@ import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LocaleProvider } from './contexts/LocaleContext';
+import { AIProvider } from './contexts/AIContext';
+import { AIChatProvider } from './contexts/AIChatContext';
+
+// AI Components (Global)
+import { AIChatSidebar, AIFloatingButton } from './components/AI';
 
 // Error Boundary
 import ErrorBoundary from './components/ErrorBoundary';
@@ -55,7 +60,14 @@ const Root = () => {
               <ThemeProvider>
                 <AuthProvider>
                   <SubscriptionProvider>
-                    <App />
+                    <AIProvider>
+                      <AIChatProvider>
+                        <App />
+                        {/* Global AI Components */}
+                        <AIChatSidebar />
+                        <AIFloatingButton />
+                      </AIChatProvider>
+                    </AIProvider>
                   </SubscriptionProvider>
                 </AuthProvider>
               </ThemeProvider>

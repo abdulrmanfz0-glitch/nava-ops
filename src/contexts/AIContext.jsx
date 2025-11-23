@@ -5,7 +5,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { aiIntelligenceAPI } from '@/services/aiIntelligence';
-import { logger } from '@/lib/logger';
+import logger from '@/lib/logger';
 
 const AIContext = createContext(null);
 

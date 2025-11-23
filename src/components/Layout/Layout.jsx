@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useAIChat } from '../../contexts/AIChatContext';
 import {
   Home,
   FileText,
@@ -13,13 +14,16 @@ import {
   LogOut,
   ChevronDown,
   Building2,
-  BarChart3
+  BarChart3,
+  Sparkles,
+  Brain
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout, hasPermission } = useAuth();
+  const { openChat } = useAIChat();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -47,6 +51,13 @@ const Layout = ({ children }) => {
       icon: BarChart3,
       permission: 'reports:view',
       badge: 'New'
+    },
+    {
+      name: 'AI Intelligence',
+      path: '/intelligence',
+      icon: Brain,
+      permission: null,
+      badge: 'AI'
     },
     {
       name: 'Team',
@@ -185,12 +196,25 @@ const Layout = ({ children }) => {
               <Menu className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {/* AI Assistant Button */}
+              <button
+                onClick={openChat}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30 hover:border-purple-500/50 transition-all group"
+                title="Open AI Assistant (Ctrl+K)"
+              >
+                <Sparkles className="w-4 h-4 text-purple-400 group-hover:text-purple-300" />
+                <span className="text-sm text-gray-300 group-hover:text-white hidden sm:inline">Ask AI</span>
+                <kbd className="hidden sm:inline px-1.5 py-0.5 text-xs bg-gray-800 text-gray-400 rounded">
+                  Ctrl+K
+                </kbd>
+              </button>
+
               {/* Notifications Badge */}
               <Link
                 to="/notifications"
                 className="relative text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white hover:bg-opacity-5"
-              
+              >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </Link>

@@ -2,7 +2,7 @@
 import { saveAs } from 'file-saver';
 import logger from '../lib/logger';
 
-// تنسيق الأرقام والعملات
+// Number and currency formatting
 export const formatters = {
   formatMoney: (amount, currency = 'SAR') => {
     return new Intl.NumberFormat('ar-SA', {
@@ -45,7 +45,7 @@ export const formatters = {
   }
 };
 
-// أدوات التصدير إلى CSV
+// CSV export utilities
 export const csvUtils = {
   exportToCSV(data, filename = 'data', options = {}) {
     try {
@@ -55,19 +55,19 @@ export const csvUtils = {
         includeHeaders = true
       } = options;
 
-      // تحديد الهيدرات
+      // Determine headers
       const actualHeaders = headers || Object.keys(data[0] || {});
-      
-      // إنشاء محتوى CSV
+
+      // Create CSV content
       const csvContent = [
-        // الهيدرات (إذا مطلوب)
+        // Headers (if required)
         includeHeaders ? actualHeaders.join(delimiter) : null,
-        
-        // البيانات
-        ...data.map(row => 
+
+        // Data rows
+        ...data.map(row =>
           actualHeaders.map(header => {
             const value = row[header];
-            // معالجة القيم الخاصة
+            // Handle special values
             if (value === null || value === undefined) return '';
             const stringValue = String(value).replace(/"/g, '""');
             return `"${stringValue}"`;
@@ -75,11 +75,11 @@ export const csvUtils = {
         )
       ].filter(Boolean).join('\n');
 
-      // إنشاء الملف وتنزيله
-      const blob = new Blob(['\uFEFF' + csvContent], { 
-        type: 'text/csv;charset=utf-8;' 
+      // Create and download file
+      const blob = new Blob(['\uFEFF' + csvContent], {
+        type: 'text/csv;charset=utf-8;'
       });
-      
+
       saveAs(blob, `${filename}_${new Date().toISOString().split('T')[0]}.csv`);
 
       return { success: true, filename: `${filename}.csv` };
@@ -89,19 +89,19 @@ export const csvUtils = {
     }
   },
 
-  // تصدير بيانات محددة مع تحويلات
+  // Export specific data with transformations
   exportDataToCSV(data, columns, filename = 'export') {
     const formattedData = data.map(item => {
       const row = {};
       columns.forEach(col => {
         let value = item[col.key];
-        
-        // تطبيق المُنسق إذا موجود
+
+        // Apply formatter if available
         if (col.formatter) {
           value = col.formatter(value, item);
         }
-        
-        // استخدام الاسم المعروض للعمود
+
+        // Use display name for column
         row[col.label || col.key] = value;
       });
       return row;
@@ -111,7 +111,7 @@ export const csvUtils = {
   }
 };
 
-// أدوات التصدير إلى Excel (باستخدام xlsx)
+// Excel export utilities (using xlsx)
 export const excelUtils = {
   async exportToExcel(data, filename = 'data', options = {}) {
     try {
@@ -121,23 +121,23 @@ export const excelUtils = {
         includeHeaders = true
       } = options;
 
-      // تحميل مكتبة xlsx ديناميكياً
+      // Dynamically load xlsx library
       const XLSX = await import('xlsx');
 
-      // تحديد الهيدرات
+      // Determine headers
       const actualHeaders = headers || Object.keys(data[0] || {});
 
-      // إنشاء ورقة العمل
+      // Create worksheet
       const worksheet = XLSX.utils.json_to_sheet(data, {
         header: actualHeaders,
         skipHeader: !includeHeaders
       });
 
-      // إنشاء دفتر العمل
+      // Create workbook
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
 
-      // كتابة الملف
+      // Write file
       XLSX.writeFile(workbook, `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`);
 
       return { success: true, filename: `${filename}.xlsx` };
@@ -147,7 +147,7 @@ export const excelUtils = {
     }
   },
 
-  // تصدير بيانات متعددة الأوراق
+  // Export multi-sheet data
   async exportMultiSheetExcel(sheets, filename = 'workbook') {
     try {
       const XLSX = await import('xlsx');
@@ -169,51 +169,51 @@ export const excelUtils = {
   }
 };
 
-// أدوات التصدير إلى PDF (باستخدام jsPDF)
+// PDF export utilities (using jsPDF)
 export const pdfUtils = {
   async exportToPDF(elementId, filename = 'document', options = {}) {
     try {
-      const { 
-        title = 'تقرير NAVA',
+      const {
+        title = 'NAVA Report',
         orientation = 'portrait',
         format = 'a4'
       } = options;
 
-      // تحميل مكتبة jsPDF ديناميكياً
+      // Dynamically load jsPDF library
       const { jsPDF } = await import('jspdf');
-      
-      // إنشاء مستند PDF جديد
+
+      // Create new PDF document
       const doc = new jsPDF({
         orientation,
         unit: 'mm',
         format
       });
 
-      // إضافة عنوان
+      // Add title
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(18);
       doc.text(title, 105, 20, { align: 'center' });
 
-      // إضافة تاريخ التصدير
+      // Add export date
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(10);
       doc.text(
-        `تم التصدير في: ${new Date().toLocaleDateString('ar-SA')}`,
+        `Exported on: ${new Date().toLocaleDateString('en-US')}`,
         105,
         30,
         { align: 'center' }
       );
 
-      // محاولة التقاط العنصر إذا كان موجوداً
+      // Attempt to capture element if it exists
       if (elementId && typeof window !== 'undefined') {
         const element = document.getElementById(elementId);
         if (element) {
-          // يمكن إضافة مكتبة html2canvas هنا لالتقاط screenshots
+          // Can add html2canvas library here for screenshots
           logger.debug('Element found for PDF export:', elementId);
         }
       }
 
-      // حفظ الملف
+      // Save file
       doc.save(`${filename}_${new Date().toISOString().split('T')[0]}.pdf`);
 
       return { success: true, filename: `${filename}.pdf` };
@@ -223,15 +223,15 @@ export const pdfUtils = {
     }
   },
 
-  // إنشاء تقرير جدولي
+  // Create table report
   async exportTableToPDF(headers, data, filename = 'table') {
     try {
       const { jsPDF } = await import('jspdf');
       const doc = new jsPDF();
 
-      // إعداد الجدول
+      // Setup table
       const tableColumn = headers.map(h => h.label || h.key);
-      const tableRows = data.map(item => 
+      const tableRows = data.map(item =>
         headers.map(header => {
           let value = item[header.key];
           if (header.formatter) {
@@ -241,13 +241,13 @@ export const pdfUtils = {
         })
       );
 
-      // إضافة الجدول إلى PDF
+      // Add table to PDF
       doc.autoTable({
         head: [tableColumn],
         body: tableRows,
         startY: 20,
         styles: { font: 'Helvetica', fontSize: 10 },
-        headStyles: { fillColor: [0, 136, 255] }, // لون NAVA الأزرق
+        headStyles: { fillColor: [0, 136, 255] }, // NAVA blue color
         margin: { top: 20 }
       });
 
@@ -260,7 +260,7 @@ export const pdfUtils = {
   }
 };
 
-// أدوات مساعدة عامة
+// General helper utilities
 export const generalUtils = {
   generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -278,7 +278,7 @@ export const generalUtils = {
     };
   },
 
-  // تحميل الصور
+  // Load images
   loadImage(src) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -288,7 +288,7 @@ export const generalUtils = {
     });
   },
 
-  // تنزيل البيانات كملف JSON
+  // Download data as JSON file
   exportToJSON(data, filename = 'data') {
     try {
       const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -303,7 +303,7 @@ export const generalUtils = {
   }
 };
 
-// التصدير الرئيسي
+// Main export
 export const exportUtils = {
   ...formatters,
   ...csvUtils,
@@ -311,7 +311,7 @@ export const exportUtils = {
   ...pdfUtils,
   ...generalUtils,
 
-  // تصدير شامل لجميع الصيغ
+  // Export to all formats
   exportMultipleFormats(data, baseFilename, options = {}) {
     const formats = options.formats || ['csv', 'pdf', 'json', 'excel'];
     const results = [];

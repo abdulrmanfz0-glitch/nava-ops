@@ -69,13 +69,13 @@ function RequireAuth({ children, requiredPermissions = [] }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">لا يوجد اتصال بالإنترنت</h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">يجب أن تكون متصلاً بالإنترنت للوصول إلى المنصة</p>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Internet Connection</h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">You must be connected to the internet to access the platform</p>
           <button
             onClick={() => window.location.reload()}
             className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg transition-colors duration-200"
           >
-            إعادة المحاولة
+            Retry
           </button>
         </div>
       </div>
@@ -98,13 +98,13 @@ function RequireAuth({ children, requiredPermissions = [] }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H9m3-9V4m0 2h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
             </svg>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">غير مصرح بالوصول</h3>
-          <p className="text-gray-600 dark:text-gray-300">ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة</p>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Access Denied</h3>
+          <p className="text-gray-600 dark:text-gray-300">You don't have sufficient permissions to access this page</p>
           <button
             onClick={() => window.history.back()}
             className="mt-4 bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors duration-200"
           >
-            العودة
+            Go Back
           </button>
         </div>
       </div>
@@ -123,8 +123,8 @@ function GlobalLoading() {
           <div className="w-16 h-16 border-4 border-primary-200 rounded-full animate-spin-slow"></div>
           <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-primary-500 rounded-full animate-spin"></div>
         </div>
-        <p className="mt-6 text-gray-600 dark:text-gray-300 text-lg font-medium">جاري تحميل NAVA</p>
-        <p className="text-primary-500 text-sm mt-2">منصة إدارة المطاعم المتكاملة</p>
+        <p className="mt-6 text-gray-600 dark:text-gray-300 text-lg font-medium">Loading NAVA</p>
+        <p className="text-primary-500 text-sm mt-2">Complete Restaurant Management Platform</p>
       </div>
     </div>
   );
@@ -136,8 +136,8 @@ function NotFoundPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="text-center">
         <h1 className="text-6xl font-bold text-gray-300 dark:text-gray-600 mb-4">404</h1>
-        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">الصفحة غير موجودة</h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">عذراً، الصفحة التي تبحث عنها غير موجودة.</p>
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">Page Not Found</h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">Sorry, the page you are looking for does not exist.</p>
         <Navigate to="/" replace />
       </div>
     </div>

@@ -20,8 +20,8 @@ import { AlertTriangle, CheckCircle, Info, XCircle, X } from 'lucide-react';
  * @param {function} props.onCancel - Optional callback when user cancels (defaults to onClose)
  * @param {string} props.title - Dialog title
  * @param {string} props.message - Dialog message/description
- * @param {string} props.confirmText - Text for confirm button (default: "تأكيد")
- * @param {string} props.cancelText - Text for cancel button (default: "إلغاء")
+ * @param {string} props.confirmText - Text for confirm button (default: "Confirm")
+ * @param {string} props.cancelText - Text for cancel button (default: "Cancel")
  * @param {string} props.variant - Dialog variant: 'danger', 'warning', 'info', 'success' (default: 'info')
  * @param {boolean} props.loading - Shows loading state on confirm button
  * @param {React.ReactNode} props.children - Optional custom content
@@ -31,10 +31,10 @@ const ConfirmDialog = ({
   onClose,
   onConfirm,
   onCancel,
-  title = 'تأكيد العملية',
-  message = 'هل أنت متأكد من القيام بهذا الإجراء؟',
-  confirmText = 'تأكيد',
-  cancelText = 'إلغاء',
+  title = 'Confirm Action',
+  message = 'Are you sure you want to proceed with this action?',
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   variant = 'info', // 'danger', 'warning', 'info', 'success'
   loading = false,
   children
@@ -140,7 +140,7 @@ const ConfirmDialog = ({
           onClick={handleCancel}
           disabled={loading}
           className="absolute top-4 left-4 p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label="إغلاق"
+          aria-label="Close"
         >
           <X size={20} />
         </button>
@@ -201,7 +201,7 @@ const ConfirmDialog = ({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                جاري التنفيذ...
+                Processing...
               </span>
             ) : (
               confirmText
@@ -236,8 +236,8 @@ export const useConfirmDialog = () => {
     title: '',
     message: '',
     variant: 'info',
-    confirmText: 'تأكيد',
-    cancelText: 'إلغاء',
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
     onConfirm: null,
     onCancel: null
   });
@@ -246,11 +246,11 @@ export const useConfirmDialog = () => {
     return new Promise((resolve, reject) => {
       setDialogState({
         isOpen: true,
-        title: options.title || 'تأكيد العملية',
-        message: options.message || 'هل أنت متأكد من القيام بهذا الإجراء؟',
+        title: options.title || 'Confirm Action',
+        message: options.message || 'Are you sure you want to proceed with this action?',
         variant: options.variant || 'info',
-        confirmText: options.confirmText || 'تأكيد',
-        cancelText: options.cancelText || 'إلغاء',
+        confirmText: options.confirmText || 'Confirm',
+        cancelText: options.cancelText || 'Cancel',
         onConfirm: () => {
           setDialogState((prev) => ({ ...prev, isOpen: false }));
           resolve(true);

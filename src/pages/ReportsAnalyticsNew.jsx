@@ -11,14 +11,8 @@ import BrandedReportHeader from '@/components/Reports/BrandedReportHeader';
 import {
   BarChart3, Download, Calendar, TrendingUp, FileText, DollarSign,
   Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare,
-  Clock, Settings, Play, Eye, ChevronRight, Sparkles, Share2
-
-  Clock, Settings, Play, Eye, ChevronRight, Sparkles, Printer, Share2
-
-  Clock, Settings, Play, Eye, ChevronRight, Sparkles, Zap, ArrowRight,
-  PieChart, TrendingDown, Activity
- 
- 
+  Clock, Settings, Play, Eye, ChevronRight, Sparkles, Share2, Printer,
+  Zap, ArrowRight, PieChart, TrendingDown, Activity
 } from 'lucide-react';
 import { reportEngine } from '@/lib/reportEngine';
 import { REPORT_TYPES, REPORT_CATEGORIES, getReportsByCategory } from '@/lib/reportTypes';
@@ -27,11 +21,9 @@ import ReportFilters from '@/components/Reports/ReportFilters';
 import ExportDialog from '@/components/Reports/ExportDialog';
 
 import ProfessionalReport from '@/components/Reports/ProfessionalReport';
- 
 import FinancialOverview from '@/components/Reports/FinancialOverview';
 import MenuEngineering from '@/components/Reports/MenuEngineering';
 import ChannelPerformanceReport from '@/components/Reports/ChannelPerformanceReport';
-import ProfessionalReport from '@/components/Reports/ProfessionalReport';
 
 export default function ReportsAnalyticsNew() {
   const { addNotification } = useNotification();
@@ -124,13 +116,9 @@ export default function ReportsAnalyticsNew() {
         type: 'info'
       });
 
-      const filename = `${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${format}`;
-      await exportReport(generatedReport, format, filename, restaurantInfo);
-
       const fileExtension = format === 'json' ? 'json' : format === 'excel' ? 'xlsx' : format;
       const filename = `Restalyze_${generatedReport.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${fileExtension}`;
-      await exportReport(generatedReport, format, filename);
- 
+      await exportReport(generatedReport, format, filename, restaurantInfo);
 
       addNotification({
         title: 'Success',
@@ -255,6 +243,8 @@ export default function ReportsAnalyticsNew() {
         message: 'Failed to open print dialog',
         type: 'error'
       });
+    }
+  };
 
   const handlePrint = () => {
     window.print();
@@ -274,7 +264,6 @@ export default function ReportsAnalyticsNew() {
         type: 'info'
       });
       navigator.clipboard.writeText(window.location.href);
- 
     }
   };
 
@@ -284,16 +273,6 @@ export default function ReportsAnalyticsNew() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 space-y-6 pb-12">
-      <PageHeader
-        title="Restalyze Report Hub"
-        subtitle="Professional reporting with AI insights, advanced analytics, and client-ready exports"
-        icon={BarChart3}
-        badge={{
-          text: 'Premium Reports',
-          icon: Sparkles,
-          color: 'blue'
-
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Professional Branded Header */}
       <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 dark:from-blue-900 dark:via-blue-800 dark:to-indigo-900 text-white pt-8 pb-12 shadow-2xl">
@@ -327,58 +306,39 @@ export default function ReportsAnalyticsNew() {
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+        {/* Navigation Tabs */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md">
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <nav className="flex -mb-px">
+              <TabButton
+                active={activeTab === 'builder'}
+                onClick={() => setActiveTab('builder')}
+                icon={Settings}
+                label="Report Generator"
+              />
+              <TabButton
+                active={activeTab === 'view'}
+                onClick={() => setActiveTab('view')}
+                icon={Eye}
+                label="View Report"
+                disabled={!generatedReport}
+              />
+              <TabButton
+                active={activeTab === 'templates'}
+                onClick={() => setActiveTab('templates')}
+                icon={Crown}
+                label="Templates"
+              />
+              <TabButton
+                active={activeTab === 'history'}
+                onClick={() => setActiveTab('history')}
+                icon={Clock}
+                label="Report History"
+              />
+            </nav>
+          </div>
 
-      {/* Navigation Tabs - Professional Styling */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-        <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
-          <nav className="flex -mb-px px-6">
-
-    <div className="space-y-6">
-      <PageHeader
-        title="Report Hub"
-        subtitle="Premium AI-powered reporting with professional insights, anomaly detection, and actionable recommendations"
-        icon={BarChart3}
-        badge={{
-          text: 'Premium Reports',
-          icon: Crown,
-          color: 'gold'
- 
-        }}
-      />
-
-      {/* Navigation Tabs */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md">
-        <div className="border-b border-gray-200 dark:border-gray-700">
-          <nav className="flex -mb-px"> 
-            <TabButton
-              active={activeTab === 'builder'}
-              onClick={() => setActiveTab('builder')}
-              icon={Settings}
-              label="Report Generator"
-            />
-            <TabButton
-              active={activeTab === 'view'}
-              onClick={() => setActiveTab('view')}
-              icon={Eye}
-              label="View Report"
-              disabled={!generatedReport}
-            />
-            <TabButton
-              active={activeTab === 'templates'}
-              onClick={() => setActiveTab('templates')}
-              icon={Crown}
-              label="Templates"
-            />
-            <TabButton
-              active={activeTab === 'history'}
-              onClick={() => setActiveTab('history')}
-              icon={Clock}
-              label="Report History"
-            />
-          </nav>
-        </div>
-
-        <div className="p-8">
+          <div className="p-8">
           {/* Report Generator Tab */}
           {activeTab === 'builder' && (
             <div className="space-y-8">
@@ -553,65 +513,6 @@ export default function ReportsAnalyticsNew() {
           {/* View Report Tab - Professional Report */}
           {activeTab === 'view' && generatedReport && (
             <div className="space-y-6">
-              {/* Report Header with Branding */}
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">R</span>
-                      </div>
-                      <div>
-                        <h3 className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-                          Restalyze Professional Report
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">{restaurantInfo.name} • {restaurantInfo.branch}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    {generatedReport.title}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400 mb-3">{generatedReport.subtitle}</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
-                      <span className="text-gray-600 dark:text-gray-400">Generated</span>
-                      <p className="font-semibold text-gray-900 dark:text-white text-xs">{new Date(generatedReport.generatedAt).toLocaleString()}</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
-                      <span className="text-gray-600 dark:text-gray-400">Report ID</span>
-                      <p className="font-semibold text-gray-900 dark:text-white text-xs">{generatedReport.id.substring(0, 8)}</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
-                      <span className="text-gray-600 dark:text-gray-400">Confidence</span>
-                      <p className="font-semibold text-green-600 dark:text-green-400 text-xs">{generatedReport.metadata.confidence}</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800/50 rounded p-2">
-                      <span className="text-gray-600 dark:text-gray-400">Status</span>
-                      <p className="font-semibold text-blue-600 dark:text-blue-400 text-xs">Ready</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-                {/* Export & Share Button */}
-                <button
-                  onClick={() => setIsExportDialogOpen(true)}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
-                           transition-colors duration-200 flex items-center gap-2 font-medium"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Export & Share
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mr-4">
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Export & Share:</span>
-
-            <div className="space-y-8">
               {/* Report Header with Professional Branding */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-8 border border-blue-200 dark:border-blue-800">
                 <div className="flex items-start justify-between gap-6">
@@ -679,36 +580,14 @@ export default function ReportsAnalyticsNew() {
                       </button>
                     </div>
                   </div>
- 
                 </div>
-                <button
-                  onClick={() => handleExport('pdf')}
-                  className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg
-                           transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
-                  title="Download as PDF"
-                >
-                  <Download className="w-4 h-4" />
-                  PDF
-                </button>
-                <button
-                  onClick={() => handleExport('excel')}
-                  className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg
-                           transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
-                  title="Download as Excel"
-                >
-                  <Download className="w-4 h-4" />
-                  Excel
-                </button>
-                <button
-                  onClick={() => handleExport('csv')}
-                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg
-                           transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
-                  title="Download as CSV"
-                >
-                  <Download className="w-4 h-4" />
-                  CSV
-                </button>
-                <div className="h-6 border-l border-gray-300 dark:border-gray-600 mx-2"></div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mr-4">
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Additional Actions:</span>
+                </div>
                 <button
                   onClick={handlePrintReport}
                   className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg
@@ -719,30 +598,15 @@ export default function ReportsAnalyticsNew() {
                   Print
                 </button>
                 <button
+                  onClick={handleShare}
                   className="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600
                            text-gray-900 dark:text-white rounded-lg transition-colors duration-200 flex items-center gap-2 font-medium text-sm"
-                  title="Share Report (Coming Soon)"
+                  title="Share Report"
                 >
                   <Share2 className="w-4 h-4" />
                   Share
- 
                 </button>
               </div>
-
-            <div className="space-y-6">
-              {/* Branded Report Header */}
-              <BrandedReportHeader
-                title={generatedReport.title}
-                subtitle={generatedReport.subtitle}
-                reportType={generatedReport.type}
-                generatedDate={generatedReport.generatedAt}
-                reportId={generatedReport.id}
-                confidence={generatedReport.metadata?.confidence || 'High'}
-                onExport={handleExport}
-                onPrint={handlePrint}
-                onShare={handleShare}
-              />
- 
 
               {/* Report Content */}
               <div ref={reportRef} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
@@ -755,9 +619,12 @@ export default function ReportsAnalyticsNew() {
                 {generatedReport.type === 'channel_performance' && (
                   <ChannelPerformanceReport reportData={generatedReport} />
                 )}
+                {generatedReport.type === 'professional_report' && (
+                  <ProfessionalReport reportData={generatedReport} isLoading={false} />
+                )}
 
                 {/* Default Report View for other types */}
-                {!['financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
+                {!['financial_overview', 'menu_engineering', 'channel_performance', 'professional_report'].includes(generatedReport.type) && (
                   <div className="space-y-6">
                     {generatedReport.executiveSummary && (
                       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
@@ -792,66 +659,6 @@ export default function ReportsAnalyticsNew() {
                   </div>
                 )}
               </div>
-
-              {generatedReport.type === 'PROFESSIONAL_REPORT' && (
-                <ProfessionalReport reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'financial_overview' && (
-                <FinancialOverview reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'menu_engineering' && (
-                <MenuEngineering reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'channel_performance' && (
-                <ChannelPerformanceReport reportData={generatedReport} />
-              )}
-              {generatedReport.type === 'professional_report' && (
-                <ProfessionalReport reportData={generatedReport} isLoading={false} />
-              )}
-
-              {/* Default Report View for other types */}
-              {!['PROFESSIONAL_REPORT', 'financial_overview', 'menu_engineering', 'channel_performance'].includes(generatedReport.type) && (
-
-              {!['financial_overview', 'menu_engineering', 'channel_performance', 'professional_report'].includes(generatedReport.type) && (
- 
-                <div className="space-y-6">
-                  {generatedReport.executiveSummary && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                        Executive Summary
-                      </h3>
-                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {generatedReport.executiveSummary}
-                      </p>
-                    </div>
-                  )}
-
-                  {generatedReport.insights && generatedReport.insights.length > 0 && (
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        AI-Generated Insights
-                      </h3>
-                      <div className="space-y-3">
-                        {generatedReport.insights.map((insight, index) => (
-                          <div key={index} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                              {insight.title}
-                            </h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                              {insight.description}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-            <div>
-              <ProfessionalReport report={generatedReport} />
- 
- 
             </div>
           )}
 
@@ -961,11 +768,13 @@ export default function ReportsAnalyticsNew() {
         isOpen={isExportDialogOpen}
         onClose={() => setIsExportDialogOpen(false)}
       />
+      </div>
     </div>
   );
 }
 
-function TabButton({ active, onClick, icon: Icon, label, disabled }) {
+function TabButton({ active, onClick, icon, label, disabled }) {
+  const Icon = icon;
   return (
     <button
       onClick={onClick}
@@ -987,16 +796,14 @@ function TabButton({ active, onClick, icon: Icon, label, disabled }) {
 
 function ReportTypeCard({ report, selected, onClick }) {
   const iconMap = {
-    DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText,
+    BarChart3, DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText,
     PieChart, TrendingDown, Activity
-
-    BarChart3, DollarSign, TrendingUp, Users, Package, Target, AlertTriangle, Crown, Layers, GitCompare, FileText
- 
   };
   const Icon = iconMap[report.icon] || FileText;
 
   const colorClasses = {
     green: 'bg-green-600 dark:bg-green-600 text-white',
+    emerald: 'bg-emerald-600 dark:bg-emerald-600 text-white',
     blue: 'bg-blue-600 dark:bg-blue-600 text-white',
     red: 'bg-red-600 dark:bg-red-600 text-white',
     purple: 'bg-purple-600 dark:bg-purple-600 text-white',
@@ -1010,23 +817,6 @@ function ReportTypeCard({ report, selected, onClick }) {
     lime: 'bg-lime-600 dark:bg-lime-600 text-white',
     gold: 'bg-yellow-600 dark:bg-yellow-600 text-white',
     gray: 'bg-gray-600 dark:bg-gray-600 text-white'
-
-    green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-300',
-    emerald: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-300',
-    blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-300',
-    red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-300',
-    purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-300',
-    orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-orange-300',
-    cyan: 'bg-cyan-100 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400 border-cyan-300',
-    teal: 'bg-teal-100 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 border-teal-300',
-    pink: 'bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 border-pink-300',
-    yellow: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 border-yellow-300',
-    indigo: 'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-indigo-300',
-    violet: 'bg-violet-100 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 border-violet-300',
-    lime: 'bg-lime-100 dark:bg-lime-900/20 text-lime-600 dark:text-lime-400 border-lime-300',
-    gold: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 border-yellow-300',
-    gray: 'bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400 border-gray-300'
- 
   };
 
   return (

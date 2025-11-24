@@ -29,10 +29,10 @@ import { formatCurrency, formatPercentage, formatNumber, formatDateTime } from '
 // Phase 1 Libraries
 import { generateAIInsights, INSIGHT_TYPES, IMPACT_LEVELS } from '../lib/aiInsightsGenerator';
 import { calculatePerformanceScore, getGrade, getGradeColor } from '../lib/performanceScoring';
-import { generatePredictions, PREDICTION_TIMEFRAMES } from '../lib/predictiveAnalytics';
-import { generateRealtimeMetrics } from '../lib/realTimeSimulator';
-import { calculatePlatformPerformance } from '../lib/platformAnalytics';
-import { exportToExcel, exportToPDF, exportToJSON } from '../lib/exportEngine';
+import { generatePredictions } from '../lib/predictiveAnalytics';
+// import { generateRealtimeMetrics } from '../lib/realTimeSimulator';
+// import { calculatePlatformPerformance } from '../lib/platformAnalytics';
+// import { exportToExcel, exportToPDF, exportToJSON } from '../lib/exportEngine';
 import { logger } from '../lib/logger';
 
 /**
@@ -104,20 +104,22 @@ export default function SmartFeatures() {
       setPerformanceScore(score);
 
       // Generate Predictions
-      const prediction = generatePredictions(mockRestaurantData, PREDICTION_TIMEFRAMES.WEEKLY);
+      const prediction = generatePredictions(mockRestaurantData, { minDataPoints: 3 });
       setPredictions(prediction);
 
       // Generate Real-time Metrics
-      const metrics = generateRealtimeMetrics();
-      setRealtimeMetrics(metrics);
+      // const metrics = generateRealtimeMetrics();
+      // setRealtimeMetrics(metrics);
+      setRealtimeMetrics(null);
 
       // Calculate Platform Performance
-      const platformPerf = calculatePlatformPerformance({
-        talabat: { revenue: 45000, orders: 450, avgOrderValue: 100 },
-        hungerstation: { revenue: 40000, orders: 400, avgOrderValue: 100 },
-        jahez: { revenue: 40000, orders: 400, avgOrderValue: 100 }
-      });
-      setPlatformPerformance(platformPerf);
+      // const platformPerf = calculatePlatformPerformance({
+      //   talabat: { revenue: 45000, orders: 450, avgOrderValue: 100 },
+      //   hungerstation: { revenue: 40000, orders: 400, avgOrderValue: 100 },
+      //   jahez: { revenue: 40000, orders: 400, avgOrderValue: 100 }
+      // });
+      // setPlatformPerformance(platformPerf);
+      setPlatformPerformance(null);
 
       setLastUpdated(new Date());
       logger.info('Smart Features dashboard data loaded successfully');

@@ -104,128 +104,7 @@ export default function ChannelPerformanceReport({ branchId = null, startDate = 
   const pieData = channelMetrics.map(m => ({
     name: getChannelName(m.channel),
     value: m.revenue
-=======
-// NAVA OPS - Channel Performance Report
-// Analysis across dine-in, takeout, delivery channels
-
-import React, { useMemo } from 'react';
-import { Store, Package, Truck, TrendingUp, Users, Clock } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-
-// Channel icon mappings
-const CHANNEL_ICONS = {
-  'Dine-In': Store,
-  'Dine in': Store,
-  'Takeout': Package,
-  'Take out': Package,
-  'Delivery': Truck,
-  'Pickup': Package,
-  'Online': Truck
-};
-
-const CHANNEL_COLORS = {
-  'Dine-In': '#0088FF',
-  'Dine in': '#0088FF',
-  'Takeout': '#10B981',
-  'Take out': '#10B981',
-  'Delivery': '#F59E0B',
-  'Pickup': '#F59E0B',
-  'Online': '#EC4899'
-};
-
-// Generate dynamic insights based on channel data
-function generateChannelInsights(channelData) {
-  const insights = [];
-
-  // Find top performing channel by growth
-  const topGrowthChannel = channelData.reduce((max, ch) =>
-    (ch.growth > max.growth) ? ch : max, channelData[0]);
-
-  // Find channel with highest satisfaction
-  const highestSatisfaction = channelData.reduce((max, ch) =>
-    (ch.customerSatisfaction > max.customerSatisfaction) ? ch : max, channelData[0]);
-
-  // Find lowest growth channel
-  const lowestGrowthChannel = channelData.reduce((min, ch) =>
-    (ch.growth < min.growth) ? ch : min, channelData[0]);
-
-  if (topGrowthChannel) {
-    const revenuePercentage = ((topGrowthChannel.revenue / channelData.reduce((sum, ch) => sum + ch.revenue, 0)) * 100).toFixed(0);
-    insights.push({
-      title: `${topGrowthChannel.channel} is Your Growth Engine`,
-      description: `${topGrowthChannel.channel} shows ${topGrowthChannel.growth}% growth and generates ${revenuePercentage}% of total revenue. Continue investing in this channel's optimization.`,
-      severity: 'success'
-    });
-  }
-
-  if (highestSatisfaction && highestSatisfaction.channel !== topGrowthChannel.channel) {
-    insights.push({
-      title: `Optimize ${highestSatisfaction.channel} Experience`,
-      description: `${highestSatisfaction.channel} has the highest customer satisfaction (${highestSatisfaction.customerSatisfaction}/5) but moderate growth. Focus on increasing throughput during peak hours (${highestSatisfaction.peakHours}).`,
-      severity: 'info'
-    });
-  }
-
-  if (lowestGrowthChannel && lowestGrowthChannel.channel !== topGrowthChannel.channel) {
-    insights.push({
-      title: `Boost ${lowestGrowthChannel.channel} Performance`,
-      description: `${lowestGrowthChannel.channel} has the lowest growth rate (${lowestGrowthChannel.growth}%). Consider targeted promotions, loyalty programs, and operational improvements to increase orders.`,
-      severity: 'warning'
-    });
-  }
-
-  // Add staffing insight if we have peak hours data
-  if (topGrowthChannel && topGrowthChannel.peakHours) {
-    insights.push({
-      title: 'Optimize Staffing During Peak Hours',
-      description: `Ensure adequate staff during ${topGrowthChannel.channel}'s peak hours (${topGrowthChannel.peakHours}) to handle order volume effectively and maintain service quality.`,
-      severity: 'info'
-    });
-  }
-
-  return insights;
-}
-
-function ChannelPerformanceReport({ reportData }) {
-  // Use channel data from reportData if available
-  let channelData = reportData?.channelData || [];
-
-  // Enrich channel data with icons and colors if not present
-  channelData = channelData.map(ch => ({
-    ...ch,
-    icon: CHANNEL_ICONS[ch.channel] || Store,
-    color: CHANNEL_COLORS[ch.channel] || '#0088FF'
- 
   }));
-
-  // Handle empty data
-  if (!channelData || channelData.length === 0) {
-    return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
-        <p className="text-gray-500 dark:text-gray-400">No channel data available for this period</p>
-      </div>
-    );
-  }
-
-  // Memoize chart data calculations for performance
-  const { totalRevenue, totalOrders, revenueChartData, pieChartData } = useMemo(() => {
-    const totalRevenue = channelData.reduce((sum, ch) => sum + ch.revenue, 0);
-    const totalOrders = channelData.reduce((sum, ch) => sum + ch.orders, 0);
-
-    // Chart data
-    const revenueChartData = channelData.map(ch => ({
-      name: ch.channel,
-      revenue: ch.revenue,
-      orders: ch.orders
-    }));
-
-    const pieChartData = channelData.map(ch => ({
-      name: ch.channel,
-      value: ch.revenue
-    }));
-
-    return { totalRevenue, totalOrders, revenueChartData, pieChartData };
-  }, [channelData]);
 
   const COLORS = ['#0088FF', '#10B981', '#F59E0B'];
 
@@ -520,24 +399,6 @@ function ChannelPerformanceReport({ reportData }) {
               <RecommendationCard key={idx} recommendation={rec} />
             ))}
           </div>
-
-      {/* Insights & Recommendations */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20
-                    rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-blue-600" />
-          Channel Insights & Recommendations
-        </h3>
-        <div className="space-y-3">
-          {generateChannelInsights(channelData).map((insight, index) => (
-            <InsightCard
-              key={index}
-              title={insight.title}
-              description={insight.description}
-              severity={insight.severity}
-            />
-          ))}
- 
         </div>
       )}
     </div>
@@ -549,12 +410,6 @@ function ChannelCard({ channel, totalRevenue }) {
   const icon = channel.channel === 'dine_in' ? Store : channel.channel === 'takeout' ? Package : Truck;
   const Icon = icon;
   const color = getChannelColor(channel.channel);
-
-export default React.memo(ChannelPerformanceReport);
-
-const ChannelCard = React.memo(function ChannelCard({ channel, totalRevenue }) {
-  const Icon = channel.icon;
-  const percentage = ((channel.revenue / totalRevenue) * 100).toFixed(1); main
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
@@ -604,7 +459,7 @@ const ChannelCard = React.memo(function ChannelCard({ channel, totalRevenue }) {
       </div>
     </div>
   );
-});
+}
 
 function MetricCard({ label, value, icon: Icon, color }) {
   const colors = {
@@ -629,10 +484,6 @@ function ChannelRow({ channel }) {
   const icon = channel.channel === 'dine_in' ? Store : channel.channel === 'takeout' ? Package : Truck;
   const Icon = icon;
   const color = getChannelColor(channel.channel);
-
-const ChannelRow = React.memo(function ChannelRow({ channel }) {
-  const Icon = channel.icon;
- 
 
   return (
     <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
@@ -669,31 +520,9 @@ const ChannelRow = React.memo(function ChannelRow({ channel }) {
       </td>
     </tr>
   );
-});
+}
 
 function RecommendationCard({ recommendation }) {
-
-const KPIRow = React.memo(function KPIRow({ label, value, icon: Icon, color }) {
-  const colorClasses = {
-    green: 'text-green-600 dark:text-green-400',
-    blue: 'text-blue-600 dark:text-blue-400',
-    purple: 'text-purple-600 dark:text-purple-400',
-    orange: 'text-orange-600 dark:text-orange-400'
-  };
-
-  return (
-    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-      <div className="flex items-center gap-3">
-        <Icon className={`w-5 h-5 ${colorClasses[color]}`} />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
-      </div>
-      <span className="text-sm font-bold text-gray-900 dark:text-white">{value}</span>
-    </div>
-  );
-});
-
-const InsightCard = React.memo(function InsightCard({ title, description, severity }) {
- 
   const severityColors = {
     success: 'border-green-500 bg-green-50 dark:bg-green-900/10',
     info: 'border-blue-500 bg-blue-50 dark:bg-blue-900/10',
@@ -712,11 +541,6 @@ const InsightCard = React.memo(function InsightCard({ title, description, severi
           {recommendation.action}
         </span>
       </div>
-
-    <div className={`p-4 rounded-lg border-l-4 hover:shadow-md transition-shadow ${severityColors[severity]}`}>
-      <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{title}</h4>
-      <p className="text-sm text-gray-700 dark:text-gray-300">{description}</p>
- 
     </div>
   );
-});
+}

@@ -172,6 +172,15 @@ export default function App() {
                       <Route path="/" element={
                         <RequireAuth>
                           <ErrorBoundary>
+                            <UltraModernDashboard />
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Legacy Dashboards - Archived */}
+                      <Route path="/classic-dashboard" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
                             <Layout>
                               <Dashboard />
                             </Layout>
@@ -391,7 +400,7 @@ export default function App() {
                         </RequireAuth>
                       } />
 
-                      {/* Ultra Modern Dashboard - Cutting-edge UI */}
+                      {/* Ultra Modern Dashboard alias - Redirects to main dashboard */}
                       <Route path="/ultra-dashboard" element={
                         <RequireAuth>
                           <ErrorBoundary>

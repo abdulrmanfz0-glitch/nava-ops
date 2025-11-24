@@ -1,6 +1,4 @@
 // src/contexts/NotificationContext.jsx
-import React, { createContext, useContext, useState, useCallback } from 'react';
-
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
  
 import { 
@@ -108,23 +106,6 @@ export function NotificationProvider({ children }) {
     return id;
   }, []);
 
-  // Quick notification helpers
-  const notificationHelpers = {
-    success: (title, message, options) => 
-      addNotification({ title, message, type: NOTIFICATION_TYPES.SUCCESS, ...options }),
-    
-    error: (title, message, options) =>
-      addNotification({ title, message, type: NOTIFICATION_TYPES.ERROR, ...options }),
-    
-    warning: (title, message, options) =>
-      addNotification({ title, message, type: NOTIFICATION_TYPES.WARNING, ...options }),
-    
-    info: (title, message, options) =>
-      addNotification({ title, message, type: NOTIFICATION_TYPES.INFO, ...options })
-  };
-
-
- 
   // Remove notification
   const removeNotification = useCallback((id) => {
     setNotifications(prev => {
@@ -184,8 +165,6 @@ export function NotificationProvider({ children }) {
     return { total, unread, read, byType };
   }, [notifications]);
 
-  const value = {
-
   // Quick notification helpers - memoized
   const success = useCallback((title, message, options) =>
     addNotification({ title, message, type: NOTIFICATION_TYPES.SUCCESS, ...options }), [addNotification]);
@@ -200,7 +179,6 @@ export function NotificationProvider({ children }) {
     addNotification({ title, message, type: NOTIFICATION_TYPES.INFO, ...options }), [addNotification]);
 
   const value = useMemo(() => ({
- 
     notifications,
     unreadCount,
     addNotification,
@@ -210,9 +188,6 @@ export function NotificationProvider({ children }) {
     clearAll,
     clearRead,
     getNotificationStats,
-    ...notificationHelpers
-  };
-
     success,
     error,
     warning,

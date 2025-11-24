@@ -26,6 +26,7 @@ import {
   Target,
   Users,
   ChevronRight,
+  Languages,
 } from 'lucide-react';
 import { useAIChat, MESSAGE_TYPES } from '@/contexts/AIChatContext';
 
@@ -211,6 +212,8 @@ const AIChatSidebar = () => {
     clearMessages,
     inputValue,
     setInputValue,
+    language,
+    toggleLanguage,
   } = useAIChat();
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -298,6 +301,16 @@ const AIChatSidebar = () => {
               </div>
               <div className="flex items-center gap-2">
                 <button
+                  onClick={toggleLanguage}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors flex items-center gap-1.5"
+                  title={language === 'en' ? 'Switch to Arabic' : 'التبديل إلى الإنجليزية'}
+                >
+                  <Languages className="w-4 h-4 text-white" />
+                  <span className="text-xs text-white font-medium">
+                    {language === 'en' ? 'AR' : 'EN'}
+                  </span>
+                </button>
+                <button
                   onClick={() => setIsExpanded(!isExpanded)}
                   className="p-2 hover:bg-white/20 rounded-lg transition-colors"
                   title={isExpanded ? 'Collapse' : 'Expand'}
@@ -381,9 +394,14 @@ const AIChatSidebar = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ask me anything about your business..."
+                    placeholder={
+                      language === 'ar'
+                        ? 'اسألني أي شي عن مطعمك...'
+                        : 'Ask me anything about your business...'
+                    }
                     rows={1}
                     className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm text-white placeholder-gray-500 resize-none max-h-32"
+                    style={{ direction: language === 'ar' ? 'rtl' : 'ltr' }}
                     disabled={isLoading}
                   />
                 </div>

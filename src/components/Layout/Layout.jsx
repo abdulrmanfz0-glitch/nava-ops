@@ -96,7 +96,7 @@ const Layout = ({ children }) => {
         className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } bg-gray-900 border-r border-gray-700 w-64`}
-      
+      >
         <div className="h-full px-3 py-4 overflow-y-auto">
           {/* Logo */}
           <div className="flex items-center justify-between mb-6 px-3">
@@ -132,7 +132,7 @@ const Layout = ({ children }) => {
                       ? 'bg-gradient-to-r from-green-500/20 to-blue-500/20 text-green-400 border-l-4 border-green-400'
                       : 'text-gray-400 hover:bg-white hover:bg-opacity-5 hover:text-white'
                   }`}
-                
+                >
                   <div className="flex items-center gap-3">
                     <Icon className="w-5 h-5" />
                     <span className="font-medium">{item.name}</span>
@@ -173,7 +173,7 @@ const Layout = ({ children }) => {
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:bg-red-500 hover:bg-opacity-10 rounded-lg transition-all"
-
+                  >
                     <LogOut className="w-4 h-4" />
                     <span className="font-medium">Logout</span>
                   </button>
@@ -192,7 +192,7 @@ const Layout = ({ children }) => {
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white hover:bg-opacity-5"
-            
+            >
               <Menu className="w-5 h-5" />
             </button>
 

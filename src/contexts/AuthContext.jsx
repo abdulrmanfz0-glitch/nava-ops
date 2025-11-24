@@ -38,15 +38,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('checking');
   const [sessionExpiry, setSessionExpiry] = useState(null);
-  const { showNotification } = useNotification();
-
-  // Check session expiry
-  useEffect(() => {
-    const checkSessionExpiry = () => {
-      if (sessionExpiry && new Date() > new Date(sessionExpiry)) {
-        showNotification('Session expired. Please log in again.', 'warning');
-
   const { addNotification } = useNotification();
+
+  // Dashboard view preference (classic or modern)
+  const [dashboardView, setDashboardViewState] = useState(() => {
+    return localStorage.getItem('nava_dashboard_view') || 'classic';
+  });
+
+  // Update dashboard view preference
+  const setDashboardView = useCallback((view) => {
+    setDashboardViewState(view);
+    localStorage.setItem('nava_dashboard_view', view);
+    logger.info('Dashboard view changed', { view });
+  }, []);
 
   // DEV MODE: Skip authentication checks
   useEffect(() => {
@@ -127,90 +131,6 @@ export function AuthProvider({ children }) {
     const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
     return () => clearInterval(interval);
   }, [sessionExpiry]);
-
-  // Initialize authentication
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        setLoading(true);
-        const connection = await checkSupabaseConnection();
-        setConnectionStatus(connection.connected ? 'connected' : 'disconnected');
-
-        if (connection.connected) {
-          await setupAuthListener();
-        } else {
-          showNotification('Cannot connect to server', 'error');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setConnectionStatus('error');
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
-  }, []);
-
-  const setupAuthListener = async () => {
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-    if (sessionError) {
-      console.error('Session error:', sessionError);
-      setLoading(false);
-      return;
-    }
-
-    if (session?.user) {
-      await handleUserSession(session.user, session.expires_at);
-    } else {
-      setLoading(false);
-      setConnectionStatus('unauthenticated');
-    }
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event);
-
-        switch (event) {
-          case 'SIGNED_IN':
-            if (session?.user) {
-              await handleUserSession(session.user, session.expires_at);
-              setConnectionStatus('authenticated');
-              showNotification('Successfully logged in!', 'success');
-            }
-            break;
-
-          case 'SIGNED_OUT':
-            setUser(null);
-            setUserProfile(null);
-            setSessionExpiry(null);
-            setConnectionStatus('unauthenticated');
-            showNotification('Logged out successfully', 'info');
-            break;
-
-          case 'TOKEN_REFRESHED':
-            if (session?.expires_at) {
-              setSessionExpiry(new Date(session.expires_at * 1000));
-            }
-            break;
-
-          case 'USER_UPDATED':
-            if (session?.user) {
-              setUser(session.user);
-            }
-            break;
-        }
-
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-
-    const interval = setInterval(checkSessionExpiry, 60000);
-    return () => clearInterval(interval);
-  }, [sessionExpiry, addNotification]);
 
   // Initialize authentication
   const initializeAuth = async () => {
@@ -311,31 +231,11 @@ export function AuthProvider({ children }) {
     setUser(user);
     setConnectionStatus('authenticated');
 
- 
-
     if (expiresAt) {
       setSessionExpiry(new Date(expiresAt * 1000));
     }
 
     // Fetch user profile
-    try {
-      const { data: profile, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist, create default
-        await createDefaultUserProfile(user);
-      } else if (error) {
-        console.error('Error fetching user profile:', error);
-      } else {
-        setUserProfile(profile);
-      }
-    } catch (error) {
-      console.error('Error handling user session:', error);
-
     try {
       const { data: profile, error } = await supabase
         .from('user_profiles')
@@ -361,7 +261,6 @@ export function AuthProvider({ children }) {
     } catch (error) {
       logger.error('Error handling user session', { error: error.message });
       await createDefaultUserProfile(user);
- 
     }
   };
 
@@ -372,12 +271,6 @@ export function AuthProvider({ children }) {
         email: user.email,
         role: 'viewer',
         full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-        is_active: true,
-        created_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await supabase
-
         phone: user.user_metadata?.phone || null,
         avatar_url: user.user_metadata?.avatar_url || null,
         is_active: true,
@@ -385,8 +278,7 @@ export function AuthProvider({ children }) {
         created_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
- 
+      const { data, error } = await supabase
         .from('user_profiles')
         .insert([defaultProfile])
         .select()
@@ -397,13 +289,8 @@ export function AuthProvider({ children }) {
       setUserProfile(data);
       return data;
     } catch (error) {
-      console.error('Error creating default profile:', error);
-
-      setUserProfile(defaultProfile);
-      return defaultProfile;
-    } catch (error) {
       logger.error('Error creating default profile', { error: error.message });
- 
+
       const fallbackProfile = {
         id: user.id,
         email: user.email,
@@ -415,8 +302,6 @@ export function AuthProvider({ children }) {
       return fallbackProfile;
     }
   };
-
-  const login = async (email, password) => {
 
   const logUserActivity = async (userId, activityType, metadata = {}) => {
     try {
@@ -532,8 +417,6 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    try {
-
     if (DEV_BYPASS_AUTH) {
       logger.debug('DEV MODE: Logout skipped');
       return;
@@ -546,7 +429,6 @@ export function AuthProvider({ children }) {
         });
       }
 
- 
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
@@ -554,14 +436,8 @@ export function AuthProvider({ children }) {
       setUserProfile(null);
       setSessionExpiry(null);
       setConnectionStatus('unauthenticated');
-
-    } catch (error) {
-      console.error('Logout error:', error);
-
-
     } catch (error) {
       logger.error('Logout error', { error: error.message });
- 
       throw error;
     }
   };
@@ -662,9 +538,6 @@ export function AuthProvider({ children }) {
         'restaurants:delete', 'team:view', 'team:manage', 'financial:view',
         'settings:manage', 'users:manage'
       ]
-
-      admin: ['dashboard:view', 'reports:view', 'restaurants:view', 'restaurants:edit', 'restaurants:delete', 'team:view', 'team:manage', 'financial:view', 'settings:manage', 'users:manage']
- 
     };
 
     const userPermissions = rolePermissions[userProfile?.role] || [];
@@ -677,35 +550,23 @@ export function AuthProvider({ children }) {
     loading,
     connectionStatus,
     sessionExpiry,
-    isAuthenticated: !!user,
-    isAdmin: userProfile?.role === 'admin',
-    isOps: userProfile?.role === 'ops' || userProfile?.role === 'admin',
-    isViewer: userProfile?.role === 'viewer',
-    login,
-    logout,
-    hasPermission,
-    checkPermission,
-
-
     isAuthenticated: DEV_BYPASS_AUTH ? true : !!user,
     isAdmin: userProfile?.role === 'admin',
     isOps: userProfile?.role === 'ops' || userProfile?.role === 'admin',
     isViewer: userProfile?.role === 'viewer',
-
+    dashboardView,
+    setDashboardView,
     login,
     signUp,
     logout,
     resetPassword,
     updateProfile,
-
     hasPermission,
     checkPermission,
-
     getSessionTimeLeft: () => {
       if (!sessionExpiry) return null;
       return Math.max(0, sessionExpiry - new Date());
     }
- 
   };
 
   return (

@@ -16,6 +16,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { LocaleProvider } from './contexts/LocaleContext';
 import { AIProvider } from './contexts/AIContext';
 import { AIChatProvider } from './contexts/AIChatContext';
+import { DataProvider } from './contexts/DataContext';
 
 // AI Components (Global)
 import { AIChatSidebar, AIFloatingButton } from './components/AI';
@@ -59,16 +60,18 @@ const Root = () => {
             <LocaleProvider>
               <ThemeProvider>
                 <AuthProvider>
-                  <SubscriptionProvider>
-                    <AIProvider>
-                      <AIChatProvider>
-                        <App />
-                        {/* Global AI Components */}
-                        <AIChatSidebar />
-                        <AIFloatingButton />
-                      </AIChatProvider>
-                    </AIProvider>
-                  </SubscriptionProvider>
+                  <DataProvider>
+                    <SubscriptionProvider>
+                      <AIProvider>
+                        <AIChatProvider>
+                          <App />
+                          {/* Global AI Components */}
+                          <AIChatSidebar />
+                          <AIFloatingButton />
+                        </AIChatProvider>
+                      </AIProvider>
+                    </SubscriptionProvider>
+                  </DataProvider>
                 </AuthProvider>
               </ThemeProvider>
             </LocaleProvider>

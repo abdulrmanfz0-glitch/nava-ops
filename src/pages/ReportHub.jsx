@@ -38,7 +38,7 @@ import { supabase } from '../lib/supabase';
 
 const ReportHub = () => {
   const { user } = useAuth();
-  const { showNotification } = useNotification();
+  const { error: showError, success: showSuccess } = useNotification();
   const { entries, categories, branches } = useData();
 
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -76,7 +76,7 @@ const ReportHub = () => {
       }
     } catch (error) {
       console.error('Error fetching platform data:', error);
-      showNotification('Failed to load platform data', 'error');
+      showError('Error', 'Failed to load platform data');
     } finally {
       setLoading(false);
     }
@@ -129,28 +129,28 @@ const ReportHub = () => {
       title: 'Report Hub Export',
       data: filteredData
     });
-    showNotification('Report exported as PDF', 'success');
+    showSuccess('Success', 'Report exported as PDF');
     setShowExportMenu(false);
   };
 
   const handleExportExcel = () => {
     const filteredData = getFilteredData();
     exportToExcel(filteredData, `report-hub-${formatDate(new Date())}.xlsx`);
-    showNotification('Report exported as Excel', 'success');
+    showSuccess('Success', 'Report exported as Excel');
     setShowExportMenu(false);
   };
 
   const handleExportCSV = () => {
     const filteredData = getFilteredData();
     exportToCSV(filteredData, `report-hub-${formatDate(new Date())}.csv`);
-    showNotification('Report exported as CSV', 'success');
+    showSuccess('Success', 'Report exported as CSV');
     setShowExportMenu(false);
   };
 
   const handleExportJSON = () => {
     const filteredData = getFilteredData();
     exportToJSON(filteredData, `report-hub-${formatDate(new Date())}.json`);
-    showNotification('Report exported as JSON', 'success');
+    showSuccess('Success', 'Report exported as JSON');
     setShowExportMenu(false);
   };
 
@@ -175,7 +175,7 @@ const ReportHub = () => {
       config: {}
     };
     setCustomReportBlocks([...customReportBlocks, newBlock]);
-    showNotification(`${blockType.charAt(0).toUpperCase() + blockType.slice(1)} block added`, 'success');
+    showSuccess('Success', `${blockType.charAt(0).toUpperCase() + blockType.slice(1)} block added`);
   };
 
   const removeReportBlock = (blockId) => {

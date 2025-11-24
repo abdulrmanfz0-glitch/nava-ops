@@ -29,7 +29,7 @@ import {
   formatPrice,
   PRICING_CONFIG
 } from '@/utils/pricingCalculator';
-
+import {
   multiLocationPricingAPI,
   branchKPIsAPI,
   calculateGrossProfitMargin,
@@ -1215,9 +1215,7 @@ export default {
   licenseKeys: licenseKeysAPI,
   events: subscriptionEventsAPI,
   notifications: billingNotificationsAPI,
-  dynamicPricing: dynamicPricingAPI
-
+  dynamicPricing: dynamicPricingAPI,
   multiLocation: multiLocationPricingAPI,
   branchKPIs: branchKPIsAPI
- 
 };

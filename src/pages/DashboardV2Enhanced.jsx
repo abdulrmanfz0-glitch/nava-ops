@@ -236,6 +236,33 @@ export default function DashboardV2Enhanced() {
   return (
     <div className={`min-h-screen ${dashboardTheme.gradients.mesh} transition-colors duration-500`}>
       <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Deprecation Notice */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-4 rounded-r-lg"
+        >
+          <div className="flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
+                Migrating to UltraModern Dashboard
+              </h3>
+              <p className="text-sm text-amber-700 dark:text-amber-300">
+                Experience the next generation dashboard with glassmorphic design, advanced AI insights,
+                and seamless real-time data integration.
+              </p>
+              <a
+                href="/"
+                className="inline-flex items-center gap-2 mt-2 text-sm font-medium text-amber-800 dark:text-amber-200
+                         hover:text-amber-900 dark:hover:text-amber-100 transition-colors"
+              >
+                Explore UltraModern Dashboard →
+              </a>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Enhanced Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

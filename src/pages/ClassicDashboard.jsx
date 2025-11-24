@@ -152,6 +152,29 @@ export default function ClassicDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Deprecation Notice */}
+      <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-4 rounded-r-lg">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
+              Legacy Dashboard - Archived
+            </h3>
+            <p className="text-sm text-amber-700 dark:text-amber-300">
+              This dashboard has been superseded by the new UltraModern interface with enhanced AI insights,
+              real-time analytics, and a cutting-edge design system.
+            </p>
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 mt-2 text-sm font-medium text-amber-800 dark:text-amber-200
+                       hover:text-amber-900 dark:hover:text-amber-100 transition-colors"
+            >
+              Switch to New Dashboard →
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* Page Header */}
       <PageHeader
         title="Dashboard"

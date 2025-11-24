@@ -1,8 +1,19 @@
 /**
- * Restalyze Design Tokens
- * Comprehensive design system for the Restalyze platform
+ * @deprecated This file is deprecated. Use ultraModernTokens.js instead.
  *
- * Color Scheme:
+ * Legacy Restalyze Design Tokens
+ *
+ * DEPRECATION NOTICE:
+ * This design token system is being phased out in favor of the UltraModern
+ * design system (ultraModernTokens.js) which provides:
+ * - Glassmorphism effects
+ * - Advanced animations
+ * - Neon accents and gradients
+ * - Modern component theming
+ *
+ * For new components, import from '@/styles/ultraModernTokens' instead.
+ *
+ * Original Color Scheme:
  * - Green: Growth metrics
  * - Blue: Benchmarks
  * - Cyan: Neutral metrics

@@ -1,7 +1,19 @@
 /**
- * Ultra Modern Design Tokens
+ * Ultra Modern Design Tokens - PRIMARY DESIGN SYSTEM
  * Cutting-edge design system for NAVA OPS dashboard
- * Features: Glassmorphism, Dynamic gradients, Neon accents, Futuristic aesthetics
+ *
+ * This is the official design system for all new components.
+ *
+ * Features:
+ * - Glassmorphism effects with backdrop blur
+ * - Dynamic gradients and mesh backgrounds
+ * - Neon accents and glow effects
+ * - Framer Motion animation variants
+ * - Advanced shadow systems
+ * - Futuristic component theming
+ *
+ * Usage:
+ * import { ultraColors, ultraGradients, ultraShadows } from '@/styles/ultraModernTokens';
  */
 
 // ============================================================================

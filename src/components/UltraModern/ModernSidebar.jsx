@@ -45,8 +45,8 @@ const ModernSidebar = ({
       id: 'dashboard',
       label: 'Dashboard',
       icon: LayoutDashboard,
-      path: '/ultra-dashboard',
-      badge: 'New',
+      path: '/',
+      badge: null,
       badgeColor: 'cyan',
     },
     {

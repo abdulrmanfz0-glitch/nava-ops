@@ -40,6 +40,7 @@ const GitOperations = lazy(() => import('./GitOperations'));
 const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
 const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
+const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
 
 // Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -386,6 +387,15 @@ export default function App() {
                             <Layout>
                               <SmartFeatures />
                             </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Ultra Modern Dashboard - Cutting-edge UI */}
+                      <Route path="/ultra-dashboard" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <UltraModernDashboard />
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

@@ -1,36 +1,23 @@
-// src/components/UI/LoadingSpinner.jsx
+// src/components/UI/LoadingSpinner.jsx - Ultra Modern Loading Component
 import React from 'react';
 
-const LoadingSpinner = ({ size = 'md', text = 'Loading...' }) => {
+export default function LoadingSpinner({ size = 'md', text = '', className = '' }) {
   const sizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16',
-    xl: 'w-24 h-24'
+    sm: 'w-6 h-6 border-2',
+    md: 'w-10 h-10 border-3',
+    lg: 'w-14 h-14 border-4',
+    xl: 'w-20 h-20 border-4'
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <div className={`${sizeClasses[size]} border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin`}></div>
-      {text && <p className="mt-4 text-gray-600 dark:text-gray-300">{text}</p>}
-    </div>
-  );
-};
-
-export default LoadingSpinner;
-
-export default function LoadingSpinner({ size = 'md', className = '' }) {
-  const sizeClasses = {
-    sm: 'w-4 h-4 border-2',
-    md: 'w-8 h-8 border-3',
-    lg: 'w-12 h-12 border-4',
-    xl: 'w-16 h-16 border-4'
-  };
-
-  return (
-    <div className={`flex items-center justify-center ${className}`}>
-      <div className={`${sizeClasses[size]} border-gray-200 border-t-blue-500 rounded-full animate-spin`}></div>
+    <div className={`flex flex-col items-center justify-center ${className}`}>
+      <div className="relative">
+        <div className={`${sizeClasses[size]} border-gray-700 border-t-cyan-500 rounded-full animate-spin`}></div>
+        <div className={`${sizeClasses[size]} absolute top-0 left-0 border-gray-800 border-b-blue-500 rounded-full animate-spin-reverse opacity-50`}></div>
+      </div>
+      {text && (
+        <p className="mt-4 text-sm text-gray-400 animate-pulse">{text}</p>
+      )}
     </div>
   );
 }
- 

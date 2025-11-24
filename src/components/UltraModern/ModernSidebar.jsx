@@ -34,6 +34,7 @@ const ModernSidebar = ({
   isDarkMode = true,
   onThemeToggle,
   user = {},
+  onLogout,
 }) => {
   const location = useLocation();
   const [expandedGroup, setExpandedGroup] = useState(null);
@@ -46,51 +47,60 @@ const ModernSidebar = ({
       label: 'Dashboard',
       icon: LayoutDashboard,
       path: '/',
-      badge: null,
+      badge: 'New',
       badgeColor: 'cyan',
     },
     {
-      id: 'analytics',
-      label: 'Analytics',
+      id: 'branches',
+      label: 'Branches',
+      icon: Building2,
+      path: '/branches',
+    },
+    {
+      id: 'reports',
+      label: 'Reports',
       icon: BarChart3,
       children: [
-        { label: 'Overview', path: '/analytics', icon: TrendingUp },
-        { label: 'Reports', path: '/reports', icon: FileText },
-        { label: 'Insights', path: '/insights', icon: Sparkles },
+        { label: 'Report Hub', path: '/report-hub', icon: FileText },
+        { label: 'Analytics', path: '/reports', icon: TrendingUp },
+        { label: 'Executive', path: '/executive', icon: Sparkles },
       ],
     },
     {
       id: 'intelligence',
       label: 'AI Intelligence',
       icon: Brain,
-      path: '/ai-intelligence',
+      path: '/intelligence',
       badge: 'AI',
       badgeColor: 'purple',
     },
     {
       id: 'menu',
-      label: 'Menu Manager',
+      label: 'Menu Intelligence',
       icon: ChefHat,
-      children: [
-        { label: 'Menu Items', path: '/menu-management', icon: ChefHat },
-        { label: 'Performance', path: '/menu-performance', icon: TrendingUp },
-        { label: 'Intelligence', path: '/menu-intelligence', icon: Brain },
-      ],
+      path: '/menu-intelligence',
     },
     {
-      id: 'operations',
-      label: 'Operations',
-      icon: Building2,
-      children: [
-        { label: 'Branches', path: '/branches', icon: Building2 },
-        { label: 'Team', path: '/team', icon: Users },
-      ],
+      id: 'team',
+      label: 'Team',
+      icon: Users,
+      path: '/team',
     },
     {
-      id: 'billing',
-      label: 'Billing',
+      id: 'financial',
+      label: 'Financial',
       icon: CreditCard,
-      path: '/billing',
+      children: [
+        { label: 'Overview', path: '/financial', icon: TrendingUp },
+        { label: 'Intelligence', path: '/financial-intelligence', icon: Brain },
+        { label: 'Performance', path: '/financial-performance', icon: BarChart3 },
+      ],
+    },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: Bell,
+      path: '/notifications',
     },
     {
       id: 'settings',
@@ -419,7 +429,11 @@ const ModernSidebar = ({
                 {user?.role || 'Administrator'}
               </p>
             </div>
-            <button className="p-2 rounded-lg hover:bg-white/[0.05] text-gray-400 hover:text-red-400 transition-colors">
+            <button
+              onClick={onLogout}
+              className="p-2 rounded-lg hover:bg-white/[0.05] text-gray-400 hover:text-red-400 transition-colors"
+              title="Logout"
+            >
               <LogOut className="w-4 h-4" />
             </button>
           </motion.div>

@@ -1,17 +1,12 @@
- /* NAVA OPS - Modern Design System */
-
-/* src/styles/globals.css */
-/* NAVA OPS - Modern Design System */
-
- 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import './styles/ultraModernAnimations.css';
+
+/* NAVA OPS - Modern Design System */
+/* src/styles/globals.css */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Ultra Modern Animations */
-@import './styles/ultraModernAnimations.css';
 
 
  

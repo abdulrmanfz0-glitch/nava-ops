@@ -2,7 +2,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
-import { DashboardProvider } from './contexts/DashboardContext';
 import Layout from './components/Layout/Layout';
 import OfflineIndicator from './components/UI/OfflineIndicator';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -21,11 +20,8 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const RestaurantsManagement = lazy(() => import('./pages/RestaurantsManagement'));
 const ReportHub = lazy(() => import('./pages/ReportHub'));
 
-const DashboardV2 = lazy(() => import('./pages/DashboardV2Enhanced'));
 const BranchesManagement = lazy(() => import('./pages/BranchesManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalyticsNew')); // Unified Professional Report
-const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
- 
 const TeamManagement = lazy(() => import('./pages/TeamManagement'));
 const FinancialReports = lazy(() => import('./pages/FinancialReports'));
 const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence'));
@@ -34,7 +30,6 @@ const MenuIntelligence = lazy(() => import('./pages/MenuIntelligence'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'));
 const Intelligence = lazy(() => import('./pages/Intelligence'));
-const ExecutiveHQ = lazy(() => import('./pages/ExecutiveHQ'));
 const ClaudeNexusDemo = lazy(() => import('./pages/ClaudeNexusDemo'));
 const GitOperations = lazy(() => import('./GitOperations'));
 const Subscriptions = lazy(() => import('./pages/Subscriptions'));
@@ -188,18 +183,6 @@ export default function App() {
                         </RequireAuth>
                       } />
 
-                      <Route path="/dashboard-v2" element={
-                        <RequireAuth>
-                          <ErrorBoundary>
-                            <DashboardProvider>
-                              <Layout>
-                                <DashboardV2 />
-                              </Layout>
-                            </DashboardProvider>
-                          </ErrorBoundary>
-                        </RequireAuth>
-                      } />
-
                       <Route path="/branches" element={
                         <RequireAuth requiredPermissions={['restaurants:view']}>
                           <ErrorBoundary>
@@ -242,17 +225,6 @@ export default function App() {
                         </RequireAuth>
                       } />
 
-                      {/* Executive Dashboard */}
-                      <Route path="/executive" element={
-                        <RequireAuth requiredPermissions={['reports:view']}>
-                          <ErrorBoundary>
-                            <Layout>
-                              <ExecutiveDashboard />
-                            </Layout>
-                          </ErrorBoundary>
-                        </RequireAuth>
-                      } />
-
                       {/* Team Management */}
                       <Route path="/team" element={
                         <RequireAuth requiredPermissions={['team:manage']}>
@@ -280,17 +252,6 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <Intelligence />
-                            </Layout>
-                          </ErrorBoundary>
-                        </RequireAuth>
-                      } />
-
-                      {/* Executive HQ Dashboard - Premium Feature */}
-                      <Route path="/executive-hq" element={
-                        <RequireAuth>
-                          <ErrorBoundary>
-                            <Layout>
-                              <ExecutiveHQ />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>
@@ -400,11 +361,13 @@ export default function App() {
                         </RequireAuth>
                       } />
 
-                      {/* Ultra Modern Dashboard alias - Redirects to main dashboard */}
+                      {/* Ultra Modern Dashboard - Alias route to main dashboard */}
                       <Route path="/ultra-dashboard" element={
                         <RequireAuth>
                           <ErrorBoundary>
-                            <UltraModernDashboard />
+                            <Layout>
+                              <UltraModernDashboard />
+                            </Layout>
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

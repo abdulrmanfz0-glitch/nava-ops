@@ -33,6 +33,7 @@ const ModernHeader = ({
   notifications = [],
   onSearch,
   breadcrumbs = [],
+  onLogout,
 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -376,12 +377,15 @@ const ModernHeader = ({
                     </div>
 
                     <div className="border-t border-white/[0.08] py-2">
-                      <button className="
-                        w-full flex items-center gap-3 px-4 py-2.5
-                        text-sm text-red-400 hover:text-red-300
-                        hover:bg-red-500/10
-                        transition-colors
-                      ">
+                      <button
+                        onClick={onLogout}
+                        className="
+                          w-full flex items-center gap-3 px-4 py-2.5
+                          text-sm text-red-400 hover:text-red-300
+                          hover:bg-red-500/10
+                          transition-colors
+                        "
+                      >
                         <LogOut className="w-4 h-4" />
                         Sign Out
                       </button>

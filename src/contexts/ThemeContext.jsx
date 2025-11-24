@@ -1,6 +1,4 @@
 // src/contexts/ThemeContext.jsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
  
 
@@ -17,10 +15,7 @@ export function useTheme() {
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     // Check localStorage first
-    const savedTheme = localStorage.getItem('theme');
-
     const savedTheme = localStorage.getItem('nava-theme');
- 
     if (savedTheme) return savedTheme;
 
     // Check system preference
@@ -32,32 +27,6 @@ export function ThemeProvider({ children }) {
   });
 
   useEffect(() => {
-    // Apply theme to document
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-
-    // Save to localStorage
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
-
-  const setLightTheme = () => setTheme('light');
-  const setDarkTheme = () => setTheme('dark');
-
-  const value = {
-    theme,
-    isDark: theme === 'dark',
-    isLight: theme === 'light',
-    toggleTheme,
-    setLightTheme,
-    setDarkTheme,
-    setTheme
-  };
-
     const root = window.document.documentElement;
 
     // Remove previous theme

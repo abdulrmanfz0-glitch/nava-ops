@@ -21,17 +21,33 @@ export const MESSAGE_TYPES = {
 const WELCOME_MESSAGE = {
   id: 'welcome',
   type: MESSAGE_TYPES.ASSISTANT,
-  content: `Hello! I'm NAVA AI, your intelligent restaurant operations co-pilot.
+  content: `Hello! I'm your **Senior Advisor** for NAVA OPS - think of me as your trusted business partner who's here to help you understand your restaurant, make better decisions, and increase profitability.
 
-I can help you with:
-• **Analytics & Insights** - Understand your business performance
-• **Revenue Forecasting** - Predict future trends
-• **Anomaly Detection** - Spot unusual patterns
-• **Recommendations** - Get actionable suggestions
-• **Branch Comparisons** - Analyze performance across locations
-• **Menu Intelligence** - Optimize your offerings
+**I'm here to help you with:**
 
-What would you like to explore today?`,
+💡 **Understanding Your Business**
+• Explain financial concepts in simple terms (What does revenue mean? How do refunds affect profit?)
+• Break down your numbers and show where your money goes
+• Answer any questions about your restaurant operations
+
+📊 **Making Sense of Changes**
+• Why did sales drop yesterday?
+• What's driving your revenue growth?
+• Understanding patterns and trends in your data
+
+🎯 **Growing Your Profit**
+• Actionable recommendations with real financial impact
+• Finding opportunities to increase revenue
+• Reducing costs and improving margins
+
+📈 **Business Performance**
+• Daily revenue and order analysis
+• Branch comparisons and insights
+• Forecasting and planning for the future
+
+**You can ask me anything!** I'll explain everything in simple, clear language - no confusing jargon. Whether you want to understand what "profit margin" means or need help figuring out why sales changed, I'm here to help.
+
+What would you like to know about your business today?`,
   timestamp: new Date(),
   metadata: {
     source: 'system',
@@ -53,6 +69,12 @@ export function AIChatProvider({ children }) {
     currentPage: null,
     selectedDateRange: null,
     filters: {},
+  });
+
+  // Language preference
+  const [language, setLanguage] = useState(() => {
+    // Get from localStorage or default to English
+    return localStorage.getItem('nava_ai_language') || 'en';
   });
 
   // Session state
@@ -100,6 +122,19 @@ export function AIChatProvider({ children }) {
     setError(null);
   }, []);
 
+  // Toggle language
+  const toggleLanguage = useCallback(() => {
+    const newLanguage = language === 'en' ? 'ar' : 'en';
+    setLanguage(newLanguage);
+    localStorage.setItem('nava_ai_language', newLanguage);
+  }, [language]);
+
+  // Set specific language
+  const setAILanguage = useCallback((lang) => {
+    setLanguage(lang);
+    localStorage.setItem('nava_ai_language', lang);
+  }, []);
+
   // Send a message to the AI
   const sendMessage = useCallback(async (content, options = {}) => {
     if (!content.trim()) return null;
@@ -122,7 +157,7 @@ export function AIChatProvider({ children }) {
       const response = await aiClient.chat({
         message: content.trim(),
         sessionId,
-        context: businessContext,
+        context: { ...businessContext, language }, // Include language in context
         history: messages.slice(-10), // Send last 10 messages for context
         ...options,
       });
@@ -162,7 +197,7 @@ export function AIChatProvider({ children }) {
       setIsLoading(false);
       return null;
     }
-  }, [addMessage, businessContext, messages, sessionId]);
+  }, [addMessage, businessContext, messages, sessionId, language]);
 
   // Quick action handler
   const sendQuickAction = useCallback(async (action) => {
@@ -213,6 +248,7 @@ export function AIChatProvider({ children }) {
     inputValue,
     businessContext,
     sessionId,
+    language,
 
     // Actions
     openChat,
@@ -223,6 +259,8 @@ export function AIChatProvider({ children }) {
     clearMessages,
     updateContext,
     setInputValue,
+    toggleLanguage,
+    setAILanguage,
 
     // Helpers
     addMessage,

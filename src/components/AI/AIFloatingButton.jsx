@@ -121,7 +121,7 @@ const AIFloatingButton = () => {
                 Open full chat
               </button>
             </div>
-          </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 

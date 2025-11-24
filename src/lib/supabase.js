@@ -5,7 +5,13 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 // Check for environment variables with flexible handling
-const hasValidCredentials = !!(supabaseUrl && supabaseAnonKey)
+// Reject placeholder values
+const hasValidCredentials = !!(
+  supabaseUrl &&
+  supabaseAnonKey &&
+  !supabaseUrl.includes('placeholder') &&
+  !supabaseAnonKey.includes('placeholder')
+)
 
 if (!hasValidCredentials && import.meta.env.DEV) {
   // Show a single consolidated warning in development mode only

@@ -4,14 +4,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/contexts/NotificationContext';
-import ModernPageWrapper, {
-  ModernPageHeader,
-  ModernSection,
-  ModernButton,
-  ModernInput,
-  ModernBadge
-} from '@/components/UltraModern/ModernPageWrapper';
-import GlassCard from '@/components/UltraModern/GlassCard';
+import {
+  Sidebar,
+  TopNavbar,
+  ModernCard,
+  KPIWidget,
+  SectionTitle,
+  StatBadge,
+  SearchBar,
+  NeoButton,
+  Modal
+} from '@/components/nava-ui';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import {
   Users,
@@ -233,255 +236,324 @@ export default function TeamManagement() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0E1A]">
         <LoadingSpinner size="lg" text="Loading team members..." />
       </div>
     );
   }
 
   return (
-    <ModernPageWrapper>
-      <ModernPageHeader
-        title="Team Management"
-        subtitle="Manage your team members and their roles"
-        icon={Users}
-        stats={stats}
-        actions={
-          <ModernButton
-            variant="primary"
-            icon={Plus}
-            onClick={() => {
-              resetForm();
-              setShowModal(true);
-            }}
-          >
-            Add Team Member
-          </ModernButton>
-        }
-      />
+    <div className="flex min-h-screen bg-[#0A0E1A]">
+      {/* Sidebar */}
+      <Sidebar defaultCollapsed={false} />
 
-      <ModernSection title="Team Members" icon={Users}>
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1">
-            <ModernInput
-              placeholder="Search by name or email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              icon={Search}
+      {/* Main Content */}
+      <div className="flex-1 ml-0 lg:ml-[280px] transition-all duration-300">
+        {/* Top Navbar */}
+        <TopNavbar
+          user={{ name: 'Admin User', email: 'admin@navaops.com' }}
+          notificationCount={3}
+        />
+
+        {/* Page Content */}
+        <div className="p-6 space-y-6 mt-20">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <SectionTitle
+              title="Team Management"
+              subtitle="Manage your team members and their roles"
+              icon={Users}
+              accent="cyan"
             />
-          </div>
-          <div className="flex gap-2">
-            <select
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-              className="px-4 py-2.5 bg-white/[0.03] rounded-xl border border-white/[0.08] text-white text-sm focus:outline-none focus:border-cyan-500/50"
+            <NeoButton
+              variant="primary"
+              icon={Plus}
+              onClick={() => {
+                resetForm();
+                setShowModal(true);
+              }}
             >
-              <option value="all">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="ops">Operations</option>
-              <option value="manager">Manager</option>
-              <option value="staff">Staff</option>
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2.5 bg-white/[0.03] rounded-xl border border-white/[0.08] text-white text-sm focus:outline-none focus:border-cyan-500/50"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+              Add Team Member
+            </NeoButton>
           </div>
-        </div>
 
-        {/* Team Members Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <AnimatePresence mode="popLayout">
-            {filteredEmployees.map((employee, index) => (
-              <motion.div
-                key={employee.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <GlassCard hover className="p-5">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-semibold text-lg">
-                        {employee.full_name?.charAt(0) || 'U'}
-                      </div>
-                      <div>
-                        <h3 className="text-base font-semibold text-white">
-                          {employee.full_name || 'Unknown'}
-                        </h3>
-                        <p className="text-xs text-gray-400">
-                          {employee.position || 'No position'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <ModernButton
-                        variant="ghost"
-                        size="sm"
-                        icon={Edit2}
-                        onClick={() => openEditModal(employee)}
-                      />
-                      <ModernButton
-                        variant="ghost"
-                        size="sm"
-                        icon={Trash2}
-                        onClick={() => handleDelete(employee.id)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <Mail className="w-4 h-4" />
-                      <span className="truncate">{employee.email || 'No email'}</span>
-                    </div>
-                    {employee.phone && (
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <Phone className="w-4 h-4" />
-                        <span>{employee.phone}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <ModernBadge variant={roleConfig[employee.role]?.variant || 'default'}>
-                      {roleConfig[employee.role]?.label || employee.role}
-                    </ModernBadge>
-                    <ModernBadge variant={statusConfig[employee.status]?.variant || 'default'}>
-                      {statusConfig[employee.status]?.label || employee.status}
-                    </ModernBadge>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {filteredEmployees.length === 0 && (
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No team members found</p>
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <ModernCard variant="glass" glow glowColor="cyan">
+              <KPIWidget
+                title="Total Team Members"
+                value={employees.length}
+                icon={Users}
+                iconColor="text-cyan-400"
+                trend="up"
+                trendValue={5}
+                animated
+              />
+            </ModernCard>
+            <ModernCard variant="glass" glow glowColor="teal">
+              <KPIWidget
+                title="Active Members"
+                value={employees.filter(e => e.status === 'active').length}
+                icon={UserCheck}
+                iconColor="text-green-400"
+                animated
+              />
+            </ModernCard>
+            <ModernCard variant="glass" glow glowColor="purple">
+              <KPIWidget
+                title="Inactive Members"
+                value={employees.filter(e => e.status === 'inactive').length}
+                icon={UserX}
+                iconColor="text-red-400"
+                animated
+              />
+            </ModernCard>
           </div>
-        )}
-      </ModernSection>
 
-      {/* Add/Edit Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowModal(false)}
-          >
-            <motion.div
-              className="w-full max-w-2xl bg-gray-900/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden"
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/[0.08]">
-                <h2 className="text-xl font-semibold text-white">
-                  {editingEmployee ? 'Edit Team Member' : 'Add Team Member'}
-                </h2>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="p-2 rounded-lg hover:bg-white/[0.05] text-gray-400 hover:text-white transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+          {/* Team Members Section */}
+          <ModernCard variant="glass">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                <Users className="w-5 h-5 text-cyan-400" />
+                Team Members
+              </h3>
+
+              {/* Filters */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <div className="flex-1">
+                  <SearchBar
+                    placeholder="Search by name or email..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    size="md"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <select
+                    value={filterRole}
+                    onChange={(e) => setFilterRole(e.target.value)}
+                    className="px-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+                  >
+                    <option value="all">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="ops">Operations</option>
+                    <option value="manager">Manager</option>
+                    <option value="staff">Staff</option>
+                  </select>
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="px-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
               </div>
 
-              {/* Modal Body */}
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <ModernInput
-                    label="Full Name"
-                    value={formData.full_name}
-                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    placeholder="Enter full name"
-                    required
-                  />
-                  <ModernInput
-                    label="Email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="Enter email"
-                    icon={Mail}
-                    required
-                  />
-                  <ModernInput
-                    label="Phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="Enter phone number"
-                    icon={Phone}
-                  />
-                  <ModernInput
-                    label="Position"
-                    value={formData.position}
-                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                    placeholder="Enter position"
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Role</label>
-                    <select
-                      value={formData.role}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-white/[0.03] rounded-xl border border-white/[0.08] text-white focus:outline-none focus:border-cyan-500/50"
-                      required
+              {/* Team Members Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <AnimatePresence mode="popLayout">
+                  {filteredEmployees.map((employee, index) => (
+                    <motion.div
+                      key={employee.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ delay: index * 0.05 }}
                     >
-                      <option value="staff">Staff</option>
-                      <option value="manager">Manager</option>
-                      <option value="ops">Operations</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-white/[0.03] rounded-xl border border-white/[0.08] text-white focus:outline-none focus:border-cyan-500/50"
-                      required
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  </div>
-                </div>
+                      <ModernCard variant="glass" hoverable className="p-5">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-semibold text-lg shadow-lg shadow-cyan-500/30">
+                              {employee.full_name?.charAt(0) || 'U'}
+                            </div>
+                            <div>
+                              <h3 className="text-base font-semibold text-white">
+                                {employee.full_name || 'Unknown'}
+                              </h3>
+                              <p className="text-xs text-gray-400">
+                                {employee.position || 'No position'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <NeoButton
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditModal(employee)}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </NeoButton>
+                            <NeoButton
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(employee.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </NeoButton>
+                          </div>
+                        </div>
 
-                {/* Modal Footer */}
-                <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.08]">
-                  <ModernButton
-                    variant="secondary"
-                    onClick={() => setShowModal(false)}
-                    type="button"
-                  >
-                    Cancel
-                  </ModernButton>
-                  <ModernButton variant="primary" type="submit">
-                    {editingEmployee ? 'Update' : 'Add'} Team Member
-                  </ModernButton>
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2 text-sm text-gray-400">
+                            <Mail className="w-4 h-4" />
+                            <span className="truncate">{employee.email || 'No email'}</span>
+                          </div>
+                          {employee.phone && (
+                            <div className="flex items-center gap-2 text-sm text-gray-400">
+                              <Phone className="w-4 h-4" />
+                              <span>{employee.phone}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <StatBadge
+                            label={roleConfig[employee.role]?.label || employee.role}
+                            variant={
+                              employee.role === 'admin' ? 'primary' :
+                              employee.role === 'manager' ? 'success' :
+                              employee.role === 'ops' ? 'info' :
+                              'default'
+                            }
+                            glow
+                          />
+                          <StatBadge
+                            label={statusConfig[employee.status]?.label || employee.status}
+                            variant={employee.status === 'active' ? 'success' : 'danger'}
+                            glow
+                          />
+                        </div>
+                      </ModernCard>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {filteredEmployees.length === 0 && (
+                <div className="text-center py-12">
+                  <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No team members found</p>
                 </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </ModernPageWrapper>
+              )}
+            </div>
+          </ModernCard>
+        </div>
+      </div>
+
+      {/* Add/Edit Modal */}
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingEmployee ? 'Edit Team Member' : 'Add Team Member'}
+        size="xl"
+        footer={
+          <div className="flex justify-end gap-3">
+            <NeoButton
+              variant="secondary"
+              onClick={() => setShowModal(false)}
+            >
+              Cancel
+            </NeoButton>
+            <NeoButton variant="primary" onClick={handleSubmit}>
+              {editingEmployee ? 'Update' : 'Add'} Team Member
+            </NeoButton>
+          </div>
+        }
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Full Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
+              <input
+                type="text"
+                value={formData.full_name}
+                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                placeholder="Enter full name"
+                required
+                className="w-full px-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email *</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="Enter email"
+                  required
+                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+                />
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="Enter phone number"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+                />
+              </div>
+            </div>
+
+            {/* Position */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Position</label>
+              <input
+                type="text"
+                value={formData.position}
+                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                placeholder="Enter position"
+                className="w-full px-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+              />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Role *</label>
+              <select
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                className="w-full px-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+                required
+              >
+                <option value="staff">Staff</option>
+                <option value="manager">Manager</option>
+                <option value="ops">Operations</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Status *</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-4 py-2.5 bg-white/5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 backdrop-blur-xl"
+                required
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </Modal>
+    </div>
   );
 }

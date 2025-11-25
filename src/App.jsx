@@ -36,7 +36,10 @@ const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
 const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
 const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
+const RefundsAnalytics = lazy(() => import('./pages/RefundsAnalytics'));
+
 const DeliveryOpsMAX = lazy(() => import('./pages/DeliveryOpsMAX'));
+ 
 
 // Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -44,7 +47,7 @@ function RequireAuth({ children, requiredPermissions = [] }) {
   const location = useLocation();
 
   // Show loading state while checking session
-  if (connectionStatus === 'checking') {
+  if (connectionStatus  'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -284,6 +287,17 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <FinancialPerformanceReport />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Refunds & Adjustments - AI-Powered Revenue Leakage Analysis */}
+                      <Route path="/refunds-analytics" element={
+                        <RequireAuth requiredPermissions={['financial:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <RefundsAnalytics />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

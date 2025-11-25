@@ -15,6 +15,16 @@ import {
   RefreshCw,
 } from 'lucide-react';
 
+// NAVA UI Components
+import {
+  Sidebar,
+  TopNavbar,
+  ModernCard,
+  SectionTitle,
+  NeoButton,
+  StatBadge
+} from '@/components/nava-ui';
+
 // Intelligence Components
 import InsightCard from '../components/Intelligence/InsightCard';
 import RecommendationCard from '../components/Intelligence/RecommendationCard';
@@ -157,296 +167,305 @@ const Intelligence = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0E1A]">
         <div className="text-center">
-          <Brain className="w-16 h-16 text-purple-600 animate-pulse mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Loading Intelligence Engine...</p>
+          <Brain className="w-16 h-16 text-purple-500 animate-pulse mx-auto mb-4" />
+          <p className="text-gray-400">Loading Intelligence Engine...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl"
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-4 bg-white/20 rounded-xl backdrop-blur">
-                <Brain className="w-10 h-10" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
-                  Intelligence Hub
-                  <Sparkles className="w-8 h-8 animate-pulse" />
-                </h1>
-                <p className="text-blue-100 text-lg">
-                  AI-Powered Business Intelligence & Predictive Analytics
-                </p>
-              </div>
-            </div>
+    <div className="flex min-h-screen bg-[#0A0E1A]">
+      {/* Sidebar */}
+      <Sidebar defaultCollapsed={false} />
 
-            <div className="flex gap-2">
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg backdrop-blur transition-colors flex items-center gap-2"
-              >
-                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                <span className="text-sm font-medium">Refresh</span>
-              </button>
-              <button
-                onClick={openChat}
-                className="px-4 py-2 bg-white text-purple-600 hover:bg-blue-50 rounded-lg font-semibold transition-colors flex items-center gap-2"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Ask AI</span>
-              </button>
-            </div>
-          </div>
+      {/* Main Content */}
+      <div className="flex-1 ml-0 lg:ml-[280px] transition-all duration-300">
+        {/* Top Navbar */}
+        <TopNavbar
+          user={{ name: 'Admin User', email: 'admin@navaops.com' }}
+          notificationCount={3}
+        />
 
-          {/* Executive Summary Banner */}
-          {executiveSummary && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mt-6 p-4 bg-white/10 backdrop-blur rounded-xl border border-white/20"
-            >
-              <div className="flex items-start gap-4">
-                <Sparkles className="w-6 h-6 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-bold text-lg mb-1">{executiveSummary.headline}</h3>
-                  <p className="text-blue-100 text-sm">{executiveSummary.outlook}</p>
-                  <div className="mt-3 flex gap-4 text-sm">
-                    <div>
-                      <span className="text-blue-200">Health Score: </span>
-                      <span className="font-bold">{executiveSummary.healthScore}/100</span>
-                    </div>
-                    <div className="border-l border-white/20 pl-4">
-                      <span className="text-blue-200">Period: </span>
-                      <span className="font-bold">{executiveSummary.period}</span>
-                    </div>
+        {/* Page Content */}
+        <div className="p-6 space-y-6 mt-20">
+          {/* Header */}
+          <ModernCard variant="gradient" className="bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-cyan-500/20 border-purple-500/30">
+            <div className="p-8">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-purple-500/20 rounded-xl backdrop-blur border border-purple-400/30 shadow-lg shadow-purple-500/20">
+                    <Brain className="w-10 h-10 text-purple-400" />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-2">
+                      Intelligence Hub
+                      <Sparkles className="w-8 h-8 text-cyan-400 animate-pulse" />
+                    </h1>
+                    <p className="text-blue-200 text-lg">
+                      AI-Powered Business Intelligence & Predictive Analytics
+                    </p>
                   </div>
                 </div>
+
+                <div className="flex gap-2">
+                  <NeoButton
+                    variant="glass"
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    icon={RefreshCw}
+                    className={refreshing ? 'animate-spin' : ''}
+                  >
+                    Refresh
+                  </NeoButton>
+                  <NeoButton
+                    variant="primary"
+                    onClick={openChat}
+                    icon={MessageCircle}
+                  >
+                    Ask AI
+                  </NeoButton>
+                </div>
               </div>
-            </motion.div>
-          )}
-        </motion.div>
-      </div>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
-        {/* Left Column - Health Score */}
-        <div className="xl:col-span-1">
-          <HealthScoreWidget healthData={healthScore} />
-        </div>
-
-        {/* Right Column - Revenue Forecast */}
-        <div className="xl:col-span-2">
-          {forecast && (
-            <PredictionChart
-              historicalData={mockHistoricalData}
-              predictions={forecast.predictions}
-              title="30-Day Revenue Forecast"
-            />
-          )}
-        </div>
-      </div>
-
-      {/* Critical Insights */}
-      {insights.filter((i) => i.priority === 'critical' || i.priority === 'high').length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Critical Insights
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {insights
-              .filter((i) => i.priority === 'critical' || i.priority === 'high')
-              .slice(0, 4)
-              .map((insight, index) => (
-                <InsightCard key={index} insight={insight} expandable showActions />
-              ))}
-          </div>
-        </div>
-      )}
-
-      {/* Top Recommendations */}
-      {recommendations.length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              AI Recommendations
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {recommendations.slice(0, 4).map((rec, index) => (
-              <RecommendationCard key={index} recommendation={rec} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Scenario Simulator */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Zap className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            What-If Scenarios
-          </h2>
-        </div>
-        <ScenarioSimulator baseMetrics={mockCurrentMetrics} />
-      </div>
-
-      {/* All Insights Grid */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Lightbulb className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">All Insights</h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            ({insights.length} total)
-          </span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {insights.map((insight, index) => (
-            <InsightCard key={index} insight={insight} expandable showActions />
-          ))}
-        </div>
-      </div>
-
-      {/* Anomalies Detection */}
-      {anomalies.length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Activity className="w-6 h-6 text-red-600 dark:text-red-400" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Detected Anomalies
-            </h2>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              ({anomalies.length} detected)
-            </span>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="space-y-3">
-              {anomalies.slice(0, 10).map((anomaly, index) => (
+              {/* Executive Summary Banner */}
+              {executiveSummary && (
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className={`p-4 rounded-lg border-2 ${
-                    anomaly.severity === 'severe'
-                      ? 'border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950/30'
-                      : 'border-yellow-300 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/30'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span
-                          className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            anomaly.type === 'spike'
-                              ? 'bg-green-500 text-white'
-                              : 'bg-red-500 text-white'
-                          }`}
-                        >
-                          {anomaly.type.toUpperCase()}
-                        </span>
-                        <span
-                          className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            anomaly.severity === 'severe'
-                              ? 'bg-red-500 text-white'
-                              : 'bg-yellow-500 text-white'
-                          }`}
-                        >
-                          {anomaly.severity.toUpperCase()}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {anomaly.timestamp}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-700 dark:text-gray-300">
-                        Value: <span className="font-bold">${anomaly.value.toLocaleString()}</span>
-                        {' | '}
-                        Expected: <span className="font-bold">${anomaly.expected.toLocaleString()}</span>
-                        {' | '}
-                        Deviation: <span className="font-bold">${Math.abs(anomaly.deviation).toLocaleString()}</span>
-                      </div>
-                      {anomaly.method && (
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Detection method: {anomaly.method}
-                        </div>
-                      )}
-                    </div>
-                    {anomaly.confidence && (
-                      <div className="text-right">
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Confidence</div>
-                        <div className="text-lg font-bold text-gray-900 dark:text-white">
-                          {(anomaly.confidence * 100).toFixed(0)}%
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Executive Summary */}
-      {executiveSummary && executiveSummary.nextSteps && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Next Steps</h2>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="space-y-4">
-              {executiveSummary.nextSteps.map((step, index) => (
-                <motion.div
-                  key={index}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-start gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-lg border border-blue-200 dark:border-blue-800"
+                  transition={{ delay: 0.2 }}
+                  className="p-6 bg-white/10 backdrop-blur-xl rounded-xl border border-white/20 shadow-xl"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {step.action}
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{step.reason}</p>
-                    <div className="mt-2 flex items-center gap-4 text-xs">
-                      <span className="text-gray-500 dark:text-gray-400">
-                        Priority: <span className="font-semibold">{step.priority}</span>
-                      </span>
-                      {step.expectedImpact && (
-                        <span className="text-gray-500 dark:text-gray-400">
-                          Impact: <span className="font-semibold">{step.expectedImpact}</span>
-                        </span>
-                      )}
+                  <div className="flex items-start gap-4">
+                    <Sparkles className="w-6 h-6 flex-shrink-0 mt-1 text-cyan-400" />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-xl text-white mb-2">{executiveSummary.headline}</h3>
+                      <p className="text-blue-100">{executiveSummary.outlook}</p>
+                      <div className="mt-4 flex gap-6 text-sm">
+                        <div>
+                          <span className="text-blue-200">Health Score: </span>
+                          <span className="font-bold text-white text-lg">{executiveSummary.healthScore}/100</span>
+                        </div>
+                        <div className="border-l border-white/20 pl-6">
+                          <span className="text-blue-200">Period: </span>
+                          <span className="font-bold text-white">{executiveSummary.period}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
+              )}
+            </div>
+          </ModernCard>
+
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Left Column - Health Score */}
+            <div className="xl:col-span-1">
+              <HealthScoreWidget healthData={healthScore} />
+            </div>
+
+            {/* Right Column - Revenue Forecast */}
+            <div className="xl:col-span-2">
+              {forecast && (
+                <PredictionChart
+                  historicalData={mockHistoricalData}
+                  predictions={forecast.predictions}
+                  title="30-Day Revenue Forecast"
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Critical Insights */}
+          {insights.filter((i) => i.priority === 'critical' || i.priority === 'high').length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <AlertCircle className="w-6 h-6 text-red-400" />
+                <h2 className="text-2xl font-bold text-white">
+                  Critical Insights
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {insights
+                  .filter((i) => i.priority === 'critical' || i.priority === 'high')
+                  .slice(0, 4)
+                  .map((insight, index) => (
+                    <InsightCard key={index} insight={insight} expandable showActions />
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Top Recommendations */}
+          {recommendations.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Target className="w-6 h-6 text-blue-400" />
+                <h2 className="text-2xl font-bold text-white">
+                  AI Recommendations
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {recommendations.slice(0, 4).map((rec, index) => (
+                  <RecommendationCard key={index} recommendation={rec} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Scenario Simulator */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Zap className="w-6 h-6 text-yellow-400" />
+              <h2 className="text-2xl font-bold text-white">
+                What-If Scenarios
+              </h2>
+            </div>
+            <ScenarioSimulator baseMetrics={mockCurrentMetrics} />
+          </div>
+
+          {/* All Insights Grid */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Lightbulb className="w-6 h-6 text-yellow-400" />
+              <h2 className="text-2xl font-bold text-white">All Insights</h2>
+              <StatBadge label={`${insights.length} total`} variant="info" glow />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {insights.map((insight, index) => (
+                <InsightCard key={index} insight={insight} expandable showActions />
               ))}
             </div>
           </div>
-        </div>
-      )}
 
+          {/* Anomalies Detection */}
+          {anomalies.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Activity className="w-6 h-6 text-red-400" />
+                <h2 className="text-2xl font-bold text-white">
+                  Detected Anomalies
+                </h2>
+                <StatBadge label={`${anomalies.length} detected`} variant="danger" glow />
+              </div>
+              <ModernCard variant="glass">
+                <div className="p-6">
+                  <div className="space-y-3">
+                    {anomalies.slice(0, 10).map((anomaly, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={`p-4 rounded-xl border-2 ${
+                          anomaly.severity === 'severe'
+                            ? 'border-red-500/30 bg-red-500/10'
+                            : 'border-yellow-500/30 bg-yellow-500/10'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <StatBadge
+                                label={anomaly.type}
+                                variant={anomaly.type === 'spike' ? 'success' : 'danger'}
+                                size="sm"
+                              />
+                              <StatBadge
+                                label={anomaly.severity}
+                                variant={anomaly.severity === 'severe' ? 'danger' : 'warning'}
+                                size="sm"
+                              />
+                              <span className="text-xs text-gray-400">
+                                {anomaly.timestamp}
+                              </span>
+                            </div>
+                            <div className="text-sm text-gray-300">
+                              Value: <span className="font-bold text-white">${anomaly.value.toLocaleString()}</span>
+                              {' | '}
+                              Expected: <span className="font-bold text-white">${anomaly.expected.toLocaleString()}</span>
+                              {' | '}
+                              Deviation: <span className="font-bold text-white">${Math.abs(anomaly.deviation).toLocaleString()}</span>
+                            </div>
+                            {anomaly.method && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                Detection method: {anomaly.method}
+                              </div>
+                            )}
+                          </div>
+                          {anomaly.confidence && (
+                            <div className="text-right">
+                              <div className="text-xs text-gray-400">Confidence</div>
+                              <div className="text-2xl font-bold text-white">
+                                {(anomaly.confidence * 100).toFixed(0)}%
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </ModernCard>
+            </div>
+          )}
+
+          {/* Executive Summary - Next Steps */}
+          {executiveSummary && executiveSummary.nextSteps && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart3 className="w-6 h-6 text-purple-400" />
+                <h2 className="text-2xl font-bold text-white">Next Steps</h2>
+              </div>
+              <ModernCard variant="glass">
+                <div className="p-6">
+                  <div className="space-y-4">
+                    {executiveSummary.nextSteps.map((step, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-start gap-4 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl border border-blue-500/30"
+                      >
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-bold shadow-lg shadow-blue-500/30">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-white mb-2">
+                            {step.action}
+                          </h4>
+                          <p className="text-sm text-gray-300">{step.reason}</p>
+                          <div className="mt-3 flex items-center gap-4 text-xs">
+                            <StatBadge
+                              label={`Priority: ${step.priority}`}
+                              variant={
+                                step.priority === 'high' ? 'danger' :
+                                step.priority === 'medium' ? 'warning' :
+                                'info'
+                              }
+                              size="sm"
+                            />
+                            {step.expectedImpact && (
+                              <span className="text-gray-400">
+                                Impact: <span className="font-semibold text-white">{step.expectedImpact}</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </ModernCard>
+            </div>
+          )}
+        </div>
       </div>
+    </div>
   );
 };
 

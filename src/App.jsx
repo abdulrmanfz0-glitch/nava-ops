@@ -36,6 +36,7 @@ const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
 const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
 const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
+const RefundsAnalytics = lazy(() => import('./pages/RefundsAnalytics'));
 
 // Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -283,6 +284,17 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <FinancialPerformanceReport />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Refunds & Adjustments - AI-Powered Revenue Leakage Analysis */}
+                      <Route path="/refunds-analytics" element={
+                        <RequireAuth requiredPermissions={['financial:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <RefundsAnalytics />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

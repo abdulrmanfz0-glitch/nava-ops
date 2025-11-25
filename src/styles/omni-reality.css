@@ -1,0 +1,432 @@
+/**
+ * OMNI-REALITY ENGINE STYLES
+ * Visual styles for the quantum-grade UI system
+ */
+
+/* Global OMNI variables */
+:root {
+  --omni-primary: #60a5fa;
+  --omni-secondary: #818cf8;
+  --omni-accent: #a78bfa;
+  --omni-glow: rgba(96, 165, 250, 0.4);
+  --omni-shimmer: rgba(255, 255, 255, 0.1);
+
+  /* Adaptive spacing (controlled by Quantum Fabric) */
+  --adaptive-spacing: 1rem;
+  --adaptive-density: 1;
+  --adaptive-animation-speed: 400ms;
+  --adaptive-color-intensity: 1;
+
+  /* Fluid dynamics */
+  --fluid-viscosity: 0.98;
+  --fluid-damping: 0.95;
+
+  /* Holographic effects */
+  --holo-intensity: 0.8;
+  --holo-glow: 0 0 20px var(--omni-glow);
+
+  /* Particle effects */
+  --particle-density: 1;
+  --particle-speed: 1;
+}
+
+/* Quantum UI Fabric - Global mutations */
+body.omni-compact {
+  --adaptive-spacing: 0.8rem;
+  --adaptive-density: 1.2;
+}
+
+body.omni-expanded {
+  --adaptive-spacing: 1.5rem;
+  --adaptive-density: 0.8;
+}
+
+body.omni-high-contrast {
+  --adaptive-color-intensity: 1.2;
+}
+
+body.omni-soft-colors {
+  --adaptive-color-intensity: 0.7;
+}
+
+/* Holographic glassmorphism */
+.holo-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+/* Quantum glow effect */
+.quantum-glow {
+  box-shadow:
+    0 0 10px var(--omni-glow),
+    0 0 20px var(--omni-glow),
+    inset 0 0 10px var(--omni-shimmer);
+}
+
+/* Holographic text */
+.holo-text {
+  background: linear-gradient(
+    45deg,
+    var(--omni-primary),
+    var(--omni-secondary),
+    var(--omni-accent)
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: holo-gradient 3s ease infinite;
+}
+
+@keyframes holo-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Particle trail effect */
+.particle-trail {
+  position: relative;
+  overflow: visible;
+}
+
+.particle-trail::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--omni-glow), transparent);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--adaptive-animation-speed) ease-out;
+}
+
+.particle-trail:hover::after {
+  opacity: 1;
+}
+
+/* Fluid interaction zones */
+.fluid-interactive {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform var(--adaptive-animation-speed) ease-out;
+}
+
+.fluid-interactive:hover {
+  transform: translateZ(10px);
+}
+
+/* Dimensional depth layers */
+.layer-surface { z-index: 1; }
+.layer-elevated { z-index: 10; transform: translateZ(100px); }
+.layer-floating { z-index: 20; transform: translateZ(200px); }
+.layer-hyperspace { z-index: 50; transform: translateZ(500px); }
+
+/* Quantum button effects */
+.quantum-button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--omni-primary), var(--omni-secondary));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--adaptive-animation-speed) ease-out;
+}
+
+.quantum-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease-out, height 0.6s ease-out;
+}
+
+.quantum-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Neural network background */
+.neural-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.neural-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 20% 30%, var(--omni-glow) 1px, transparent 1px),
+    radial-gradient(circle at 60% 70%, var(--omni-glow) 1px, transparent 1px),
+    radial-gradient(circle at 80% 20%, var(--omni-glow) 1px, transparent 1px);
+  background-size: 100% 100%;
+  opacity: 0.3;
+  pointer-events: none;
+  animation: neural-pulse 4s ease-in-out infinite;
+}
+
+@keyframes neural-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Warp speed lines */
+.warp-lines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.warp-lines.active {
+  opacity: 1;
+}
+
+/* Tesseract grid overlay */
+.tesseract-grid {
+  background-image:
+    linear-gradient(rgba(96, 165, 250, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 165, 250, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: tesseract-shift 20s linear infinite;
+}
+
+@keyframes tesseract-shift {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+/* Chrono temporal effects */
+.chrono-fade {
+  animation: chrono-fade-in var(--adaptive-animation-speed) ease-out;
+}
+
+@keyframes chrono-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateZ(-100px);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateZ(0);
+    filter: blur(0);
+  }
+}
+
+/* Pressure wave ripple */
+@keyframes pressure-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Volumetric projection */
+.volumetric-projection {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  animation: volumetric-float 3s ease-in-out infinite;
+}
+
+@keyframes volumetric-float {
+  0%, 100% {
+    transform: translateZ(0) rotateX(0);
+  }
+  50% {
+    transform: translateZ(20px) rotateX(5deg);
+  }
+}
+
+/* Prism chromatic effects */
+.prism-effect {
+  position: relative;
+}
+
+.prism-effect::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 0, 0.1),
+    rgba(255, 127, 0, 0.1),
+    rgba(255, 255, 0, 0.1),
+    rgba(0, 255, 0, 0.1),
+    rgba(0, 0, 255, 0.1),
+    rgba(75, 0, 130, 0.1),
+    rgba(148, 0, 211, 0.1)
+  );
+  filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.prism-effect:hover::after {
+  opacity: 1;
+}
+
+/* Cognitive state indicators */
+.cognitive-focused {
+  --adaptive-animation-speed: 300ms;
+  --adaptive-color-intensity: 1;
+}
+
+.cognitive-confused {
+  --adaptive-spacing: 1.2rem;
+  animation: subtle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+}
+
+.cognitive-fatigued {
+  --adaptive-color-intensity: 0.8;
+  filter: saturate(0.9);
+}
+
+/* Morphing transition states */
+.morphing {
+  transition: all var(--adaptive-animation-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.morphing-explode {
+  animation: morph-explode 1s ease-out;
+}
+
+@keyframes morph-explode {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* Scanline effect for retro-futuristic feel */
+.scanlines {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.05) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  animation: scanline-move 8s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes scanline-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+/* Energy field glow */
+.energy-field {
+  position: relative;
+  animation: energy-pulse 2s ease-in-out infinite;
+}
+
+@keyframes energy-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--omni-glow), 0 0 20px var(--omni-glow);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--omni-glow), 0 0 40px var(--omni-glow);
+  }
+}
+
+/* Responsive OMNI adjustments */
+@media (max-width: 768px) {
+  :root {
+    --adaptive-spacing: 0.8rem;
+    --particle-density: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .particle-trail::after,
+  .quantum-button::before,
+  .neural-bg::before {
+    animation: none;
+  }
+}
+
+/* Dark mode OMNI enhancements */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --omni-glow: rgba(96, 165, 250, 0.6);
+    --omni-shimmer: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Print mode - disable all OMNI effects */
+@media print {
+  .particle-trail::after,
+  .quantum-button::before,
+  .neural-bg::before,
+  .prism-effect::after,
+  .scanlines::before {
+    display: none !important;
+  }
+
+  * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

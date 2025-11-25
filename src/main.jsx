@@ -7,6 +7,7 @@ import './index.css';
 import './styles/animations.css';
 import './styles/ui-fixes.css';
 import './styles/print-styles.css';
+import './styles/omni-reality.css';
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext';
@@ -17,6 +18,7 @@ import { LocaleProvider } from './contexts/LocaleContext';
 import { AIProvider } from './contexts/AIContext';
 import { AIChatProvider } from './contexts/AIChatContext';
 import { DataProvider } from './contexts/DataContext';
+import { OmniRealityProvider } from './contexts/OmniRealityContext';
 
 // AI Components (Global)
 import { AIChatSidebar, AIFloatingButton } from './components/AI';
@@ -56,26 +58,28 @@ const Root = () => {
             v7_relativeSplatPath: true
           }}
         >
-          <NotificationProvider>
-            <LocaleProvider>
-              <ThemeProvider>
-                <AuthProvider>
-                  <DataProvider>
-                    <SubscriptionProvider>
-                      <AIProvider>
-                        <AIChatProvider>
-                          <App />
-                          {/* Global AI Components */}
-                          <AIChatSidebar />
-                          <AIFloatingButton />
-                        </AIChatProvider>
-                      </AIProvider>
-                    </SubscriptionProvider>
-                  </DataProvider>
-                </AuthProvider>
-              </ThemeProvider>
-            </LocaleProvider>
-          </NotificationProvider>
+          <OmniRealityProvider>
+            <NotificationProvider>
+              <LocaleProvider>
+                <ThemeProvider>
+                  <AuthProvider>
+                    <DataProvider>
+                      <SubscriptionProvider>
+                        <AIProvider>
+                          <AIChatProvider>
+                            <App />
+                            {/* Global AI Components */}
+                            <AIChatSidebar />
+                            <AIFloatingButton />
+                          </AIChatProvider>
+                        </AIProvider>
+                      </SubscriptionProvider>
+                    </DataProvider>
+                  </AuthProvider>
+                </ThemeProvider>
+              </LocaleProvider>
+            </NotificationProvider>
+          </OmniRealityProvider>
         </BrowserRouter>
       </ErrorBoundary>
     </StrictMode>

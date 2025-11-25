@@ -36,6 +36,7 @@ const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
 const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
 const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
+const DeliveryOpsMAX = lazy(() => import('./pages/DeliveryOpsMAX'));
 
 // Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -294,6 +295,17 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <MenuIntelligence />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* DeliveryOps MAX AI - Refund & Dispute Intelligence Engine */}
+                      <Route path="/delivery-ops-max" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <DeliveryOpsMAX />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

@@ -38,13 +38,16 @@ const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
 const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
 const RefundsAnalytics = lazy(() => import('./pages/RefundsAnalytics'));
 
+const DeliveryOpsMAX = lazy(() => import('./pages/DeliveryOpsMAX'));
+ 
+
 // Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
   const { connectionStatus, user, hasPermission, isAuthenticated } = useAuth();
   const location = useLocation();
 
   // Show loading state while checking session
-  if (connectionStatus === 'checking') {
+  if (connectionStatus  'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -306,6 +309,17 @@ export default function App() {
                           <ErrorBoundary>
                             <Layout>
                               <MenuIntelligence />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* DeliveryOps MAX AI - Refund & Dispute Intelligence Engine */}
+                      <Route path="/delivery-ops-max" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <DeliveryOpsMAX />
                             </Layout>
                           </ErrorBoundary>
                         </RequireAuth>

@@ -756,3 +756,98 @@ body[data-dev-mode="true"]::before {
     opacity: 0.8;
   }
 }
+
+/* ========== NAVA UI CUSTOM SCROLLBARS ========== */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 196, 255, 0.3) rgba(255, 255, 255, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 196, 255, 0.3);
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 196, 255, 0.5);
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ========== NAVA UI GLASS EFFECTS ========== */
+.glass-bg-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px) saturate(180%);
+}
+
+.glass-bg-medium {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+
+.glass-bg-strong {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px) saturate(200%);
+}
+
+.glass-bg-dark-light {
+  background: rgba(20, 25, 35, 0.6);
+  backdrop-filter: blur(12px) saturate(180%);
+}
+
+.glass-bg-dark-medium {
+  background: rgba(20, 25, 35, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+
+.glass-bg-dark-strong {
+  background: rgba(20, 25, 35, 0.85);
+  backdrop-filter: blur(24px) saturate(200%);
+}
+
+/* ========== NAVA UI UTILITY CLASSES ========== */
+.text-gradient-cyan-purple {
+  background: linear-gradient(135deg, #00C4FF 0%, #9210FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-teal-cyan {
+  background: linear-gradient(135deg, #00FFCC 0%, #00C4FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.animate-breathing {
+  animation: breathing 3s ease-in-out infinite;
+}
+
+@keyframes breathing {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}

@@ -9,8 +9,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Modern NAVA Primary Palette (Blue)
+        // NAVA UI Primary Palette (Cyan - VisionOS Style)
         primary: {
+          50: '#E0F7FF',
+          100: '#B8EEFF',
+          200: '#8DE5FF',
+          300: '#5DD9FF',
+          400: '#2BCFFF',
+          500: '#00C4FF',  // Main cyan
+          600: '#00A8E0',
+          700: '#0088B8',
+          800: '#006B8F',
+          900: '#004E66',
+        },
+        // Legacy Primary (for backward compatibility)
+        'primary-legacy': {
           50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',
@@ -48,8 +61,43 @@ export default {
           800: '#102a43',
           900: '#0d1f33',
         },
-        // Modern Secondary Palette
+        // NAVA UI Secondary Palette (Teal)
         secondary: {
+          50: '#E0FFF9',
+          100: '#B3FFF0',
+          200: '#80FFE6',
+          300: '#4DFFDC',
+          400: '#26FFD4',
+          500: '#00FFCC',  // Main teal
+          600: '#00D9AD',
+          700: '#00B38F',
+          800: '#008C70',
+          900: '#006652',
+        },
+        // NAVA UI Accent Palette (Purple)
+        accent: {
+          50: '#F3E5FF',
+          100: '#E0B8FF',
+          200: '#CC8AFF',
+          300: '#B85CFF',
+          400: '#A533FF',
+          500: '#9210FF',  // Main purple
+          600: '#7A0DD9',
+          700: '#6209B3',
+          800: '#4A068C',
+          900: '#320466',
+        },
+        // Neon Accents
+        neon: {
+          cyan: '#00FFFF',
+          magenta: '#FF00FF',
+          yellow: '#FFFF00',
+          green: '#00FF00',
+          pink: '#FF00AA',
+          blue: '#0088FF',
+        },
+        // Legacy Secondary (for backward compatibility)
+        'secondary-legacy': {
           50: '#faf5ff',
           100: '#f3e8ff',
           200: '#e9d5ff',
@@ -185,6 +233,18 @@ export default {
         'elevation-2': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         'elevation-3': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         'elevation-4': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+
+        // NAVA UI Glass & Glow Effects
+        'glass-light': '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+        'glass-medium': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'glass-strong': '0 8px 32px 0 rgba(0, 0, 0, 0.5)',
+
+        'glow-cyan': '0 0 20px rgba(0, 196, 255, 0.4), 0 0 40px rgba(0, 196, 255, 0.2)',
+        'glow-teal': '0 0 20px rgba(0, 255, 204, 0.4), 0 0 40px rgba(0, 255, 204, 0.2)',
+        'glow-purple': '0 0 20px rgba(146, 16, 255, 0.4), 0 0 40px rgba(146, 16, 255, 0.2)',
+        'glow-green': '0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(16, 185, 129, 0.2)',
+        'glow-warning': '0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.2)',
+        'glow-error': '0 0 20px rgba(239, 68, 68, 0.4), 0 0 40px rgba(239, 68, 68, 0.2)',
       },
       animation: {
         // Smooth, modern animations
@@ -292,6 +352,12 @@ export default {
         'gradient-gold': 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
         'gradient-navy': 'linear-gradient(135deg, #0A2540 0%, #1a3a5c 100%)',
         'gradient-premium': 'linear-gradient(135deg, #0088FF 0%, #00b4ff 100%)',
+
+        // NAVA UI VisionOS Gradients
+        'gradient-cyan-purple': 'linear-gradient(135deg, #00C4FF 0%, #9210FF 100%)',
+        'gradient-teal-cyan': 'linear-gradient(135deg, #00FFCC 0%, #00C4FF 100%)',
+        'gradient-mesh-cyber': 'radial-gradient(at 0% 0%, rgba(0, 196, 255, 0.2) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(146, 16, 255, 0.2) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(0, 255, 204, 0.15) 0px, transparent 50%)',
+        'gradient-mesh-aurora': 'radial-gradient(at 0% 100%, rgba(0, 196, 255, 0.25) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(146, 16, 255, 0.25) 0px, transparent 50%), radial-gradient(at 50% 50%, rgba(0, 255, 204, 0.15) 0px, transparent 50%)',
       },
       spacing: {
         '18': '4.5rem',

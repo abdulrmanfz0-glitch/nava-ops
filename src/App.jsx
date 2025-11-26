@@ -36,7 +36,12 @@ const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
 const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
 const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
+const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
 const RefundsAnalytics = lazy(() => import('./pages/RefundsAnalytics'));
+
+const DeliveryOpsMAX = lazy(() => import('./pages/DeliveryOpsMAX'));
+const Refunds = lazy(() => import('./pages/Refunds'));
+ 
 
 // Protected route wrapper with authentication and permission checking
 function RequireAuth({ children, requiredPermissions = [] }) {
@@ -44,7 +49,7 @@ function RequireAuth({ children, requiredPermissions = [] }) {
   const location = useLocation();
 
   // Show loading state while checking session
-  if (connectionStatus === 'checking') {
+  if (connectionStatus  'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -168,9 +173,30 @@ export default function App() {
                       <Route path="/" element={
                         <RequireAuth>
                           <ErrorBoundary>
+ release/stable-ui
                             <Layout>
                               <UltraModernDashboard />
                             </Layout>
+
+                            <ExecutiveDashboard />
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Alternative Dashboard Views */}
+                      <Route path="/ultra-modern-dashboard" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <UltraModernDashboard />
+ 
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      <Route path="/executive" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <ExecutiveDashboard />
                           </ErrorBoundary>
                         </RequireAuth>
                       } />
@@ -320,6 +346,26 @@ export default function App() {
                             <Layout>
                               <MenuIntelligence />
                             </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* DeliveryOps MAX AI - Refund & Dispute Intelligence Engine */}
+                      <Route path="/delivery-ops-max" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <DeliveryOpsMAX />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Refund Center - Refund Management & Dispute Generation */}
+                      <Route path="/refunds" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Refunds />
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

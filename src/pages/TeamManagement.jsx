@@ -5,8 +5,6 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/contexts/NotificationContext';
 import {
-  Sidebar,
-  TopNavbar,
   ModernCard,
   KPIWidget,
   SectionTitle,
@@ -243,20 +241,9 @@ export default function TeamManagement() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0A0E1A]">
-      {/* Sidebar */}
-      <Sidebar defaultCollapsed={false} />
-
-      {/* Main Content */}
-      <div className="flex-1 ml-0 lg:ml-[280px] transition-all duration-300">
-        {/* Top Navbar */}
-        <TopNavbar
-          user={{ name: 'Admin User', email: 'admin@navaops.com' }}
-          notificationCount={3}
-        />
-
-        {/* Page Content */}
-        <div className="p-6 space-y-6 mt-20">
+    <div className="min-h-screen bg-[#0A0E1A]">
+      {/* Page Content */}
+      <div className="space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <SectionTitle
@@ -442,10 +429,9 @@ export default function TeamManagement() {
             </div>
           </ModernCard>
         </div>
-      </div>
 
-      {/* Add/Edit Modal */}
-      <Modal
+        {/* Add/Edit Modal */}
+        <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         title={editingEmployee ? 'Edit Team Member' : 'Add Team Member'}

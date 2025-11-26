@@ -22,6 +22,7 @@ import {
   Sun,
   Search,
   Zap,
+  ShieldCheck,
 } from 'lucide-react';
 
 /**
@@ -35,6 +36,7 @@ const ModernSidebar = ({
   onThemeToggle,
   user = {},
   onLogout,
+  hasPermission = () => true, // Default: show all items if no permission check
 }) => {
   const location = useLocation();
   const [expandedGroup, setExpandedGroup] = useState(null);
@@ -81,6 +83,15 @@ const ModernSidebar = ({
       path: '/menu-intelligence',
     },
     {
+      id: 'refunds',
+      label: 'Refund Defense Center',
+      icon: ShieldCheck,
+      path: '/refunds',
+      permissions: ['reports:view'],
+      badge: 'New',
+      badgeColor: 'orange',
+    },
+    {
       id: 'team',
       label: 'Team',
       icon: Users,
@@ -110,8 +121,14 @@ const ModernSidebar = ({
     },
   ];
 
-  // Filter nav items based on search
+  // Filter nav items based on search and permissions
   const filteredItems = navItems.filter(item => {
+    // Check permissions first
+    if (item.permissions && !hasPermission(item.permissions)) {
+      return false;
+    }
+
+    // Then apply search filter
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     if (item.label.toLowerCase().includes(query)) return true;

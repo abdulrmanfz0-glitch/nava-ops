@@ -7,7 +7,7 @@ import ModernHeader from '../UltraModern/ModernHeader';
 const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, hasPermission } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
@@ -45,6 +45,7 @@ const Layout = ({ children }) => {
       '/billing': 'Billing',
       '/smart-features': 'Smart Features',
       '/ultra-dashboard': 'Ultra Modern Dashboard',
+      '/refunds': 'Refund Defense Center',
     };
     return titleMap[path] || 'Dashboard';
   };
@@ -63,6 +64,7 @@ const Layout = ({ children }) => {
           role: user?.role || 'Administrator',
         }}
         onLogout={handleLogout}
+        hasPermission={hasPermission}
       />
 
       {/* Main Content Area */}

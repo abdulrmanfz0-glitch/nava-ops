@@ -9,8 +9,6 @@ import BCGMatrixChart from '@/components/MenuIntelligence/BCGMatrixChart';
 import ProfitabilityAnalysisChart from '@/components/MenuIntelligence/ProfitabilityAnalysisChart';
 import AIRecommendationsPanel from '@/components/MenuIntelligence/AIRecommendationsPanel';
 import {
-  Sidebar,
-  TopNavbar,
   ModernCard,
   KPIWidget,
   SectionTitle,
@@ -215,20 +213,9 @@ export default function MenuIntelligence() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0A0E1A]">
-      {/* Sidebar */}
-      <Sidebar defaultCollapsed={false} />
-
-      {/* Main Content */}
-      <div className="flex-1 ml-0 lg:ml-[280px] transition-all duration-300">
-        {/* Top Navbar */}
-        <TopNavbar
-          user={{ name: 'Admin User', email: 'admin@navaops.com' }}
-          notificationCount={3}
-        />
-
-        {/* Page Content */}
-        <div className="p-6 space-y-6 mt-20">
+    <div className="min-h-screen bg-[#0A0E1A]">
+      {/* Page Content */}
+      <div className="space-y-6">
           {/* Header */}
           <SectionTitle
             title="Menu Intelligence"
@@ -562,6 +549,5 @@ export default function MenuIntelligence() {
           </ModernCard>
         </div>
       </div>
-    </div>
   );
 }

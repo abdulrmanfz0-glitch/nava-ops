@@ -36,6 +36,7 @@ const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Billing = lazy(() => import('./pages/Billing'));
 const SmartFeatures = lazy(() => import('./pages/SmartFeatures'));
 const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
+const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
 const RefundsAnalytics = lazy(() => import('./pages/RefundsAnalytics'));
 
 const DeliveryOpsMAX = lazy(() => import('./pages/DeliveryOpsMAX'));
@@ -172,7 +173,24 @@ export default function App() {
                       <Route path="/" element={
                         <RequireAuth>
                           <ErrorBoundary>
+                            <ExecutiveDashboard />
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Alternative Dashboard Views */}
+                      <Route path="/ultra-modern-dashboard" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
                             <UltraModernDashboard />
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      <Route path="/executive" element={
+                        <RequireAuth>
+                          <ErrorBoundary>
+                            <ExecutiveDashboard />
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

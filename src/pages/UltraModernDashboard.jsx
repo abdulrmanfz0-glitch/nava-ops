@@ -19,8 +19,6 @@ import {
 } from 'lucide-react';
 // NEW: Import from nava-ui component library
 import {
-  Sidebar,
-  TopNavbar,
   ModernCard,
   KPIWidget,
   ChartCard,
@@ -299,25 +297,10 @@ const UltraModernDashboard = () => {
   return (
     <div className="min-h-screen bg-[#0A0E14]">
       {/* Background mesh gradient */}
-      <div className="fixed inset-0 bg-gradient-mesh-cyber opacity-50 pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-mesh-cyber opacity-50 pointer-events-none -z-10" />
 
-      {/* NEW: Sidebar from nava-ui */}
-      <Sidebar defaultCollapsed={false} />
-
-      {/* NEW: TopNavbar from nava-ui */}
-      <TopNavbar
-        user={user}
-        notificationCount={smartAlerts.length}
-        onNotificationsClick={() => {}}
-        onSearchClick={() => {}}
-        onProfileClick={() => {}}
-        onLogout={() => {}}
-        darkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-      />
-
-      {/* Main Content */}
-      <main className="pl-[280px] pt-[73px] p-8 space-y-8">
+      {/* Main Content - Layout will add sidebar and navbar */}
+      <main className="space-y-8">
         {/* Header Section */}
         <SectionTitle
           title="Dashboard"

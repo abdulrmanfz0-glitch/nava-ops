@@ -168,7 +168,9 @@ export default function App() {
                       <Route path="/" element={
                         <RequireAuth>
                           <ErrorBoundary>
-                            <UltraModernDashboard />
+                            <Layout>
+                              <UltraModernDashboard />
+                            </Layout>
                           </ErrorBoundary>
                         </RequireAuth>
                       } />
@@ -292,6 +294,17 @@ export default function App() {
                       {/* Refunds & Adjustments - AI-Powered Revenue Leakage Analysis */}
                       <Route path="/refunds-analytics" element={
                         <RequireAuth requiredPermissions={['financial:view']}>
+                          <ErrorBoundary>
+                            <Layout>
+                              <RefundsAnalytics />
+                            </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Refund Center - Main route */}
+                      <Route path="/refunds" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
                           <ErrorBoundary>
                             <Layout>
                               <RefundsAnalytics />

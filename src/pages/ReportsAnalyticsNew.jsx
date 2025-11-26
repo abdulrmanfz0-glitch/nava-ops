@@ -2,8 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNotification } from '@/contexts/NotificationContext';
 import {
-  Sidebar,
-  TopNavbar,
   ModernCard,
   KPIWidget,
   NeoButton,
@@ -234,21 +232,10 @@ export default function ReportsAnalyticsNew() {
   return (
     <div className="min-h-screen bg-[#0A0E14]">
       {/* Background */}
-      <div className="fixed inset-0 bg-gradient-mesh-cyber opacity-50 pointer-events-none" />
-
-      {/* Sidebar */}
-      <Sidebar defaultCollapsed={false} />
-
-      {/* TopNavbar */}
-      <TopNavbar
-        user={user}
-        notificationCount={0}
-        darkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-      />
+      <div className="fixed inset-0 bg-gradient-mesh-cyber opacity-50 pointer-events-none -z-10" />
 
       {/* Main Content */}
-      <main className="pl-[280px] pt-[73px] p-8 space-y-8">
+      <main className="space-y-8">
         {/* Page Header */}
         <SectionTitle
           title="Professional Report Hub"

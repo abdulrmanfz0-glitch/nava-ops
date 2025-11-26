@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNotification } from '@/contexts/NotificationContext';
 import {
-  Sidebar,
-  TopNavbar,
   ModernCard,
   NeoButton,
   SectionTitle,
@@ -114,21 +112,10 @@ export default function ReportHub() {
   return (
     <div className="min-h-screen bg-[#0A0E14]">
       {/* Background mesh gradient */}
-      <div className="fixed inset-0 bg-gradient-mesh-cyber opacity-50 pointer-events-none" />
-
-      {/* Sidebar */}
-      <Sidebar defaultCollapsed={false} />
-
-      {/* TopNavbar */}
-      <TopNavbar
-        user={user}
-        notificationCount={0}
-        darkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-      />
+      <div className="fixed inset-0 bg-gradient-mesh-cyber opacity-50 pointer-events-none -z-10" />
 
       {/* Main Content */}
-      <main className="pl-[280px] pt-[73px] p-8 space-y-8">
+      <main className="space-y-8">
         {/* Page Header */}
         <SectionTitle
           title="Report Hub"

@@ -17,8 +17,6 @@ import {
 
 // NAVA UI Components
 import {
-  Sidebar,
-  TopNavbar,
   ModernCard,
   SectionTitle,
   NeoButton,
@@ -177,20 +175,9 @@ const Intelligence = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0A0E1A]">
-      {/* Sidebar */}
-      <Sidebar defaultCollapsed={false} />
-
-      {/* Main Content */}
-      <div className="flex-1 ml-0 lg:ml-[280px] transition-all duration-300">
-        {/* Top Navbar */}
-        <TopNavbar
-          user={{ name: 'Admin User', email: 'admin@navaops.com' }}
-          notificationCount={3}
-        />
-
-        {/* Page Content */}
-        <div className="p-6 space-y-6 mt-20">
+    <div className="min-h-screen bg-[#0A0E1A]">
+      {/* Page Content */}
+      <div className="space-y-6">
           {/* Header */}
           <ModernCard variant="gradient" className="bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-cyan-500/20 border-purple-500/30">
             <div className="p-8">
@@ -465,7 +452,6 @@ const Intelligence = () => {
           )}
         </div>
       </div>
-    </div>
   );
 };
 

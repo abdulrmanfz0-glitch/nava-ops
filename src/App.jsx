@@ -39,6 +39,7 @@ const UltraModernDashboard = lazy(() => import('./pages/UltraModernDashboard'));
 const RefundsAnalytics = lazy(() => import('./pages/RefundsAnalytics'));
 
 const DeliveryOpsMAX = lazy(() => import('./pages/DeliveryOpsMAX'));
+const Refunds = lazy(() => import('./pages/Refunds'));
  
 
 // Protected route wrapper with authentication and permission checking
@@ -321,6 +322,15 @@ export default function App() {
                             <Layout>
                               <DeliveryOpsMAX />
                             </Layout>
+                          </ErrorBoundary>
+                        </RequireAuth>
+                      } />
+
+                      {/* Refund Center - Refund Management & Dispute Generation */}
+                      <Route path="/refunds" element={
+                        <RequireAuth requiredPermissions={['reports:view']}>
+                          <ErrorBoundary>
+                            <Refunds />
                           </ErrorBoundary>
                         </RequireAuth>
                       } />

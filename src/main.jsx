@@ -14,6 +14,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { BrandThemeProvider } from './contexts/BrandThemeContext';
 import { LocaleProvider } from './contexts/LocaleContext';
 import { AIProvider } from './contexts/AIContext';
 import { AIChatProvider } from './contexts/AIChatContext';
@@ -62,20 +63,22 @@ const Root = () => {
             <NotificationProvider>
               <LocaleProvider>
                 <ThemeProvider>
-                  <AuthProvider>
-                    <DataProvider>
-                      <SubscriptionProvider>
-                        <AIProvider>
-                          <AIChatProvider>
-                            <App />
-                            {/* Global AI Components */}
-                            <AIChatSidebar />
-                            <AIFloatingButton />
-                          </AIChatProvider>
-                        </AIProvider>
-                      </SubscriptionProvider>
-                    </DataProvider>
-                  </AuthProvider>
+                  <BrandThemeProvider>
+                    <AuthProvider>
+                      <DataProvider>
+                        <SubscriptionProvider>
+                          <AIProvider>
+                            <AIChatProvider>
+                              <App />
+                              {/* Global AI Components */}
+                              <AIChatSidebar />
+                              <AIFloatingButton />
+                            </AIChatProvider>
+                          </AIProvider>
+                        </SubscriptionProvider>
+                      </DataProvider>
+                    </AuthProvider>
+                  </BrandThemeProvider>
                 </ThemeProvider>
               </LocaleProvider>
             </NotificationProvider>
